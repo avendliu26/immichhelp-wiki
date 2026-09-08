@@ -1,1 +1,3 @@
+import type { Metadata } from 'next';
+export const metadata: Metadata = { title: 'Compare', description: 'Comparison guides are being researched.', robots: { index: false, follow: true } };
 import Link from 'next/link'; import { getPublishedDocuments } from '@/lib/content'; export default function Compare(){const docs=getPublishedDocuments().filter(d=>d.category==='Compare');return <main className="container section"><div className="eyebrow">Compare</div><h1>Compare options</h1><p className="article-lead">A neutral structure for setup, maintenance, performance, privacy, and fit.</p><div className="card-grid" style={{marginTop:30}}>{docs.map(d=><Link className="card" href={`/${d.slug}`} key={d.slug}><h3>{d.title}</h3><p>{d.description}</p></Link>)}</div></main>}

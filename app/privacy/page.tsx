@@ -1,1 +1,3 @@
+import type { Metadata } from 'next';
+export const metadata: Metadata = { title: 'Privacy · Immich Help', description: 'Read how this static Immich community guide handles visitors, accounts, analytics, and future changes to data collection.' };
 export default function Privacy(){return <main className="container section"><div className="eyebrow">Legal</div><h1>Privacy</h1><p className="article-lead">Immich Help is a static community guide. We do not require an account to read these pages. If analytics or contact tools are added later, this page will be updated before they are enabled.</p></main>}

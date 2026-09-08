@@ -1,0 +1,739 @@
+[
+  {
+    "page": "immich-backup",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "What belongs in the backup set",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/",
+      "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml",
+      "https://www.postgresql.org/docs/current/backup-dump.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Step 1: Establish the recovery point",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Step 2: Keep the database and media consistent",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/stop/",
+      "https://docs.immich.app/administration/backup-and-restore/",
+      "https://docs.immich.app/guides/template-backup-script/",
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Step 3: Verify the saved copy before relying on it",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Step 4: Choose the correct restore workflow",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Step 5: Verify the restored installation",
+    "sources": [
+      "https://docs.immich.app/administration/system-integrity/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "If this does not work",
+    "sources": [
+      "https://docs.immich.app/administration/maintenance-mode/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "Platform and version boundaries",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/",
+      "https://github.com/immich-app/immich/issues/26522"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-backup",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/install/upgrading/",
+      "https://www.reddit.com/r/immich/comments/1m6x9li/how_do_you_back_up_your_immich_photosvideos_what/",
+      "https://www.reddit.com/r/immich/comments/1pep6pu/backup_strategy_advice/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Step 1: Check the host and storage",
+    "sources": [
+      "https://docs.docker.com/engine/install/",
+      "https://docs.immich.app/install/requirements/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Step 2: Download the two release files",
+    "sources": [
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Step 3: Populate .env and understand the mounts",
+    "sources": [
+      "https://github.com/immich-app/immich/discussions/8843",
+      "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Step 4: Validate and start",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/config/",
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Step 5: Verify startup and create the admin",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/logs/",
+      "https://docs.docker.com/reference/cli/docker/compose/ps/",
+      "https://docs.immich.app/features/mobile-backup/",
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "If this does not work",
+    "sources": [
+      "https://docs.immich.app/administration/system-integrity/",
+      "https://docs.immich.app/errors/",
+      "https://www.reddit.com/r/immich/comments/1u5kf89/path_to_storage_not_working_not_done_properly/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "Platform differences and first maintenance",
+    "sources": [
+      "https://docs.immich.app/install/requirements/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-docker-compose",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/FAQ/",
+      "https://docs.immich.app/administration/backup-and-restore/",
+      "https://docs.immich.app/install/upgrading/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/install/upgrading/",
+      "https://github.com/immich-app/immich/releases"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Step 1: Identify the upgrade path",
+    "sources": [
+      "https://docs.immich.app/install/upgrading/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Step 2: Prepare a usable recovery set",
+    "sources": [
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Step 3: Apply a routine stable update",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/config/",
+      "https://docs.immich.app/install/upgrading/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Step 4: Wait for migrations and verify",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/logs/",
+      "https://docs.docker.com/reference/cli/docker/compose/ps/",
+      "https://docs.immich.app/administration/system-integrity/",
+      "https://docs.immich.app/install/upgrading/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Migrating pgvecto.rs to VectorChord",
+    "sources": [
+      "https://docs.immich.app/administration/postgres-standalone/",
+      "https://docs.immich.app/install/upgrading/#migrating-to-vectorchord"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "v1, v2 and v3 differences",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/",
+      "https://docs.immich.app/errors/",
+      "https://immich.app/blog/v3-migration"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "If this does not work",
+    "sources": [
+      "https://docs.immich.app/errors/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "Platform differences and real-world evidence",
+    "sources": [
+      "https://github.com/immich-app/immich/discussions/25771",
+      "https://github.com/immich-app/immich/discussions/30621"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-update-immich",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/install/upgrading/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/install/requirements/",
+      "https://pve.proxmox.com/pve-docs/chapter-pct.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Choose VM, Docker-in-LXC or native LXC",
+    "sources": [
+      "https://github.com/immich-app/immich/discussions/29317"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Step 1: Create the Linux VM",
+    "sources": [
+      "https://docs.immich.app/install/requirements/",
+      "https://pve.proxmox.com/pve-docs/chapter-qm.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Step 2: Plan the storage layers",
+    "sources": [
+      "https://docs.immich.app/features/libraries/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Step 3: Install Docker and Immich inside the guest",
+    "sources": [
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Step 4: Verify the complete path",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/logs/",
+      "https://docs.docker.com/reference/cli/docker/compose/ps/",
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Advanced branch: LXC storage and permissions",
+    "sources": [
+      "https://forum.proxmox.com/threads/access-via-nfs-bindmount-in-an-unprivileged-lxc.165001/",
+      "https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/",
+      "https://pve.proxmox.com/wiki/Unprivileged_LXC_containers"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Advanced branch: GPU and hardware acceleration",
+    "sources": [
+      "https://docs.immich.app/features/hardware-transcoding/",
+      "https://docs.immich.app/features/ml-hardware-acceleration/",
+      "https://pve.proxmox.com/pve-docs/chapter-qm.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "Backup and upgrade",
+    "sources": [
+      "https://pve.proxmox.com/pve-docs/chapter-pct.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "If this does not work",
+    "sources": [
+      "https://github.com/immich-app/immich/discussions/29626"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-proxmox",
+    "section": "FAQ",
+    "sources": [
+      "https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/",
+      "https://github.com/immich-app/immich/discussions/29317",
+      "https://pve.proxmox.com/pve-docs/chapter-pct.html"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/install/requirements/",
+      "https://docs.immich.app/install/synology/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 1: Prepare Container Manager and shared storage",
+    "sources": [
+      "https://docs.immich.app/install/requirements/",
+      "https://docs.immich.app/install/synology/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 2: Place and edit the release files",
+    "sources": [
+      "https://docs.immich.app/install/docker-compose/",
+      "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 3: Create and build the project",
+    "sources": [
+      "https://docs.immich.app/install/synology/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 4: Establish LAN access and firewall rules",
+    "sources": [
+      "https://docs.immich.app/install/synology/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 5: Create the admin and test mobile upload",
+    "sources": [
+      "https://docs.immich.app/features/mobile-backup/",
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Step 6: Add an existing NAS photo folder",
+    "sources": [
+      "https://docs.immich.app/features/libraries/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "Backup and update the existing project",
+    "sources": [
+      "https://docs.immich.app/install/synology/",
+      "https://docs.immich.app/install/upgrading/",
+      "https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "If this does not work",
+    "sources": [
+      "https://github.com/immich-app/immich/discussions/28987",
+      "https://www.reddit.com/r/immich/comments/1jq4kuk/synology_firewall/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-for-synology",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/install/requirements/",
+      "https://github.com/immich-app/immich/discussions/25771",
+      "https://github.com/immich-app/immich/discussions/28987"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 1: Log in and establish the account",
+    "sources": [
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 2: Back up a small phone album",
+    "sources": [
+      "https://docs.immich.app/features/mobile-app/",
+      "https://docs.immich.app/features/mobile-backup/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 3: Verify the server has the files",
+    "sources": [
+      "https://docs.immich.app/administration/jobs-workers/",
+      "https://immich.app/blog/v3.0.0-release"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 4: Configure background backup for your platform",
+    "sources": [
+      "https://docs.immich.app/features/mobile-backup/",
+      "https://github.com/immich-app/immich/discussions/27250",
+      "https://github.com/immich-app/immich/issues/24110",
+      "https://immich.app/blog/v3.0.0-release"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 5: Upload from the web and choose a storage model",
+    "sources": [
+      "https://docs.immich.app/features/libraries/",
+      "https://docs.immich.app/install/post-install/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 6: Organize, search and identify people",
+    "sources": [
+      "https://docs.immich.app/features/facial-recognition/",
+      "https://docs.immich.app/features/mobile-app/",
+      "https://docs.immich.app/features/searching/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 7: Share deliberately and verify the recipient's view",
+    "sources": [
+      "https://docs.immich.app/features/sharing/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "Step 8: Perform the first server maintenance tasks",
+    "sources": [
+      "https://docs.immich.app/administration/backup-and-restore/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "If this does not work",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "how-to-use-immich",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/FAQ/#how-can-i-hide-a-photo-or-video-from-the-timeline",
+      "https://docs.immich.app/FAQ/#what-happens-if-an-asset-exists-in-more-than-one-account",
+      "https://docs.immich.app/FAQ/#why-do-files-from-whatsapp-not-appear-with-the-correct-date"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/administration/system-integrity/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Choose the matching symptom",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Step 1: Collect useful logs and integrity findings",
+    "sources": [
+      "https://docs.docker.com/reference/cli/docker/compose/logs/",
+      "https://docs.docker.com/reference/cli/docker/compose/ps/",
+      "https://docs.immich.app/administration/system-integrity/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Thumbnail-only branch",
+    "sources": [
+      "https://docs.immich.app/administration/jobs-workers/",
+      "https://docs.immich.app/administration/system-integrity/",
+      "https://github.com/immich-app/immich/discussions/10570",
+      "https://www.reddit.com/r/immich/comments/1pgql6k/error_loading_image/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Missing-original or permission branch",
+    "sources": [
+      "https://docs.immich.app/features/libraries/#troubleshooting",
+      "https://github.com/immich-app/immich/issues/26720"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "External-library branch",
+    "sources": [
+      "https://docs.immich.app/features/libraries/",
+      "https://github.com/immich-app/immich/discussions/30820"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Post-update or storage-move branch",
+    "sources": [
+      "https://docs.immich.app/administration/system-integrity/",
+      "https://docs.immich.app/errors/",
+      "https://www.reddit.com/r/immich/comments/1qs5jqm/issue_after_updating_to_25x/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Network and reverse-proxy branch",
+    "sources": [
+      "https://docs.immich.app/administration/reverse-proxy/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Format, checksum and multi-instance branches",
+    "sources": [
+      "https://docs.immich.app/features/supported-formats/",
+      "https://github.com/immich-app/immich/issues/23574",
+      "https://github.com/immich-app/immich/issues/23574#issuecomment-3486006690"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "Verification and escalation",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-error-loading-image",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/FAQ/",
+      "https://github.com/immich-app/immich/issues/26720"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Direct Answer",
+    "sources": [
+      "https://docs.immich.app/features/libraries/",
+      "https://docs.immich.app/features/xmp-sidecars/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Choose the right library and access mode",
+    "sources": [
+      "https://docs.immich.app/features/libraries/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Step 1: Prepare a small source folder and record both paths",
+    "sources": [
+      "https://docs.immich.app/features/libraries/#mount-docker-volumes"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Step 2: Apply and verify the mount",
+    "sources": [
+      "https://docs.immich.app/features/libraries/#troubleshooting",
+      "https://docs.immich.app/install/docker-compose/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Step 3: Create and scan the library",
+    "sources": [
+      "https://docs.immich.app/guides/external-library/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Step 4: Verify ownership, originals and indexing",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Step 5: Configure rescans for ongoing changes",
+    "sources": [
+      "https://docs.immich.app/features/libraries/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Metadata: database, XMP and read-only conflicts",
+    "sources": [
+      "https://docs.immich.app/features/xmp-sidecars/",
+      "https://github.com/immich-app/immich/issues/10538"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "When the original path disappears",
+    "sources": [
+      "https://docs.immich.app/features/libraries/",
+      "https://github.com/immich-app/immich/discussions/30820"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "Platform and version differences",
+    "sources": [
+      "https://docs.immich.app/features/libraries/",
+      "https://docs.immich.app/install/synology/",
+      "https://github.com/immich-app/immich/issues/29724",
+      "https://www.reddit.com/r/immich/comments/1unxce7/ext_library_unable_to_scan_files/"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "If this does not work",
+    "sources": [],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  },
+  {
+    "page": "immich-external-library",
+    "section": "FAQ",
+    "sources": [
+      "https://docs.immich.app/FAQ/",
+      "https://docs.immich.app/FAQ/#can-i-add-an-external-library-while-keeping-the-existing-album-structure",
+      "https://docs.immich.app/FAQ/#how-are-deletions-of-files-handled-in-external-libraries"
+    ],
+    "scope": "Documentary evidence plus explicitly framed reader acceptance checks; no hardware execution"
+  }
+]

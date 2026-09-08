@@ -1,0 +1,201 @@
+{
+  "wordCountMethod": "Visible article body including headings, tables, code tokens, FAQ and source labels; excludes frontmatter, URLs, link targets and Markdown punctuation. Both HEAD and current use the same Unicode regex, preserving internal hyphens/apostrophes.",
+  "sourceCountMethod": "Unique canonical URLs in each Sources section, stripping fragments/trailing slash. New means absent from the same old article, not necessarily new to the website. Totals deduplicate across pages.",
+  "pages": [
+    {
+      "slug": "immich-for-synology",
+      "file": "content/platforms/immich-for-synology.mdx",
+      "before": 215,
+      "after": 1950,
+      "sourcesBefore": 3,
+      "sourcesAfter": 12,
+      "sourcesAdded": 9,
+      "types": {
+        "official": 8,
+        "github-issue": 0,
+        "github-discussion": 2,
+        "forum-reddit": 1,
+        "community-contribution": 1
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "immich-proxmox",
+      "file": "content/platforms/immich-proxmox.mdx",
+      "before": 224,
+      "after": 1823,
+      "sourcesBefore": 4,
+      "sourcesAfter": 15,
+      "sourcesAdded": 11,
+      "types": {
+        "official": 11,
+        "github-issue": 0,
+        "github-discussion": 2,
+        "forum-reddit": 2,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "how-to-update-immich",
+      "file": "content/setup/how-to-update-immich.mdx",
+      "before": 219,
+      "after": 1795,
+      "sourcesBefore": 4,
+      "sourcesAfter": 13,
+      "sourcesAdded": 9,
+      "types": {
+        "official": 11,
+        "github-issue": 0,
+        "github-discussion": 2,
+        "forum-reddit": 0,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "immich-docker-compose",
+      "file": "content/setup/immich-docker-compose.mdx",
+      "before": 242,
+      "after": 1787,
+      "sourcesBefore": 4,
+      "sourcesAfter": 16,
+      "sourcesAdded": 12,
+      "types": {
+        "official": 14,
+        "github-issue": 0,
+        "github-discussion": 1,
+        "forum-reddit": 1,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 1,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "immich-error-loading-image",
+      "file": "content/troubleshooting/immich-error-loading-image.mdx",
+      "before": 287,
+      "after": 2042,
+      "sourcesBefore": 5,
+      "sourcesAfter": 15,
+      "sourcesAdded": 10,
+      "types": {
+        "official": 9,
+        "github-issue": 2,
+        "github-discussion": 2,
+        "forum-reddit": 2,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "immich-external-library",
+      "file": "content/storage/immich-external-library.mdx",
+      "before": 234,
+      "after": 2028,
+      "sourcesBefore": 4,
+      "sourcesAfter": 10,
+      "sourcesAdded": 6,
+      "types": {
+        "official": 5,
+        "github-issue": 2,
+        "github-discussion": 1,
+        "forum-reddit": 1,
+        "community-contribution": 1
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "how-to-use-immich",
+      "file": "content/getting-started/how-to-use-immich.mdx",
+      "before": 222,
+      "after": 1912,
+      "sourcesBefore": 4,
+      "sourcesAfter": 13,
+      "sourcesAdded": 9,
+      "types": {
+        "official": 11,
+        "github-issue": 1,
+        "github-discussion": 1,
+        "forum-reddit": 0,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 2,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    },
+    {
+      "slug": "immich-backup",
+      "file": "content/backup/immich-backup.mdx",
+      "before": 321,
+      "after": 2092,
+      "sourcesBefore": 3,
+      "sourcesAfter": 12,
+      "sourcesAdded": 9,
+      "types": {
+        "official": 9,
+        "github-issue": 1,
+        "github-discussion": 0,
+        "forum-reddit": 2,
+        "community-contribution": 0
+      },
+      "faqCount": 3,
+      "dangerCount": 4,
+      "stepByStep": true,
+      "verification": true,
+      "failureRecovery": true,
+      "platformDifferences": true,
+      "versionDifferences": true
+    }
+  ],
+  "uniqueSources": 63,
+  "uniqueTypes": {
+    "official": 38,
+    "github-issue": 6,
+    "github-discussion": 9,
+    "forum-reddit": 9,
+    "community-contribution": 1
+  },
+  "originalResearchUnchanged": true,
+  "publishedRoutesUnchanged": true,
+  "structuralIssues": []
+}

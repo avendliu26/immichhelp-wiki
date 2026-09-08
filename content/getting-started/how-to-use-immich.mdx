@@ -10,33 +10,133 @@ updated: 2026-09-08
 draft: false
 ---
 
-## Direct answer
+## Direct Answer
 
-Start with the first admin account, configure storage, enable only the mobile albums you intend to back up, and set up a separate server backup. Mobile backup and server backup protect different layers.
+Start by signing in to your server, backing up a small selected phone album, and confirming those files open from the web interface. Then organize and share the uploaded files, expand mobile backup, and arrange an independent backup of the server's database and originals. This sequence separates account access, upload, processing and disaster recovery so you can tell which layer is working.
 
-## First steps
+If someone already hosts Immich for you, ask them for the server URL and your account; you do not need to install your own stack. On a new server, the first registered user becomes administrator. The mobile app connects to that server; it does not provide storage independently. [Post-installation](https://docs.immich.app/install/post-install/)
 
-The first user registered becomes the administrator. From the post-install flow, set a storage template only if its path behavior is understood, install the mobile app, sign in to the server endpoint, and enable backup from the selected albums.
+Background upload timing depends on the phone's operating system. A photo visible on your phone is not proof that the server has its original. Do not free device space until you have verified server access and independent backups. This guide uses current documentation reviewed with stable v3.1.0 on September 8, 2026; old mobile screenshots and v1/v2 cases can differ.
 
-## Mobile backup behavior
+## Step 1: Log in and establish the account
 
-Immich calculates a content checksum and skips files already on the server. The default is Wi-Fi-only uploads. On iOS, Background App Refresh must be enabled, but iOS decides when background tasks run. Android battery optimization can stop background work on some models.
+For a new installation, open `http://SERVER-IP:2283` in a browser on the same network, replacing the placeholder with the server's address. Choose Getting Started and register the first administrator. In Administration → Users → Create user, create separate accounts for other people rather than distributing the admin login. On an existing server, use the account supplied by its administrator. [Official first-login steps](https://docs.immich.app/install/post-install/)
 
-## Server backup
+Install the official mobile app through the download links in that guide. Enter the same reachable URL, including `http://` or `https://` and any required port. Use your public HTTPS hostname only if the server owner has configured it. The phone must be able to reach the URL on its current Wi-Fi, VPN or other network; a LAN address alone does not become remotely reachable when you leave home.
 
-Follow the [backup guide](/backup/immich-backup) after importing media. Save the database and original files together. A database dump alone does not contain photos or videos.
+Verify browser login first, then phone login. If neither works, resolve the server/service issue. If the browser works but the phone cannot connect, compare the actual URL, network and client version before changing any photo settings. Follow the [update guide](/setup/how-to-update-immich) for server/mobile compatibility.
 
-## Real user case
+## Step 2: Back up a small phone album
 
-Discussion #27250 reports iOS uploads stopping when the app is closed. The report is a feature request and includes no universal fix. Treat reopening the app as a practical observation, not a guaranteed repair.
+Open the cloud/backup screen, select one album with a few photos and a short video, and choose Enable Backup. The documented album selector also allows exclusions by double-tapping an album. Check the selected and excluded sets before enabling your entire camera roll. [Mobile Backup](https://docs.immich.app/features/mobile-backup/)
 
-:::warning Keep two backup concepts separate
-“Backed up on the phone” and “server database backed up” are different states. Verify both before using any free-space or deletion workflow.
+Keep the app in the foreground for this first test so you are testing connectivity and upload separately from background scheduling. Immich uses file-content checksums to skip already uploaded content. The default upload preference is Wi-Fi; review the backup settings if you intend to permit cellular transfers. Selecting an album for backup is not the same as publishing it to other people.
+
+In the current app, `Library → On this device` also lets you select local items and use Upload for a deliberate manual transfer. The storage-indicator setting under Settings → Photo Grid helps distinguish local and backed-up tiles. [Mobile App](https://docs.immich.app/features/mobile-app/)
+
+## Step 3: Verify the server has the files
+
+Open the web interface on another device. For a v3 installation, Recently Added is available from web Explore and mobile Search, which is useful when an old photo appears far back in the capture-date timeline. Find the test files, open an original, download one and play the video. Check its date and orientation before trusting a large import. [v3 release notes](https://immich.app/blog/v3.0.0-release)
+
+These are practical checks derived from the documented upload and library behavior. They distinguish “the phone still has a local copy” from “the server can deliver this original.” A processing queue that is still generating thumbnails can make the library look incomplete even when upload succeeded. Inspect Administration → Job Queues if you are the administrator. [Jobs and Workers](https://docs.immich.app/administration/jobs-workers/)
+
+## Step 4: Configure background backup for your platform
+
+| Platform or symptom | What to check | What success means |
+|---|---|---|
+| Android stops when backgrounded | Battery optimization, app background permissions, backup settings such as charging-only and minimum delay | A new eligible photo reaches the server during a later background opportunity |
+| iOS uploads only when opened | Settings → General → Background App Refresh; the app's backup permissions and reachable server | Foreground upload works; later background uploads are possible, not guaranteed immediately |
+| Wi-Fi works but cellular does not | Wi-Fi-only preference and whether the server URL is reachable off the LAN | Transfer works on the allowed network |
+| iCloud-only items stall | Immich must download originals to temporary device storage before uploading | Enough temporary space exists and a test iCloud original uploads |
+| A selected album uploads nothing | Album exclusions, photo permissions and whether content already exists on the server | A genuinely new test item uploads or an existing original is verified in the web app |
+
+The [mobile backup documentation](https://docs.immich.app/features/mobile-backup/) describes these platform limits. v3 introduced an Android periodic scheduler and improved concurrent iOS synchronization/upload work, but these improvements do not override operating-system scheduling. [v3 mobile changes](https://immich.app/blog/v3.0.0-release)
+
+Historical Android example: [Issue #24110](https://github.com/immich-app/immich/issues/24110) reported Android 14/Zenfone 9 with server and mobile v2.3.1, a Debian VM on Proxmox and VPN connectivity. Foreground use resumed uploads despite attempted battery-setting changes. The issue was closed as a duplicate, not documented as fixed. It is not proof that v3 has the same cause.
+
+The iOS feature request [#27250](https://github.com/immich-app/immich/discussions/27250) likewise reports unreliable background behavior without a universal confirmed fix. Its main version fields contain examples rather than exact tested versions. Use it to understand the limitation, not to promise that toggling one setting always repairs backup.
+
+## Step 5: Upload from the web and choose a storage model
+
+Use the web Upload control to choose a small set of files from your computer. Confirm them through the same original/download check. For an existing disk collection, decide whether you want Immich to manage a copied upload or index files in their existing location.
+
+| Choice | What happens | Your responsibility |
+|---|---|---|
+| Web/mobile upload | Immich stores and tracks managed originals | Do not manually edit or rename files in internal upload folders |
+| External library | Immich scans an existing collection mounted into the server | Keep source paths available and back up that collection separately |
+| Storage template | Optional organization of managed upload paths | Understand migration and take a backup before changing existing storage |
+
+You do not need to enable a storage template to finish a first backup. If you later change it for existing files, use the documented migration job rather than moving directories by hand. [Post-installation](https://docs.immich.app/install/post-install/), [external libraries](https://docs.immich.app/features/libraries/)
+
+:::danger Storage migration and permissions
+Moving internal originals, deleting volumes or changing permissions recursively can damage an otherwise working library. Preserve database and media first, then follow the documented workflow for the actual operation. For an existing NAS folder, start with the read-only external-library guide instead of replacing the upload mount.
 :::
+
+## Step 6: Organize, search and identify people
+
+Create an album in the app, add a few uploaded files and reopen it to verify membership. Current mobile Album Sync is a one-way feature: same-name server albums can merge with the selected local album, and later device deletions or ordering changes do not mirror every change to the server. If that server album is shared, newly synchronized items are shared too. [Mobile album behavior](https://docs.immich.app/features/mobile-app/)
+
+For search, first look for a known filename or use a date/location filter. Then try a description of a scene. A missing semantic result can be an indexing/model issue rather than a missing upload. Smart Search settings live under Administration → Settings → Machine Learning Settings; changing a model requires processing assets again, so it is not the first fix for a new upload still in the queue. [Searching](https://docs.immich.app/features/searching/)
+
+After face jobs finish, open Explore, select a person and add a name. The person menu supports merging duplicates, hiding a person and changing their featured image. Very few sample faces may not meet clustering requirements; absence of a person after a tiny test import is not proof of failed storage. [Facial Recognition](https://docs.immich.app/features/facial-recognition/)
+
+## Step 7: Share deliberately and verify the recipient's view
+
+Open an album's Share control to invite another user of the same server and select the intended viewer/editor role. For someone without an account, create a public link and review password, expiry and permitted actions. Partner Sharing exposes a much broader library relationship than sharing one album. [Sharing](https://docs.immich.app/features/sharing/)
+
+Test a public link in a signed-out browser, or ask the intended account to verify the shared album. Check both access and scope: the right person seeing only the intended items is the useful result. Avoid testing only while logged in as the owner, whose permissions differ.
+
+:::warning Album Sync can expand an existing share
+Review same-name server albums before enabling synchronization from your phone. New photos merged into an already shared album become visible to its recipients.
+:::
+
+## Step 8: Perform the first server maintenance tasks
+
+Configure Administration → Settings → Backup and check that database dumps actually appear. Arrange filesystem backups of managed originals, external originals and configuration to independent storage, then rehearse recovery. The server's dump contains metadata and paths, not the photo/video bytes. [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
+
+After an initial import, review failed processing jobs, free storage and a sample of originals. Read release notes before updates and retain a recovery point. Use the complete [backup tutorial](/backup/immich-backup), [update tutorial](/setup/how-to-update-immich) and [external-library tutorial](/storage/immich-external-library) for those operations.
+
+:::danger Freeing phone space can affect iCloud
+Do not approve bulk deletion solely because thumbnails look correct. Verify originals on the server and an independent recovery copy. With iCloud Photos enabled, device deletion propagates through iCloud to connected devices; it does not necessarily leave a second cloud copy.
+:::
+
+## If this does not work
+
+| Failure | Next action |
+|---|---|
+| Cannot log in anywhere | Ask the server administrator to check service health and URL; for your own server use [Compose diagnosis](/setup/immich-docker-compose) |
+| Foreground upload works, background does not | Follow the Android/iOS branch above and record exact OS/app/server versions before reporting |
+| Phone shows photos, web does not | Check whether tiles are local, selected albums and the web account; download from the server to verify |
+| Uploaded image has no preview | Inspect jobs and follow [Error Loading Image](/troubleshooting/immich-error-loading-image) |
+| Search or faces lag behind uploads | Check indexing/face job progress before replacing files or changing models |
+| Public link fails only outside home | Verify the configured external URL/network path with the server administrator |
+
+## FAQ
+
+### Why do WhatsApp photos have the wrong date?
+
+Some files lack their original capture-date metadata. Immich cannot infer a missing original timestamp reliably. Inspect the file's actual metadata before treating timeline placement as upload failure. [Official FAQ](https://docs.immich.app/FAQ/#why-do-files-from-whatsapp-not-appear-with-the-correct-date)
+
+### Are identical uploads deduplicated across family accounts?
+
+An asset in another account is handled as that user's independent resource, including generated files. Do not size family storage assuming cross-account deduplication. [Official FAQ](https://docs.immich.app/FAQ/#what-happens-if-an-asset-exists-in-more-than-one-account)
+
+### Does Archive make a photo secret?
+
+Archive hides it from the main timeline and folder view, but it remains available through Archive and search. It is an organization feature, not a substitute for reviewing sharing permissions. [Official FAQ](https://docs.immich.app/FAQ/#how-can-i-hide-a-photo-or-video-from-the-timeline)
 
 ## Sources
 
-- [Post-installation steps](https://docs.immich.app/install/post-install/)
-- [Mobile Backup](https://docs.immich.app/features/mobile-backup/)
-- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
-- [Discussion #27250](https://github.com/immich-app/immich/discussions/27250)
+- [Post-installation](https://docs.immich.app/install/post-install/) — Official Immich onboarding.
+- [Mobile Backup](https://docs.immich.app/features/mobile-backup/) — Official Immich upload/platform behavior.
+- [Mobile App](https://docs.immich.app/features/mobile-app/) — Official Immich album sync, local uploads and iCloud deletion behavior.
+- [v3.0.0 release](https://immich.app/blog/v3.0.0-release) — Official release notes; current mobile changes and Recently Added.
+- [Jobs and Workers](https://docs.immich.app/administration/jobs-workers/) — Official processing model.
+- [External Libraries](https://docs.immich.app/features/libraries/) — Official storage distinction.
+- [Searching](https://docs.immich.app/features/searching/) — Official search workflow.
+- [Facial Recognition](https://docs.immich.app/features/facial-recognition/) — Official people workflow.
+- [Sharing](https://docs.immich.app/features/sharing/) — Official sharing scope and roles.
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official server protection.
+- [FAQ](https://docs.immich.app/FAQ/) — Official date, account and archive questions.
+- [iOS background request, #27250](https://github.com/immich-app/immich/discussions/27250) — GitHub discussion; unresolved behavior report.
+- [Android background report, #24110](https://github.com/immich-app/immich/issues/24110) — GitHub issue; historical v2.3.1 case, closed as duplicate.

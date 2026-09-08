@@ -1,0 +1,85 @@
+{
+  "method": "HTTP-read each of eight production-build pages and inspect emitted HTML; desktop visual sample on Backup first screen/command section and Image Error decision table. No responsive/device hardware QA claimed.",
+  "pages": [
+    {
+      "route": "/platforms/immich-for-synology",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 2,
+      "codeBlocks": 0,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/platforms/immich-proxmox",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 2,
+      "codeBlocks": 2,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/setup/how-to-update-immich",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 2,
+      "codeBlocks": 3,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/setup/immich-docker-compose",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 1,
+      "codeBlocks": 6,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/troubleshooting/immich-error-loading-image",
+      "http": 200,
+      "h1": 1,
+      "tables": 1,
+      "dangerCallouts": 2,
+      "codeBlocks": 2,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/storage/immich-external-library",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 2,
+      "codeBlocks": 3,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/getting-started/how-to-use-immich",
+      "http": 200,
+      "h1": 1,
+      "tables": 3,
+      "dangerCallouts": 2,
+      "codeBlocks": 0,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    },
+    {
+      "route": "/backup/immich-backup",
+      "http": 200,
+      "h1": 1,
+      "tables": 2,
+      "dangerCallouts": 4,
+      "codeBlocks": 3,
+      "missingAnchorTargets": [],
+      "duplicateIds": 0
+    }
+  ]
+}

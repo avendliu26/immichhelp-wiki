@@ -1,0 +1,966 @@
+[
+  {
+    "url": "https://docs.immich.app/install/synology/",
+    "title": "Synology installation",
+    "description": "Community contribution hosted in Immich docs.",
+    "pages": [
+      "immich-for-synology",
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "community-contribution",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/install/synology/",
+    "bytes": 49674,
+    "titleInResponse": "Synology [Community] | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/install/requirements/",
+    "title": "Requirements",
+    "description": "Official Immich platform limits.",
+    "pages": [
+      "immich-for-synology",
+      "immich-proxmox",
+      "immich-docker-compose"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/install/requirements/",
+    "bytes": 34462,
+    "titleInResponse": "Requirements | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/install/docker-compose/",
+    "title": "Compose installation",
+    "description": "Official Immich release files/environment.",
+    "pages": [
+      "immich-for-synology",
+      "immich-proxmox",
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-external-library",
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/install/docker-compose/",
+    "bytes": 39234,
+    "titleInResponse": "Docker Compose [Recommended] | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml",
+    "title": "v3.1.0 Compose file",
+    "description": "Official release configuration.",
+    "pages": [
+      "immich-for-synology",
+      "immich-docker-compose",
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://release-assets.githubusercontent.com/github-production-release-asset/455229168/87128f9f-dbb3-4070-ae8e-9c78e99078ea?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-08T06%3A18%3A40Z&rscd=attachment%3B+filename%3Ddocker-compose.yml&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-08T05%3A18%3A11Z&ske=2026-09-08T06%3A18%3A40Z&sks=b&skv=2018-11-09&sig=8WvhooeTLX9SzmV0xbhULBS4p27x%2FXhGV8t%2FXzVhfSc%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4ODg0NTQyMCwibmJmIjoxNzg4ODQ1MTIwLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.gjp4kYn9R4GuxnvU7wSSB1_SQgu3AY9I3wKq_ejawVc&response-content-disposition=attachment%3B%20filename%3Ddocker-compose.yml&response-content-type=application%2Foctet-stream",
+    "bytes": 2829,
+    "titleInResponse": null,
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/install/post-install/",
+    "title": "Post-installation",
+    "description": "Official Immich account setup.",
+    "pages": [
+      "immich-for-synology",
+      "immich-proxmox",
+      "immich-docker-compose",
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/install/post-install/",
+    "bytes": 45722,
+    "titleInResponse": "Post installation steps | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/mobile-backup/",
+    "title": "Mobile Backup",
+    "description": "Official Immich phone behavior.",
+    "pages": [
+      "immich-for-synology",
+      "immich-docker-compose",
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/mobile-backup/",
+    "bytes": 33220,
+    "titleInResponse": "Mobile Backup | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/libraries/",
+    "title": "External Libraries",
+    "description": "Official Immich mounts/scans.",
+    "pages": [
+      "immich-for-synology",
+      "immich-proxmox",
+      "immich-error-loading-image",
+      "immich-external-library",
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/libraries/",
+    "bytes": 50285,
+    "titleInResponse": "External Libraries | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/install/upgrading/",
+    "title": "Upgrading",
+    "description": "Official Immich version/migration policy.",
+    "pages": [
+      "immich-for-synology",
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/install/upgrading/",
+    "bytes": 51820,
+    "titleInResponse": "Upgrading | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project",
+    "title": "Container Manager Project",
+    "description": "Official Synology help; indexed text only, full body inaccessible.",
+    "pages": [
+      "immich-for-synology"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project",
+    "bytes": 132102,
+    "titleInResponse": "Project | Container Manager - Synology Knowledge Center",
+    "access": "Official indexed text read via web search; direct body is JS shell, no version-specific UI verification"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/28987",
+    "title": "DSM ML failure, #28987",
+    "description": "GitHub discussion; unresolved v2 case.",
+    "pages": [
+      "immich-for-synology"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/28987",
+    "bytes": 442126,
+    "titleInResponse": "immich_server cannot connect with immich-machine-learning \u00b7 immich-app/immich \u00b7 Discussion #28987 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/25771",
+    "title": "Synology helper, #25771",
+    "description": "GitHub community script discussion.",
+    "pages": [
+      "immich-for-synology",
+      "how-to-update-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/25771",
+    "bytes": 284381,
+    "titleInResponse": "Synology-friendly Immich Docker Compose upgrade helper \u00b7 immich-app/immich \u00b7 Discussion #25771 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1jq4kuk/synology_firewall/",
+    "title": "Synology firewall after update",
+    "description": "Reddit; user-reported network-rule correction.",
+    "pages": [
+      "immich-for-synology"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://pve.proxmox.com/pve-docs/chapter-qm.html",
+    "title": "Virtual Machines",
+    "description": "Official Proxmox CPU, VM and passthrough documentation.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://pve.proxmox.com/pve-docs/chapter-qm.html",
+    "bytes": 563609,
+    "titleInResponse": "QEMU/KVM Virtual Machines",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://pve.proxmox.com/pve-docs/chapter-pct.html",
+    "title": "Containers",
+    "description": "Official Proxmox mount and backup scope.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://pve.proxmox.com/pve-docs/chapter-pct.html",
+    "bytes": 238966,
+    "titleInResponse": "Proxmox Container Toolkit",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://pve.proxmox.com/wiki/Unprivileged_LXC_containers",
+    "title": "Unprivileged LXC",
+    "description": "Official Proxmox UID mapping documentation.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://pve.proxmox.com/wiki/Unprivileged_LXC_containers",
+    "bytes": 23331,
+    "titleInResponse": "Unprivileged LXC containers - Proxmox VE",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/hardware-transcoding/",
+    "title": "Hardware Transcoding",
+    "description": "Official Immich video acceleration.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/hardware-transcoding/",
+    "bytes": 43459,
+    "titleInResponse": "Hardware Transcoding | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/ml-hardware-acceleration/",
+    "title": "ML Hardware Acceleration",
+    "description": "Official Immich ML backend guide.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/ml-hardware-acceleration/",
+    "bytes": 54707,
+    "titleInResponse": "Hardware-Accelerated Machine Learning | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.docker.com/reference/cli/docker/compose/ps/",
+    "title": "Docker ps",
+    "description": "Official Docker reference.",
+    "pages": [
+      "immich-proxmox",
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.docker.com/reference/cli/docker/compose/ps/",
+    "bytes": 439068,
+    "titleInResponse": "docker compose ps | Docker Docs",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.docker.com/reference/cli/docker/compose/logs/",
+    "title": "Docker logs",
+    "description": "Official Docker reference.",
+    "pages": [
+      "immich-proxmox",
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.docker.com/reference/cli/docker/compose/logs/",
+    "bytes": 415139,
+    "titleInResponse": "docker compose logs | Docker Docs",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/29317",
+    "title": "LXC migration question, #29317",
+    "description": "GitHub discussion with maintainer support clarification.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/29317",
+    "bytes": 323966,
+    "titleInResponse": "Looking for advice: Migrating an existing Immich install to the Proxmox Community Script LXC \u00b7 immich-app/immich \u00b7 Discussion #29317 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/29626",
+    "title": "Upgrade restart loop, #29626",
+    "description": "GitHub historical v3.0.1 community case.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/29626",
+    "bytes": 422064,
+    "titleInResponse": "[Docker] 2.7.5 -&gt; 3.0.1 restart loop \u00b7 immich-app/immich \u00b7 Discussion #29626 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/",
+    "title": "Unprivileged write-access case",
+    "description": "Proxmox forum; user-confirmed ACL case.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "httpStatus": 200,
+    "resolvedUrl": "https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/",
+    "bytes": 110207,
+    "titleInResponse": "[SOLVED] - Issues with giving an unprivileged LXC write access to storage on the host | Proxmox Support Forum",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://forum.proxmox.com/threads/access-via-nfs-bindmount-in-an-unprivileged-lxc.165001/",
+    "title": "NFS bind-mount access",
+    "description": "Proxmox forum; unresolved read-only scenario.",
+    "pages": [
+      "immich-proxmox"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "httpStatus": 200,
+    "resolvedUrl": "https://forum.proxmox.com/threads/access-via-nfs-bindmount-in-an-unprivileged-lxc.165001/",
+    "bytes": 85002,
+    "titleInResponse": "Access via nfs bindmount in an unprivileged LXC | Proxmox Support Forum",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/releases",
+    "title": "Releases",
+    "description": "Official GitHub releases; stable/prerelease metadata.",
+    "pages": [
+      "how-to-update-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/releases",
+    "bytes": 817303,
+    "titleInResponse": "Releases \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/administration/backup-and-restore/",
+    "title": "Backup and Restore",
+    "description": "Official Immich recovery prerequisites.",
+    "pages": [
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "how-to-use-immich",
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/backup-and-restore/",
+    "bytes": 75839,
+    "titleInResponse": "Backup and Restore | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/errors/",
+    "title": "Errors",
+    "description": "Official Immich historical upgrade/path errors.",
+    "pages": [
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/errors/",
+    "bytes": 20175,
+    "titleInResponse": "Errors | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://immich.app/blog/v3-migration",
+    "title": "Migrating to v3",
+    "description": "Official Immich breaking changes.",
+    "pages": [
+      "how-to-update-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://immich.app/blog/v3-migration",
+    "bytes": 75653,
+    "titleInResponse": "Migrating to v3 | Immich Blog",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/administration/postgres-standalone/",
+    "title": "Pre-existing Postgres",
+    "description": "Official Immich custom-database boundary.",
+    "pages": [
+      "how-to-update-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/postgres-standalone/",
+    "bytes": 54160,
+    "titleInResponse": "Pre-existing Postgres | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/administration/system-integrity/",
+    "title": "System Integrity",
+    "description": "Official Immich verification.",
+    "pages": [
+      "how-to-update-immich",
+      "immich-docker-compose",
+      "immich-error-loading-image",
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/system-integrity/",
+    "bytes": 35084,
+    "titleInResponse": "System Integrity | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.docker.com/reference/cli/docker/compose/config/",
+    "title": "Compose config",
+    "description": "Official Docker command reference.",
+    "pages": [
+      "how-to-update-immich",
+      "immich-docker-compose"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.docker.com/reference/cli/docker/compose/config/",
+    "bytes": 416215,
+    "titleInResponse": "docker compose config | Docker Docs",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/30621",
+    "title": "Old-version upgrade case, #30621",
+    "description": "GitHub community guide; one documented environment.",
+    "pages": [
+      "how-to-update-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/30621",
+    "bytes": 295756,
+    "titleInResponse": "Guide: Safe Upgrade Path from Immich v1.129.x to v3.x (Docker Compose &amp; VectorChord Migration) \u00b7 immich-app/immich \u00b7 Discussion #30621 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/FAQ/",
+    "title": "FAQ",
+    "description": "Official Immich filename questions.",
+    "pages": [
+      "immich-docker-compose",
+      "immich-error-loading-image",
+      "immich-external-library",
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/FAQ/",
+    "bytes": 117689,
+    "titleInResponse": "FAQ | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.docker.com/engine/install/",
+    "title": "Docker Engine installation",
+    "description": "Official Docker runtime instructions.",
+    "pages": [
+      "immich-docker-compose"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.docker.com/engine/install/",
+    "bytes": 515834,
+    "titleInResponse": "Install Docker Engine | Docker Docs",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/8843",
+    "title": "Compose prerequisites, #8843",
+    "description": "GitHub discussion; historical packaging distinction.",
+    "pages": [
+      "immich-docker-compose"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/8843",
+    "bytes": 295417,
+    "titleInResponse": "Setup Q: Do I need to install postgresql14 and redis docker apps if I use the compose (official) method? \u00b7 immich-app/immich \u00b7 Discussion #8843 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1u5kf89/path_to_storage_not_working_not_done_properly/",
+    "title": "NAS storage capacity mismatch",
+    "description": "Reddit; first-person storage symptom.",
+    "pages": [
+      "immich-docker-compose"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://docs.immich.app/administration/jobs-workers/",
+    "title": "Jobs and Workers",
+    "description": "Official Immich processing model.",
+    "pages": [
+      "immich-error-loading-image",
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/jobs-workers/",
+    "bytes": 33579,
+    "titleInResponse": "Jobs and Workers | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/administration/reverse-proxy/",
+    "title": "Reverse Proxy",
+    "description": "Official Immich proxy requirements.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/reverse-proxy/",
+    "bytes": 48635,
+    "titleInResponse": "Reverse Proxy | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/supported-formats/",
+    "title": "Supported Media Formats",
+    "description": "Official Immich image/video compatibility.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "access": "Web tool full official page read",
+    "httpStatus": 200
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/26720",
+    "title": "Missing uploaded originals, #26720",
+    "description": "GitHub issue; historical v2.5.6 record.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/26720",
+    "bytes": 302629,
+    "titleInResponse": "Missing asset file after upload from mobile \u00b7 Issue #26720 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/23574",
+    "title": "Multiple instances, #23574",
+    "description": "GitHub issue; v2.2.1 queue-isolation case.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/23574",
+    "bytes": 308450,
+    "titleInResponse": "Error loading image \u00b7 Issue #23574 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/10570",
+    "title": "Thumbnail refresh, #10570",
+    "description": "GitHub discussion; historical user observations.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/10570",
+    "bytes": 560172,
+    "titleInResponse": "&quot;Error loading image&quot; - loads okay when you click &#39;Refresh Thumbnails&#39; \u00b7 immich-app/immich \u00b7 Discussion #10570 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/30820",
+    "title": "External mount outage, #30820",
+    "description": "GitHub discussion; v3.1.0, unresolved recovery discrepancy.",
+    "pages": [
+      "immich-error-loading-image",
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/30820",
+    "bytes": 402382,
+    "titleInResponse": "External Library scan incorrectly marks thousands of existing assets as offline and deleted \u00b7 immich-app/immich \u00b7 Discussion #30820 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1pgql6k/error_loading_image/",
+    "title": "Initial TrueNAS processing",
+    "description": "Reddit; user-reported progress.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1qs5jqm/issue_after_updating_to_25x/",
+    "title": "Images after v2.5 update",
+    "description": "Reddit; user-reported NFS/configuration correction.",
+    "pages": [
+      "immich-error-loading-image"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://docs.immich.app/guides/external-library/",
+    "title": "External Library walkthrough",
+    "description": "Official Immich UI and verification steps.",
+    "pages": [
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/guides/external-library/",
+    "bytes": 33636,
+    "titleInResponse": "External Library | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/xmp-sidecars/",
+    "title": "XMP Sidecars",
+    "description": "Official Immich field/sidecar behavior.",
+    "pages": [
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/xmp-sidecars/",
+    "bytes": 35350,
+    "titleInResponse": "XMP Sidecars | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/10538",
+    "title": "Read-only metadata, #10538",
+    "description": "GitHub issue; open historical and later unversioned reports.",
+    "pages": [
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/10538",
+    "bytes": 319625,
+    "titleInResponse": "Read-only external library metadata edits silently fail \u00b7 Issue #10538 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/29724",
+    "title": "Folder rename, #29724",
+    "description": "GitHub issue; exact version unspecified, not a confirmed current fix.",
+    "pages": [
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/29724",
+    "bytes": 260674,
+    "titleInResponse": "Duplicate utility shows stale matches after external-library folder rename (PIter.2023 -&gt; Piter.2023) \u00b7 Issue #29724 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1unxce7/ext_library_unable_to_scan_files/",
+    "title": "External scan on Proxmox/SMB",
+    "description": "Reddit; v3.0.1 user case, final exact change unspecified.",
+    "pages": [
+      "immich-external-library"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://docs.immich.app/features/mobile-app/",
+    "title": "Mobile App",
+    "description": "Official Immich album sync, local uploads and iCloud deletion behavior.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/mobile-app/",
+    "bytes": 51746,
+    "titleInResponse": "Mobile App | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://immich.app/blog/v3.0.0-release",
+    "title": "v3.0.0 release",
+    "description": "Official release notes; current mobile changes and Recently Added.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://immich.app/blog/v3.0.0-release",
+    "bytes": 173066,
+    "titleInResponse": "Release v3.0.0 | Immich Blog",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/searching/",
+    "title": "Searching",
+    "description": "Official search workflow.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/searching/",
+    "bytes": 137631,
+    "titleInResponse": "Searching | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/facial-recognition/",
+    "title": "Facial Recognition",
+    "description": "Official people workflow.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/facial-recognition/",
+    "bytes": 40099,
+    "titleInResponse": "Facial Recognition | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/features/sharing/",
+    "title": "Sharing",
+    "description": "Official sharing scope and roles.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/features/sharing/",
+    "bytes": 31818,
+    "titleInResponse": "Sharing | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/discussions/27250",
+    "title": "iOS background request, #27250",
+    "description": "GitHub discussion; unresolved behavior report.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-discussion",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/discussions/27250",
+    "bytes": 280398,
+    "titleInResponse": "[Feature] iOS app stops uploading photos when app is closed (no reliable background sync) \u00b7 immich-app/immich \u00b7 Discussion #27250 \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/24110",
+    "title": "Android background report, #24110",
+    "description": "GitHub issue; historical v2.3.1 case, closed as duplicate.",
+    "pages": [
+      "how-to-use-immich"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/24110",
+    "bytes": 301831,
+    "titleInResponse": "Background backup on android still not working reliably for me \u00b7 Issue #24110 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/administration/maintenance-mode/",
+    "title": "Maintenance Mode",
+    "description": "Official Immich documentation; recovery login.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/administration/maintenance-mode/",
+    "bytes": 25653,
+    "titleInResponse": "Maintenance Mode | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.immich.app/guides/template-backup-script/",
+    "title": "Backup Script",
+    "description": "Official Immich example; optional Borg workflow.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.immich.app/guides/template-backup-script/",
+    "bytes": 47970,
+    "titleInResponse": "Backup Script | Immich",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.postgresql.org/docs/current/backup-dump.html",
+    "title": "SQL Dump",
+    "description": "Official PostgreSQL documentation; logical backups.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://www.postgresql.org/docs/current/backup-dump.html",
+    "bytes": 29885,
+    "titleInResponse": "PostgreSQL: Documentation: 18: 25.1.\u00a0SQL Dump",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://docs.docker.com/reference/cli/docker/compose/stop/",
+    "title": "docker compose stop",
+    "description": "Official Docker command reference.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "official",
+    "httpStatus": 200,
+    "resolvedUrl": "https://docs.docker.com/reference/cli/docker/compose/stop/",
+    "bytes": 414000,
+    "titleInResponse": "docker compose stop | Docker Docs",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://github.com/immich-app/immich/issues/26522",
+    "title": "No admin exists, #26522",
+    "description": "GitHub issue; historical Unraid v2.5.6 case.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "github-issue",
+    "httpStatus": 200,
+    "resolvedUrl": "https://github.com/immich-app/immich/issues/26522",
+    "bytes": 588759,
+    "titleInResponse": "Cannot restore from backup: &quot;no admin exists&quot; \u00b7 Issue #26522 \u00b7 immich-app/immich \u00b7 GitHub",
+    "access": "HTTP body fetched; evidence reviewed in research"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1pep6pu/backup_strategy_advice/",
+    "title": "Backup strategy advice",
+    "description": "Reddit; user question, not fix authority.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  },
+  {
+    "url": "https://www.reddit.com/r/immich/comments/1m6x9li/how_do_you_back_up_your_immich_photosvideos_what/",
+    "title": "Backup tool choices",
+    "description": "Reddit; workflow question.",
+    "pages": [
+      "immich-backup"
+    ],
+    "checked": "2026-09-08",
+    "type": "forum-reddit",
+    "access": "Direct fetch blocked; browser/agent read used where recorded",
+    "error": "HTTP Error 403: Blocked"
+  }
+]

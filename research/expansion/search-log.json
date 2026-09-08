@@ -1,0 +1,94 @@
+[
+  {
+    "page": "immich-backup",
+    "queries": [
+      "immich backup restore 26522 version admin",
+      "site:reddit.com/r/immich backup database media restore order",
+      "Immich backup tools database dump Borg consistency"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Official recovery components, order, UI and CLI paths covered; follow-up community searches repeated consistency/tool questions rather than a new supported recovery mechanism.",
+    "remainingUnknowns": "No live restore drill or backup-tool deployment performed. Exact arbitrary historical backup compatibility and every platform-specific volume layout require operator testing."
+  },
+  {
+    "page": "immich-docker-compose",
+    "queries": [
+      "immich docker compose storage path postgres permission",
+      "site:docs.docker.com docker compose ps logs config",
+      "immich docker compose database password authentication failed"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Runtime/storage/account/verification branches covered with primary docs and exact release assets; additional results repeated path and ownership mistakes.",
+    "remainingUnknowns": "No actual Docker deployment or host-specific database permissions tested. NAS capacity Reddit report is a symptom, no asserted root cause."
+  },
+  {
+    "page": "how-to-update-immich",
+    "queries": [
+      "immich v3 VectorChord migration upgrade",
+      "site:github.com/immich-app/immich old v1 upgrade 30621",
+      "immich upgrade Synology helper 25771"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Primary migration constraints resolved; targeted old-install guide adds checkpoints but no different official path; custom setups explicitly bounded.",
+    "remainingUnknowns": "No real v1/v2/v3 migration tested. Arbitrary custom PostgreSQL/extension paths require distribution-specific procedure and rehearsal."
+  },
+  {
+    "page": "immich-proxmox",
+    "queries": [
+      "Proxmox Immich VM LXC requirements GPU backup UID",
+      "site:forum.proxmox.com Immich unprivileged write access storage 184141",
+      "site:forum.proxmox.com NFS bindmount unprivileged 165001"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Three rounds resolved VM/CPU, backup exclusion and mapped permissions; remaining device-specific commands cannot responsibly generalize.",
+    "remainingUnknowns": "No hardware installation/GPU test; arbitrary UID map/ACL and passthrough groups require actual host checks. No verified helper-to-Compose migration recipe."
+  },
+  {
+    "page": "immich-for-synology",
+    "queries": [
+      "Immich Synology Container Manager shared folder firewall update",
+      "Synology Project Clean volumes images official",
+      "Immich 28987 machine learning Synology 25771 helper",
+      "site:reddit.com/r/immich Synology firewall"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Three rounds establish standard UI workflow; new reports repeat firewall/path/ML splits. Unresolved ML and cleanup version differences explicitly retained.",
+    "remainingUnknowns": "Model-by-model Container Manager/GPU support, current DSM cleanup dialog, live NAS install and unresolved ML root cause."
+  },
+  {
+    "page": "how-to-use-immich",
+    "queries": [
+      "Immich post install mobile backup search sharing people",
+      "Immich v3 Android scheduler iOS parallel backup release",
+      "Immich 24110 background Android 27250 iOS",
+      "Immich Album Sync iCloud Free Up Space FAQ"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Two rounds fill all onboarding feature and platform branches; remaining timing is OS/device-dependent, not supportable as guarantee.",
+    "remainingUnknowns": "No real Android/iOS background timing tests; vendor-specific behavior and #27250 unresolved. Exact long-term sync reliability not promised."
+  },
+  {
+    "page": "immich-error-loading-image",
+    "queries": [
+      "Immich error loading image thumbnail original ENOENT jobs",
+      "Immich 23574 comments Redis 26720 sync missing files",
+      "Immich reverse proxy supported formats update images",
+      "Immich external mount 30820 3.1.0"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "Two rounds and current case cover distinct symptom branches; repeated community refresh suggestions add no reliable universal repair.",
+    "remainingUnknowns": "No live broken-library reproduction; #26720 first fixed tag unverified, no universal decoder fix, #30820 unresolved."
+  },
+  {
+    "page": "immich-external-library",
+    "queries": [
+      "Immich external library read only XMP scans mount permissions",
+      "Immich 10538 latest comments 29724 folder rename",
+      "Immich 3.1.0 external offline 30820",
+      "site:reddit.com/r/immich external library Proxmox SMB 3.0.1"
+    ],
+    "rounds": "Primary review, targeted search, reconciliation",
+    "stopReason": "New v3.1.0 case closes prior current-evidence gap; remaining metadata/recovery disagreements cannot be resolved by repeating weaker blog advice.",
+    "remainingUnknowns": "No current read-only/writable metadata persistence test; #10538 current-version fix unconfirmed; #30820 normal recovery not universally confirmed."
+  }
+]

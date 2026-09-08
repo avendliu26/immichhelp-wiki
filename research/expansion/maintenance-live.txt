@@ -1,0 +1,88 @@
+https://docs.immich.app/administration/maintenance-mode/
+
+Maintenance Mode | Immich
+Skip to main content
+Home
+GitHub
+Buy Immich
+Overview
+Install
+Features
+Administration
+Backup and Restore
+Email Notifications
+Jobs and Workers
+Maintenance Mode
+OAuth Authentication
+Pre-existing Postgres
+Reverse Proxy
+Server Commands
+Server Stats
+Storage Template
+System Integrity
+System Settings
+User Management
+Developer
+Guides
+FAQ
+API
+Administration
+Maintenance Mode
+On this page
+Maintenance Mode
+Maintenance mode is used to perform administrative tasks such as restoring backups to Immich.
+You can enter maintenance mode by either:
+Selecting "Switch to maintenance mode" in 
+Maintenance
+ tab in administration.
+Running the enable maintenance mode 
+administration command
+.
+Logging in during maintenance
+​
+Maintenance mode uses a separate login system which is handled automatically behind the scenes in most cases. Enabling maintenance mode in settings will automatically log you into maintenance mode when the server comes back up.
+If you find that you've been logged out, you can:
+Open the logs for the Immich server and look for 
+"🚧 Immich is in maintenance mode, you can log in using the following URL:"
+Run the enable maintenance mode 
+administration command
+ again, this will give you a new URL to login with.
+Run the disable maintenance mode 
+administration command
+ then re-enter through system settings.
+Edit this page
+Last updated
+ on 
+Jul 27, 2026
+ by 
+github-actions
+Previous
+Jobs and Workers
+Next
+OAuth Authentication
+Logging in during maintenance
+Download
+Android
+iOS
+Server
+Company
+FUTO
+Purchase
+Merch
+Sites
+Home
+My Immich
+Awesome Immich
+Immich API
+Immich Data
+Immich Datasets
+Miscellaneous
+Roadmap
+Cursed Knowledge
+Privacy Policy
+Social
+GitHub
+YouTube
+Discord
+Reddit
+Immich is available as open source under the terms of the GNU AGPL v3 License.

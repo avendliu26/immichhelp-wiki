@@ -1,0 +1,112 @@
+https://docs.immich.app/features/sharing/
+
+Sharing | Immich
+Skip to main content
+Home
+GitHub
+Buy Immich
+Overview
+Install
+Features
+Mobile Backup
+Chromecast support
+The Immich CLI
+Duplicates Utility
+Editing
+Facial Recognition
+Folder View
+Hardware Transcoding
+External Libraries
+Hardware-Accelerated Machine Learning
+Mobile App
+Monitoring
+Partner Sharing
+Reverse Geocoding
+Searching
+Sharing
+Supported Media Formats
+Tags
+User Settings
+XMP Sidecars
+Administration
+Developer
+Guides
+FAQ
+API
+Features
+Sharing
+On this page
+Sharing
+Immich supports local sharing, with users on the same Immich instance, and public sharing via public links.
+Local sharing
+​
+Albums
+​
+Albums can be shared between users on the same Immich instance. The shared users can view and add their own photos and videos to the shared album.
+After creating an album, you can access the sharing options by clicking on the share icon. When sharing an album, you can select the users you want to share the album with and assign them permissions either as editors (read-write) or viewers (read-only).
+Web
+​
+Mobile App
+​
+Partners
+​
+Partner sharing allows you to share your 
+entire
+ library with other users of your choice. They can then view your library and download the assets.
+You can read this guide to learn more about 
+partner sharing
+.
+Public sharing
+​
+You can create a public link to share a group of photos or videos, or an album, with anyone. The public link can be shared via email, social media, or any other method. There are a variety of options to customize the public link, such as setting an expiration date, password protection, and more. Public shared link is handy when you want to share a group of photos or videos with someone who doesn't have an Immich account and allow the shared user to upload their photos or videos to your account.
+The public shared link is generated with a random URL, which acts as as a secret to avoid the link being guessed by unwanted parties, for instance.
+https://my.immich.app/share/JUckRMxlgpo7F9BpyqGk_cZEwDzaU_U5LU5_oNZp1ETIBa9dpQ0b5ghNm_22QVJfn3k
+Creating a public share link
+​
+You can create a public share link by selecting the photos or videos, or from the share icon on an album.
+Customizing the public share link
+​
+You can customize the public share link by setting an expiration date, password protection, allow what actions can be performed on the shared assets, and more.
+Edit this page
+Last updated
+ on 
+Jul 27, 2026
+ by 
+github-actions
+Previous
+Searching
+Next
+Supported Media Formats
+Local sharing
+Albums
+Web
+Mobile App
+Partners
+Public sharing
+Creating a public share link
+Customizing the public share link
+Download
+Android
+iOS
+Server
+Company
+FUTO
+Purchase
+Merch
+Sites
+Home
+My Immich
+Awesome Immich
+Immich API
+Immich Data
+Immich Datasets
+Miscellaneous
+Roadmap
+Cursed Knowledge
+Privacy Policy
+Social
+GitHub
+YouTube
+Discord
+Reddit
+Immich is available as open source under the terms of the GNU AGPL v3 License.

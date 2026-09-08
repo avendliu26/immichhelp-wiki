@@ -1,0 +1,109 @@
+https://pve.proxmox.com/wiki/Unprivileged_LXC_containers
+
+Unprivileged LXC containers - Proxmox VE
+Unprivileged LXC containers
+From Proxmox VE
+Jump to navigation
+Jump to search
+These kind of containers use a new kernel feature called user namespaces. All of the UIDs (user id) and GIDs (group id) are mapped to a different number range than on the host machine, usually root (uid 0) became uid 100000, 1 will be 100001 and so on. This means that most security issues (container escape, resource abuse, …) in those containers will affect a random unprivileged user, even if the container itself would do it as root user, and so would be a generic kernel security bug rather than an LXC issue.  The 
+LXC team
+ thinks unprivileged containers are safe by design.
+Theoretically the unprivileged containers should work out of the box, without any difference to privileged containers. Their high uid mapped ids will be shown for the tools of the host machine (ps, top, ...).
+Creation
+Creating unprivileged containers through the GUI is a feature that has been implemented, right now (as of 2016-12) in PVE v4.4 (including restore) but for earlier versions, it's only possible on console creation:
+pct create 1234 … -unprivileged 1
+It is possible to convert an existing CT into an unprivileged CT by doing a backup, then a restore on console:
+pct restore 1234 var/lib/vz/dump/vzdump-lxc-1234-2016_03_02-02_31_03.tar.gz -ignore-unpack-errors 1 -unprivileged
+Using local directory bind mount points
+Bind mount points are directories on the host machine mapped into a container using the Proxmox framework. It is not (yet) possible to create bind mounts through the web GUI, you can create them either by using 
+pct
+ as
+pct set 100 -mp0 /mnt/bindmounts/shared,mp=/shared
+or changing the relevant config file, say, 
+/etc/pve/lxc/1234.conf
+ as
+mp0: /mnt/bindmounts/shared,mp=/shared
+However you will soon realise that every file and directory will be mapped to "nobody" (uid 65534), which is fine as long as
+you do not have restricted permissions set (only group / user readable files, or accessed directories), and
+you do not want to write files using a specific uid/gid, since all files will be created using the high-mapped (100000+) uids.
+Sometimes this isn't acceptable, like using a shared, host mapped NFS directory using specific UIDs. In this case you want to access the directory with the same - unprivileged - uid as it's using on other machines. You need to change the mapping.
+Let's see an example, we want to make 
+uid 1005
+ accessible in an unprivileged container.
+First, we have to change the container UID mapping in the file 
+/etc/pve/lxc/1234.conf
+:
+# uid map: from uid 0 map 1005 uids (in the ct) to the range starting 100000 (on the host), so 0..1004 (ct) → 100000..101004 (host)
+lxc.idmap = u 0 100000 1005
+lxc.idmap = g 0 100000 1005
+# we map 1 uid starting from uid 1005 onto 1005, so 1005 → 1005
+lxc.idmap = u 1005 1005 1
+lxc.idmap = g 1005 1005 1
+# we map the rest of 65535 from 1006 upto 101006, so 1006..65535 → 101006..165535
+lxc.idmap = u 1006 101006 64530
+lxc.idmap = g 1006 101006 64530
+Then we have to allow lxc to actually do the mapping on the host. Since lxc creates the CT using root, we have to allow root to use these uids in the container.
+First the file 
+/etc/subuid
+ (we allow 1 piece of uid starting from 1005):
+root:1005:1
+then 
+/etc/subgid
+:
+root:1005:1
+As a final step, remember to change to owner of the bind mount point directory on the host, to match the uid and gid that were made accessible to the container:
+chown -R 1005:1005 /mnt/bindmounts/shared
+You can start or restart the container here, it should start and see 
+/shared
+ mapped from the host directory 
+/mnt/bindmounts/shared
+, all uids will be mapped to 65534:65534 except 1005, which would be seen (and written) as 1005:1005.
+In case of problems debugging could be done by 
+lxc-start 
+-F
+ -n 1234
+.
+Retrieved from "
+https://pve.proxmox.com/mediawiki/index.php?title=Unprivileged_LXC_containers&oldid=10988
+"
+Cookies help us deliver our services. By using our services, you agree to our use of cookies.
+More information
+OK
+Navigation menu
+Personal tools
+Log in
+Namespaces
+Page
+Discussion
+English
+Views
+Read
+View source
+View history
+More
+Search
+Navigation
+Proxmox VE
+Documentation (current)
+Documentation (8.x)
+Downloads
+Installation
+Get support
+Sites
+proxmox.com
+Support forum
+Bugtracker
+Source code
+FAQ
+Tools
+What links here
+Related changes
+Special pages
+Printable version
+Permanent link
+Page information
+Cite this page
+ This page was last edited on 16 March 2021, at 12:18.
+Privacy policy
+About Proxmox VE
+Disclaimers

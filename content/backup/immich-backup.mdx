@@ -10,43 +10,161 @@ updated: 2026-09-08
 draft: false
 ---
 
-## Direct answer
+## Direct Answer
 
-An Immich database backup is not a photo backup. The database stores file paths and metadata, while photos and videos remain in the upload location. A dependable plan saves both and keeps an off-site copy.
+Protect three things together: the Immich database, the original photos and videos, and the configuration needed to reconnect them. Automatic database dumps contain records and file paths, not the image or video bytes. A dump on the same disk as the originals does not protect against that disk failing.
 
-## What to back up
+For an ordinary installation, copy the entire `UPLOAD_LOCATION`, retain a usable database dump, and include any external-library folders and custom mounts. Keep another copy away from the server. Immich recommends a 3-2-1 strategy; arranging and checking the actual filesystem backup remains your responsibility. [Official backup guidance](https://docs.immich.app/administration/backup-and-restore/)
 
-- Database dumps in UPLOAD_LOCATION/backups or a manually created dump.
-- Original photos and videos in UPLOAD_LOCATION/library, upload, and profile as applicable.
-- Generated folders such as thumbs and encoded-video if you want to avoid regenerating them.
-- External-library mount contents and matching mount configuration when used.
+Use the web restore workflow for current installations. A successful database import alone is insufficient: the restored records must still point to readable originals. This guide was reviewed with stable v3.1.0 on September 8, 2026; backups from before v2.5.0 need the older, version-selected recovery instructions.
 
-Immich recommends a 3-2-1 strategy. The official guide says the backup tool itself is your responsibility.
-
-## Restore from the web interface
-
-For an existing installation, use Administration → Maintenance → Restore database backup. Immich creates a restore point before replacing the current database. On a fresh installation, restore the prior storage folders first, start the services, and use Restore from backup.
-
-The v2.5.0 restore process changed. Older backups may require the version selector and older instructions.
-
-## High-risk commands
-
-:::danger docker compose down -v and database deletion
-The command removes volumes. Deleting DB_DATA_LOCATION permanently resets the database directory. Use these only with a verified database and media backup, a tested recovery plan, and a fresh target you intend to rebuild.
+:::danger Restore replaces data
+A restore replaces the current database. Keep the current database and media, verify your backup set, and rehearse on an isolated recovery target before replacing a working instance. A database restore point is not an independent copy of your photos.
 :::
 
-The command-line restore also expects a completely fresh install. If the server has already run, the official guide warns that existing relations or migrations can conflict. Some deployments may need DB_SKIP_MIGRATIONS=true during database-only recovery.
+## What belongs in the backup set
 
-## Verification checklist
+| Component | What it protects | What to include |
+|---|---|---|
+| Database dump | Users, asset records, paths and application metadata | A completed dump from `UPLOAD_LOCATION/backups`, with its date and Immich version |
+| Uploaded originals | Actual image/video content | `upload`, `library` where used, and `profile` under `UPLOAD_LOCATION` |
+| Generated media | Previews and transcoded playback files | `thumbs` and `encoded-video`; saving them avoids regeneration |
+| External libraries | Files Immich reads outside its upload storage | Every external root on the host or NAS, plus sidecars |
+| Deployment configuration | The map from old data to the restored services | `.env`, `docker-compose.yml`, overrides, custom config and mount definitions |
 
-After restore, verify the admin account, albums, originals, and a sample of thumbnails. Check the integrity report and run the relevant thumbnail/transcoding jobs if generated content was not backed up.
+The official guide recommends copying the entire upload location. With the storage template disabled, originals normally live under `upload`; a previously enabled template can leave older originals under `library` even after it is disabled. Backing up only the folder named `library` can miss most of a new installation. Custom mounts can place individual subfolders on other devices: inventory their actual sources. [Filesystem layout](https://docs.immich.app/administration/backup-and-restore/)
 
-## Real case
+Treat the configuration list as a recovery checklist derived from the documented onboarding restore requirements. Keep secrets private. Record both host paths and container destinations; the current release mounts uploaded storage at `/data`. External-library destinations must reproduce the previous structure. [Release Compose file](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml)
 
-Issue #26522 reports “no admin exists” during an Unraid restore on v2.5.6. A user comment says initializing an admin first and restoring from Settings worked for them; this is a user-reported workaround, not an official guarantee.
+A SQL dump and the live `DB_DATA_LOCATION` are different backup formats. Do not treat copying an active PostgreSQL data directory as a SQL backup. PostgreSQL documents SQL dumps separately from filesystem and continuous-archive backups. [PostgreSQL SQL-dump guidance](https://www.postgresql.org/docs/current/backup-dump.html)
+
+## Step 1: Establish the recovery point
+
+In Administration → Settings → Backup, review schedule and retention. The documented defaults are a daily dump at 02:00 and retention of 14 backups. Confirm the latest date rather than assuming the schedule ran. For an immediate dump, open Administration → Job Queues → Create job → Create Database Dump → Confirm. Wait for the resulting backup in `UPLOAD_LOCATION/backups`; it counts toward retention.
+
+Record the selected dump date, server version, media backup date, external roots and configuration location together. This makes a restore point identifiable even if the original server is gone. An empty file or a filename ending in `.sql.gz` is not proof that the database can be restored. [Database backup controls](https://docs.immich.app/administration/backup-and-restore/)
+
+## Step 2: Keep the database and media consistent
+
+The strongest documented approach stops the Immich server while a coordinated backup is made. Leave PostgreSQL running if you are taking a database dump. Pause other writers to an external collection separately. If downtime is impossible, take the database backup first and the filesystem backup second; the reverse order can leave database records referring to originals absent from the backup.
+
+For a Linux Compose operator choosing the stopped-server route, run this in the directory containing the active Compose file:
+
+```bash
+docker compose stop immich-server
+```
+
+This stops application writes without removing containers or volumes. Confirm the server is stopped in your container manager before taking the fresh dump and filesystem backup with your backup tool. A failed stop means you have not established a quiet recovery point. Use the official command-line dump instructions linked below when the web UI is stopped; the UI job in Step 1 cannot run then. [Docker stop reference](https://docs.docker.com/reference/cli/docker/compose/stop/)
+
+With the server stopped and PostgreSQL still running, the official Linux dump command is:
+
+```bash
+docker exec -t immich_postgres pg_dump --clean --if-exists --dbname=<DB_DATABASE_NAME> --username=<DB_USERNAME> | gzip > "/path/to/backup/dump.sql.gz"
+```
+
+Run this on the Docker host. Replace both angle-bracket placeholders with the configured database name/user before execution, and replace the destination with a writable backup path; the defaults are usually `immich` and `postgres`. The destination is on the host, not inside PostgreSQL. This writes a compressed SQL dump; it does not delete the live database. Its cleanup flags place restoration instructions in the dump. A database, authentication, write or compression error means the result is not accepted. A file appearing after a pipeline is not enough: inspect errors and test its restoration. [Official Linux dump example](https://docs.immich.app/administration/backup-and-restore/)
+
+Now back up that dump and the complete media/configuration set with the chosen filesystem backup tool while application writes remain stopped. The simpler live-backup alternative is to use Step 1's UI dump, then immediately back up the filesystem in the documented order; do not claim that alternative freezes all activity.
+
+After the backup tool reports success, restart the stack from the same directory:
+
+```bash
+docker compose up -d
+```
+
+The expected result is normal service startup and a reachable web UI. A startup error belongs to the storage or service checks below, not a reason to delete data. These are the documented Compose lifecycle commands, not a complete backup script. [Compose startup](https://docs.immich.app/install/docker-compose/)
+
+For automation, the official Borg template provides an example that combines a database dump with versioned asset backups. It requires its own repository, destination and SSH setup. Its `database-backup` directory differs from the built-in `backups` folder. Review and adapt the template to your mounts; do not assume copying its default paths covers an external NAS. [Official backup script](https://docs.immich.app/guides/template-backup-script/)
+
+## Step 3: Verify the saved copy before relying on it
+
+Check the backup tool's completion record, then browse the saved copy independently of the running server. Confirm that it contains the chosen dump, original files from both recent and older uploads, and each external-library root. Open a copied photo and video. Confirm configuration files and the version record are recoverable.
+
+These are practical acceptance checks derived from the documented backup components; they are not an Immich guarantee or a substitute for a restore drill. A database dump's strongest practical test is successful restoration on a disposable, isolated instance followed by checking its data. Never run the drill against the only production copy.
+
+## Step 4: Choose the correct restore workflow
+
+:::danger Existing-instance restore
+The Maintenance workflow overwrites current database state. Changes since the chosen backup can disappear from the application. Preserve an independent current backup first and check that the saved originals match the chosen point in time.
+:::
+
+For a functioning existing instance:
+
+1. Open Administration → Maintenance → Restore database backup.
+2. Review backup date and version, or use Select from computer to upload a `.sql.gz` dump.
+3. Select the intended backup and confirm Restore.
+4. Let restoration, any required migrations and the health check finish. The documented workflow creates a restore point first and attempts to roll back to it if restoration fails.
+
+:::danger Fresh-target restore
+Build an isolated target with copied backup data. Do not point a rehearsal at production database storage or writable production media. Verify the destination before copying files or confirming Restore.
+:::
+
+For a replacement server or rehearsal:
+
+1. Download the release configuration and populate `.env` for the recovery target.
+2. Put the saved `backups`, `encoded-video`, `library`, `profile`, `thumbs` and `upload` directories in the new `UPLOAD_LOCATION`, preserving their layout.
+3. Recreate external-library mounts with the same container-visible structure as before.
+4. Start services with `docker compose up -d` in that target's Compose directory. Expect the welcome screen, not your production instance.
+5. Choose Restore from backup. Review the storage-folder checks before proceeding.
+6. Select the backup, inspect compatibility information and restore. Wait for migration and health checks before testing access.
+
+Both sequences are condensed from the [official restore workflows](https://docs.immich.app/administration/backup-and-restore/). For pre-v2.5.0 dumps, use its documentation version selector rather than assuming the current onboarding flow is compatible.
+
+## Step 5: Verify the restored installation
+
+Use the restored account to check expected users and albums, open several originals, download one image and play a video. Include older files, recent files, another user's assets where authorized, and external assets. These samples test the documented relationship between restored database paths and media; a working login does not test that relationship.
+
+Review Administration → Maintenance for integrity findings. Run a full check when validating the library; Refresh only rechecks previously reported items. If generated content was omitted, run the missing thumbnail and video jobs and monitor server logs. Missing originals require investigation or recovery from another copy; regenerating previews cannot recreate them. [System Integrity](https://docs.immich.app/administration/system-integrity/)
+
+## If this does not work
+
+| Failure | Next check | Recovery boundary |
+|---|---|---|
+| Backup absent from the list | Actual target `backups` directory, selected upload location, or upload the saved `.sql.gz` | Do not assume the production path exists on a new host |
+| Folder checks fail | Mounts, restored folders, read/write access and `.immich` markers | Fix missing storage first; do not bypass checks to hide it |
+| No admin / corrupt backup | Correct dump and version; server restore logs | Preserve the restore point and use compatible version instructions |
+| Login works but images fail | Originals at database paths, external mounts, integrity findings | Follow the [image diagnosis](/troubleshooting/immich-error-loading-image) |
+| Relations already exist in manual SQL restore | Whether the server initialized a fresh schema before import | Current manual instructions require a genuinely fresh database target |
+
+For maintenance-login problems, the official guide says the server logs contain a maintenance login URL. Treat that URL as private. [Maintenance Mode](https://docs.immich.app/administration/maintenance-mode/)
+
+:::danger Manual resets and permission changes
+`docker compose down -v` removes named volumes; deleting DB_DATA_LOCATION destroys that database directory. Their exact impact depends on your mounts. They are not routine backup or image-error fixes. Manual SQL restore, database deletion, volume deletion and recursive permission changes require verified copies and a deliberately selected recovery target. Use the version-specific official restore instructions instead of copying old reset commands.
+:::
+
+The manual guide mentions `DB_SKIP_MIGRATIONS=true` for deployments that cannot start only PostgreSQL. This is a recovery-only condition: its documented procedure removes the variable and restarts after import. It is not an update workaround.
+
+## Platform and version boundaries
+
+Linux shell and Windows PowerShell dump/restore examples differ; do not paste a gzip pipeline into PowerShell as though it were the documented Windows flow. Synology, Unraid and TrueNAS deployments must preserve their actual storage mappings and use their distribution's controls. A Proxmox guest backup also needs a separate inventory of external storage. [Backup platform tabs](https://docs.immich.app/administration/backup-and-restore/)
+
+Historical example: Issue #26522 reports v2.5.6 on Unraid failing restoration with “no admin exists.” A commenter restored through settings after creating an admin. This is one reported workaround, not a universal prerequisite for the current welcome-screen restore. [Issue #26522](https://github.com/immich-app/immich/issues/26522)
+
+## FAQ
+
+### Can I keep uploading while the backup runs?
+
+This is a real question raised in the [backup-order discussion](https://www.reddit.com/r/immich/comments/1pep6pu/backup_strategy_advice/). A live backup cannot promise one frozen application state. Decide whether that tradeoff is acceptable; keep the documented database-first order, and record the recovery point so you can identify later uploads after recovery.
+
+### Will changing to VectorChord invalidate all older dumps?
+
+The bundled transition image includes the older extensions for recovery, while a dump made after the transition requires a VectorChord-capable image. This is an extension-compatibility requirement in addition to Immich version compatibility. [Official VectorChord FAQ](https://docs.immich.app/install/upgrading/)
+
+### Does the database backup replace a filesystem backup tool?
+
+No. The [community tool-selection question](https://www.reddit.com/r/immich/comments/1m6x9li/how_do_you_back_up_your_immich_photosvideos_what/) illustrates the remaining task: choose a tool that can retain and retrieve the saved files. Evaluate it by recovering a backup set, not by whether it merely synchronizes a folder.
 
 ## Sources
 
-- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
-- [Issue #26522](https://github.com/immich-app/immich/issues/26522)
-- [System Integrity](https://docs.immich.app/administration/system-integrity/)
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official Immich documentation; components, order, UI restore and version caveats.
+- [System Integrity](https://docs.immich.app/administration/system-integrity/) — Official Immich documentation; checks and generated-file recovery.
+- [Maintenance Mode](https://docs.immich.app/administration/maintenance-mode/) — Official Immich documentation; recovery login.
+- [Backup Script](https://docs.immich.app/guides/template-backup-script/) — Official Immich example; optional Borg workflow.
+- [Docker Compose installation](https://docs.immich.app/install/docker-compose/) — Official Immich documentation; start command.
+- [v3.1.0 Compose asset](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml) — Official release configuration.
+- [Upgrading / VectorChord FAQ](https://docs.immich.app/install/upgrading/) — Official Immich documentation; extension compatibility.
+- [SQL Dump](https://www.postgresql.org/docs/current/backup-dump.html) — Official PostgreSQL documentation; logical backups.
+- [docker compose stop](https://docs.docker.com/reference/cli/docker/compose/stop/) — Official Docker command reference.
+- [No admin exists, #26522](https://github.com/immich-app/immich/issues/26522) — GitHub issue; historical Unraid v2.5.6 case.
+- [Backup strategy advice](https://www.reddit.com/r/immich/comments/1pep6pu/backup_strategy_advice/) — Reddit; user question, not fix authority.
+- [Backup tool choices](https://www.reddit.com/r/immich/comments/1m6x9li/how_do_you_back_up_your_immich_photosvideos_what/) — Reddit; workflow question.

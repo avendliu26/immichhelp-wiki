@@ -10,39 +10,161 @@ updated: 2026-09-08
 draft: false
 ---
 
-## Direct answer
+## Direct Answer
 
-Docker Compose is Immich's recommended production deployment. Download the compose file and environment template from the current release, set UPLOAD_LOCATION and local DB_DATA_LOCATION, then run docker compose up -d.
+For a new server, use Immich's release-provided `docker-compose.yml` and `.env` together, choose separate media and database locations, then start them with the Docker Compose plugin. Install inside a 64-bit Linux host or full Linux VM when possible. Docker Compose is the recommended production deployment. [Official installation](https://docs.immich.app/install/docker-compose/)
 
-## Requirements
+Keep PostgreSQL on a local, permission-capable filesystem, ideally an SSD. A photo share on a NAS and a PostgreSQL data directory are different storage choices: the database must not live on a network share. The upload location should be a new managed-media directory, not an existing photo collection you want Immich to scan. Use an [external library](/storage/immich-external-library) for that collection.
 
-Immich documents 6 GB RAM minimum and 8 GB recommended. Postgres should use local SSD storage and never a network share. Use docker compose; the legacy docker-compose command is deprecated.
+This guide targets a fresh installation using stable v3.1.0, checked September 8, 2026. The `v3` metatag follows stable v3 updates, not release candidates. On an existing installation, follow the [update guide](/setup/how-to-update-immich) instead of overwriting your configuration with these download commands.
 
-## Installation
+## Step 1: Check the host and storage
 
-Download the files from the official Docker Compose guide, rename the environment template to .env, set a random alphanumeric DB_PASSWORD, and choose a timezone if needed.
+| Requirement | Decision before installation |
+|---|---|
+| CPU | amd64 or arm64; at least 2 cores, preferably 4 |
+| Memory | At least 6 GB; 8 GB recommended; 4 GB is a restricted option with machine learning disabled |
+| v3 amd64 machine learning | CPU exposed to Docker must support x86-64-v2 or later; check VM CPU configuration too |
+| Media capacity | Allow space for originals and generated previews/video; documentation estimates another 10–20% on average |
+| Database filesystem | Local storage supporting Unix ownership and permissions; no SMB/NFS share |
+| Runtime | Docker Engine and Docker Compose plugin on Linux; legacy `docker-compose` is unsupported |
 
-:::warning Keep the release files together
-The compose file on the repository's main branch may not match the latest release. Use the release download linked by the official guide.
+Use the [requirements](https://docs.immich.app/install/requirements/) to resolve hardware limits before pulling images. The old v2.7.5 exception for x86-64-v1 is no longer supported and requires a matching server; it is not a recommended permanent solution for v3 hardware incompatibility.
+
+Install Docker through the official distribution-specific [Docker Engine instructions](https://docs.docker.com/engine/install/). Do not mix an outdated distribution package with the new Compose file. On Proxmox, perform this inside the Linux VM, not on the hypervisor. Synology users should use the [Container Manager workflow](/platforms/immich-for-synology).
+
+## Step 2: Download the two release files
+
+In a terminal on the intended Linux server, choose a parent directory for your new application configuration. The official example creates a fresh `immich-app` directory:
+
+```bash
+mkdir ./immich-app
+cd ./immich-app
+```
+
+The expected result is a new working directory. If it already contains an Immich deployment, stop this fresh-install procedure and use its existing configuration. Then run the official downloads inside the new directory:
+
+```bash
+wget -O docker-compose.yml https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+wget -O .env https://github.com/immich-app/immich/releases/latest/download/example.env
+```
+
+Each download should finish successfully and produce its named file. Network errors, HTML error pages or empty files mean the configuration is not ready. Alternatively download the two assets in a browser, move them to the same directory, and rename `example.env` to `.env`. These commands follow the moving latest release; for a reproducible install, select both files from the same intended release. [Official download procedure](https://docs.immich.app/install/docker-compose/)
+
+:::warning Downloads overwrite files
+The wget -O commands replace files with those names. Use them only in the new directory. Do not download the repository main-branch Compose file: it may require unreleased application changes.
 :::
 
-Start the stack with docker compose up -d, then open port 2283 and register the first user. The first registered user becomes the admin.
+## Step 3: Populate .env and understand the mounts
 
-## Storage and verification
+Open `.env` in your editor. Keep the filename exactly `.env` and set the following fields before startup:
 
-Keep DB_DATA_LOCATION on a filesystem that supports ownership and permissions. Confirm the four services are healthy, finish onboarding, and review the post-install backup guidance.
+| Setting | What to choose | What a mistake looks like |
+|---|---|---|
+| `UPLOAD_LOCATION` | A new directory with capacity for managed uploads; default `./library` is relative to this deployment | Unexpected available space, missing media after moving the project |
+| `DB_DATA_LOCATION` | Local database directory; default `./postgres` | Ownership failures or a database restart loop on unsuitable storage |
+| `DB_PASSWORD` | A unique random alphanumeric value, using `A-Za-z0-9` | Parsing or authentication problems when values do not match |
+| `IMMICH_VERSION` | `v3` for stable v3 updates, or an exact release such as `v3.1.0` | An old exact pin will not advance just because you pull |
+| `TZ` | Uncomment and set an appropriate timezone identifier if needed | Server-local scheduled work uses an unexpected time |
+| `DB_USERNAME`, `DB_DATABASE_NAME` | Leave defaults unless you are deliberately integrating a custom database | Application and database credentials disagree |
 
-## Platform notes
+The checked v3.1.0 release mounts `${UPLOAD_LOCATION}` on the host to `/data` inside `immich-server`. It mounts `${DB_DATA_LOCATION}` to `/var/lib/postgresql/data` in PostgreSQL. Change the host-side environment values for ordinary storage selection; do not casually change these container destinations. [Release Compose configuration](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml)
 
-The official Compose stack includes Redis and Postgres. An Unraid community template can have different prerequisites. Docker in Proxmox LXC is not recommended; a full VM is the supported boundary described by the requirements.
+That release has four services: `immich-server`, `immich-machine-learning`, `database` and `redis`. The service named `redis` currently uses a Valkey image. PostgreSQL is already included, with the VectorChord-capable Immich database image. You do not need to create separate database or cache services for this official stack. Historical [Discussion #8843](https://github.com/immich-app/immich/discussions/8843) explains why a community Unraid template can give a different impression.
 
-:::danger Reset commands
-Never use docker compose down -v or delete the database directory as a routine troubleshooting step. Those actions can remove volumes and require a verified restore.
+## Step 4: Validate and start
+
+From the directory holding both files, run this read-only configuration check:
+
+```bash
+docker compose config --quiet
+```
+
+Docker validates the resolved configuration without printing it. Success produces no rendered configuration; an error identifies a YAML, interpolation or file problem to fix before startup. Do not post unrestricted configuration output publicly because resolved values may contain secrets. [Docker config reference](https://docs.docker.com/reference/cli/docker/compose/config/)
+
+Start the application in the same terminal directory:
+
+```bash
+docker compose up -d
+```
+
+Docker should pull required images, create the project's containers and start them in the background. A command returning successfully means startup was requested, not that all services finished initializing. Inspect them next. [Immich startup instructions](https://docs.immich.app/install/docker-compose/)
+
+## Step 5: Verify startup and create the admin
+
+Use Docker's status command from the same directory:
+
+```bash
+docker compose ps -a
+```
+
+Look for the four intended services, running rather than repeatedly restarting or exiting. Inspect reported health states where available. Initial processing can take time, so an early starting state is not itself a failure. If a service exits or stays unhealthy, inspect its logs:
+
+```bash
+docker compose logs --tail=100
+```
+
+This returns recent service output. Read the first relevant error, including its service and path, rather than treating later connection errors as the original cause. Both commands are documented by Docker: [ps](https://docs.docker.com/reference/cli/docker/compose/ps/), [logs](https://docs.docker.com/reference/cli/docker/compose/logs/). Logs can contain private paths and maintenance access URLs; redact before sharing.
+
+Open `http://SERVER-IP:2283` from a browser on the same network, replacing `SERVER-IP` with this machine's reachable address. Choose Getting Started and create the first user; that user becomes administrator. Add additional users through Administration → Users → Create user. [Post-installation steps](https://docs.immich.app/install/post-install/)
+
+Install the mobile app and enter the same reachable server URL, including scheme and port. `localhost` on the phone refers to the phone, not this server. Select a small test album and enable backup. Check the resulting files in the web interface, download an original and play a short video before starting a large import. This is an acceptance check derived from the documented upload workflow, not a claim of live hardware testing. [Mobile backup](https://docs.immich.app/features/mobile-backup/)
+
+## If this does not work
+
+| Symptom | Check and next action | Verify before continuing |
+|---|---|---|
+| Unknown `-d` flag or old Compose `name` validation error | Confirm the official Docker Engine installation and Compose plugin; use `docker compose` | Configuration validation then startup succeeds |
+| Error opening `.env` | Check the file exists and is readable; the installation docs also flag outdated Docker packages for this error | Config check reads the intended environment |
+| `healthcheck.start_interval` requires Engine v25 | Follow the documented compatibility note; update the runtime or apply its specific `start_interval` workaround if present in your file | Docker accepts the actual release configuration |
+| PostgreSQL permission/restart failure | Check `DB_DATA_LOCATION` filesystem, mount and logs; never move it to a network share as a fix | Database stays running and server connects |
+| UI unavailable but containers exist | Confirm published 2283, correct server IP and LAN firewall path, then server logs | Browser reaches onboarding/login |
+| UI shows unexpectedly little free storage | Confirm which host directory actually backs `/data`, including whether the NAS mounted before startup | Intended storage is visible and a test upload persists |
+| Missing `.immich` marker or inconsistent media location | Check original mounts and container destinations; follow [storage integrity](https://docs.immich.app/administration/system-integrity/) and [documented errors](https://docs.immich.app/errors/) | Folder checks pass against the correct data |
+
+A real [storage-path report](https://www.reddit.com/r/immich/comments/1u5kf89/path_to_storage_not_working_not_done_properly/) describes a large NAS but only hundreds of MB reported in Immich. It is a user symptom, not proof of one cause. Use it as a reason to verify the mounted destination before importing the library.
+
+:::danger Do not reset or broaden permissions to get a green status
+Do not use docker compose down -v, delete database storage, or apply recursive permission changes as generic startup fixes. Those actions can destroy state or expose files. Identify the failing path and service first; protect database and media before a documented recovery operation.
 :::
+
+## Platform differences and first maintenance
+
+Windows databases must not use an NTFS/exFAT directory or a WSL host mount under `/mnt`. The requirements show a named-volume alternative: set `DB_DATA_LOCATION=pgdata` and declare `pgdata` alongside `model-cache` in top-level `volumes`. This changes where database backups must be accounted for. Linux remains preferred; macOS and Windows have reduced troubleshooting support. [Windows storage requirements](https://docs.immich.app/install/requirements/)
+
+A full Proxmox VM, Docker-in-LXC, a Synology project, an Unraid template and a TrueNAS app are distinct deployments. Use this exact procedure only where you control the documented Compose stack; use platform-specific packaging instructions otherwise. Do not substitute an arbitrary PostgreSQL major version into an existing data directory.
+
+Before considering installation dependable, configure the [server backup](/backup/immich-backup), record your storage mapping and perform a small restore drill. For updates, read release notes, preserve configuration and backups, then use the [update procedure](/setup/how-to-update-immich). Mobile upload success protects a phone copy; it does not protect against server storage failure.
+
+## FAQ
+
+### Can I copy existing photos into the upload directory to import them?
+
+No. Immich's database tracks managed assets; manually adding files there does not perform an upload. Use the web/mobile upload flow or configure an external library. [Official database/storage explanation](https://docs.immich.app/administration/backup-and-restore/)
+
+### Why does the database health check disappear in a newer Compose example?
+
+Some older health-check and tuning lines were incorporated into the Immich PostgreSQL image. Their removal from the file does not mean the image has no health check. [Official VectorChord FAQ](https://docs.immich.app/install/upgrading/)
+
+### Why are my stored filenames random?
+
+With the default storage template disabled, Immich uses UUID-based filenames to avoid name collisions. A readable original filename in the UI does not require a matching disk filename. Do not rename internal files manually. [Official FAQ](https://docs.immich.app/FAQ/)
 
 ## Sources
 
-- [Docker Compose](https://docs.immich.app/install/docker-compose/)
-- [Requirements](https://docs.immich.app/install/requirements/)
-- [Post installation](https://docs.immich.app/install/post-install/)
-- [Discussion #8843](https://github.com/immich-app/immich/discussions/8843)
+- [Docker Compose](https://docs.immich.app/install/docker-compose/) — Official Immich installation and command examples.
+- [Requirements](https://docs.immich.app/install/requirements/) — Official Immich platform/storage requirements.
+- [v3.1.0 Compose file](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml) — Official release asset; exact services and mounts.
+- [Post-installation](https://docs.immich.app/install/post-install/) — Official Immich onboarding.
+- [Mobile Backup](https://docs.immich.app/features/mobile-backup/) — Official Immich mobile workflow.
+- [System Integrity](https://docs.immich.app/administration/system-integrity/) — Official Immich mount checks.
+- [Errors](https://docs.immich.app/errors/) — Official Immich path recovery boundaries.
+- [Upgrading](https://docs.immich.app/install/upgrading/) — Official Immich version policy and FAQ.
+- [FAQ](https://docs.immich.app/FAQ/) — Official Immich filename questions.
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official Immich database/storage relationship.
+- [Docker Engine installation](https://docs.docker.com/engine/install/) — Official Docker runtime instructions.
+- [Compose config](https://docs.docker.com/reference/cli/docker/compose/config/) — Official Docker command reference.
+- [Compose ps](https://docs.docker.com/reference/cli/docker/compose/ps/) — Official Docker command reference.
+- [Compose logs](https://docs.docker.com/reference/cli/docker/compose/logs/) — Official Docker command reference.
+- [Compose prerequisites, #8843](https://github.com/immich-app/immich/discussions/8843) — GitHub discussion; historical packaging distinction.
+- [NAS storage capacity mismatch](https://www.reddit.com/r/immich/comments/1u5kf89/path_to_storage_not_working_not_done_properly/) — Reddit; first-person storage symptom.

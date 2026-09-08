@@ -10,32 +10,156 @@ updated: 2026-09-08
 draft: false
 ---
 
-## Direct answer
+## Direct Answer
 
-An external library lets Immich scan files outside its internal library. Mount the same path into the server and worker containers, create the library as an administrator, and scan it. The path entered in Immich must be the path visible inside the container.
+An external library indexes photos and videos already stored outside Immich's managed upload directory. Add the existing folder as an extra container mount, enter the container-visible path as the library import path, select its owner and scan it. Start read-only if your priority is protecting the original collection. Do not replace the normal upload mount to add an external library. [Official library documentation](https://docs.immich.app/features/libraries/)
 
-## Read-only versus writable
+Read-only storage protects against filesystem writes but limits metadata editing. Organizational information such as album relationships still depends on the Immich database; supported XMP fields can be written to sidecars only when the mount allows it. A success notification is not sufficient evidence that a read-only metadata edit persisted. [XMP Sidecars](https://docs.immich.app/features/xmp-sidecars/)
 
-A read-only mount prevents Immich from deleting media or writing XMP sidecars. The library guide says metadata added to an external asset is stored inside Immich and can be lost if the asset moves or is rescanned as a new asset. The XMP guide and Issue #10538 document that read-only metadata writes can silently fail.
+Stable v3.1.0 was checked September 8, 2026. Preserve the original paths and back up both the external files and Immich database. If a NAS disappears, pause cleanup and restore mount visibility first: scanning unavailable storage can make existing assets appear deleted, and moving files can create new asset identities with lost Immich-only associations.
 
-:::warning Treat the open issue as unresolved
-Issue #10538 is an open v1.106.3 report. It contains user workarounds and conflicting observations. Do not promise that tags, dates, or locations will persist on a read-only external mount.
+## Choose the right library and access mode
+
+| Choice | Behavior | Use it when |
+|---|---|---|
+| Managed upload library | Immich stores uploads and tracks their internal paths | Importing copies from web/mobile and letting Immich manage them |
+| External library, read-only | Scans existing files while filesystem writes are blocked | Preserving a NAS/disk collection maintained elsewhere |
+| External library, writable | Allows supported sidecar writes and filesystem deletion | Deliberately allowing Immich to modify the source, with backups |
+
+Each external library belongs to the user selected when it is created. The owner relationship is separate from filesystem ownership. An external root does not automatically become every user's library, and folders are not automatically shared albums. [Libraries](https://docs.immich.app/features/libraries/)
+
+## Step 1: Prepare a small source folder and record both paths
+
+Choose an existing folder with a few known supported photos and a video. Confirm its host or NAS location, and decide where it should appear inside the container. Organize folder names before indexing where possible; changing paths later can create new assets and lose Immich-only metadata relationships.
+
+The official example deliberately uses different host and container paths:
+
+```yaml
+- /mnt/nas/christmas-trip:/mnt/media/christmas-trip:ro
+```
+
+The left side is the Docker host's existing folder. The right side is where Immich sees it. `:ro` requests a read-only mount. This is one volume-list entry, not a complete Compose file. Add it under `immich-server` → `volumes` while preserving the existing managed upload mount. For a separately configured worker, provide the same container path there too. [Official mount example](https://docs.immich.app/features/libraries/#mount-docker-volumes)
+
+## Step 2: Apply and verify the mount
+
+Run the official startup command on the Docker host, in the directory containing the edited Compose file:
+
+```bash
+docker compose up -d
+```
+
+This applies the changed configuration and recreates the service as needed. The expected result is a running server with the additional mount. A YAML or startup failure means the new mount is not ready; correct that before scanning. [Compose startup](https://docs.immich.app/install/docker-compose/)
+
+Use the official troubleshooting shell sequence:
+
+```bash
+docker exec -it immich_server bash
+ls /mnt/photos
+```
+
+Run `docker exec` on the host; run `ls` inside the opened container shell. Replace `/mnt/photos` with your chosen container path, such as `/mnt/media/christmas-trip`, and adjust the container name if customized. Expected: the known sample files are listed. If the path does not exist, recheck the YAML destination and host mount; if access is denied, inspect read/traversal permissions for the actual service identity. A shell listing does not prove a differently configured worker user has access. [Official troubleshooting](https://docs.immich.app/features/libraries/#troubleshooting)
+
+Do not proceed just because the host's file manager can see the photos. On a NAS or Proxmox installation, there may be host→guest→container layers between that file manager and Immich.
+
+## Step 3: Create and scan the library
+
+1. Sign in as an administrator and open Administration → External Libraries.
+2. Create a library and choose the intended owner.
+3. Add an import path using the container destination, `/mnt/media/christmas-trip` in the example, not `/mnt/nas/christmas-trip`.
+4. Review exclusions so that the sample directory is not filtered out.
+5. Start the library scan. Official guides show labels such as Scan or Scan New Library Files; use the matching scan action in your installed UI.
+6. Inspect library, metadata and thumbnail jobs while the first assets are processed.
+
+The [external-library walkthrough](https://docs.immich.app/guides/external-library/) documents this sequence. Use forward slashes, avoid symlinks crossing mount boundaries, and verify all workers see the same path before treating an empty scan as a software bug.
+
+## Step 4: Verify ownership, originals and indexing
+
+Sign in as the library owner and find the test assets. Open the image, download an original and play the video. Check a known date/filename and confirm thumbnail/metadata jobs finish. A scan completing with zero assets is not success when the test folder contains supported files.
+
+These are practical acceptance checks assembled from the official scan and job workflow. They test separate layers: file discovery, owner visibility, original access and generated previews. Once all pass, expand the import paths to the intended collection. Follow [image troubleshooting](/troubleshooting/immich-error-loading-image) if only previews fail.
+
+## Step 5: Configure rescans for ongoing changes
+
+Use Administration → Settings → External Library to review the scan schedule. Test a manual scan after adding a sample file outside Immich, then confirm a later scheduled scan discovers another test addition. Experimental file watching may not work on network drives, so do not rely on it as a guarantee of instant NAS updates. [Scan/watch behavior](https://docs.immich.app/features/libraries/)
+
+External deletion or renaming can change the asset records. Keep backup retention long enough to investigate unexpected offline/Trash entries. Immich is indexing a filesystem that another application may change; a scan cannot determine whether an absent mount is an intentional deletion.
+
+## Metadata: database, XMP and read-only conflicts
+
+| Data or action | What to expect | How to check safely |
+|---|---|---|
+| Album membership / people associations | Depends on Immich database identity | Preserve DB backups before path changes |
+| Supported description, rating, tag and other XMP fields | Sidecar write behavior is documented for supported fields with writable access | Use a backed-up test image, inspect its sidecar and re-read metadata |
+| Read-only edit | Sidecar cannot be written; behavior can include a misleading success message | Reload, inspect logs and confirm the value after metadata refresh |
+| Sidecar added outside Immich | Needs discovery/metadata processing | Use the documented DISCOVER job for new sidecars |
+| Existing sidecar changed outside Immich | Needs synchronization | Use the documented SYNC job and recheck metadata |
+
+The XMP guide prioritizes `IMG_0001.jpg.xmp` and falls back to `IMG_0001.xmp`. It describes merging supported changes with existing sidecar data. Do not assume all arbitrary application state can be recovered from those files. [XMP Sidecars](https://docs.immich.app/features/xmp-sidecars/)
+
+There is a documentation wording conflict: the general Libraries page describes external metadata as stored inside Immich, while the dedicated XMP page documents supported sidecar writes. Use the field-specific XMP rules and the read-only limitations rather than promising that every edit is either DB-only or always written back.
+
+[Issue #10538](https://github.com/immich-app/immich/issues/10538) began with v1.106.3/Debian 12 and remains open in this research. Later 2026 comments report inconsistent date/GPS/sidecar persistence without exact versions. They do not prove a v3.1.0 reproduction or fix. A writable test library can establish your actual behavior; this guide has not performed that device-level test.
+
+:::danger Changing to writable allows destructive filesystem actions
+Removing :ro can permit sidecar changes and deletion of original files. Back up the source and database first; use a small separate test library. Do not apply recursive permission changes to an entire shared photo collection merely to make one metadata edit succeed.
 :::
 
-## Scan checklist
+## When the original path disappears
 
-- Mount the path with forward slashes and avoid symlinks across mounts.
-- Confirm the path with docker exec and ls inside the server container.
-- Add the container path, not the host path, to the library.
-- Scan after external changes. A deleted file moves to trash on rescan and is removed after 30 days.
+If many previously working assets move offline or into Trash at once, check NAS availability and the container mount before running more scans. Restore the original mapping, verify a known file inside the container, then rescan and check whether existing records become available. Do not empty Trash during the investigation.
 
-## Network and ownership
+Current example: [Discussion #30820](https://github.com/immich-app/immich/discussions/30820) reports v3.1.0 on ZimaOS 1.7.0 with remote mounts and a zero-file scan followed by mass offline/Trash entries. A maintainer explains the unavailable-mount behavior and advises restoring visibility and rescanning; the reporter says some recovery remained unsuccessful. The discussion does not establish a universal software fix.
 
-Automatic file watching is experimental and may not work on network drives. Use periodic refreshes for network storage. An external library belongs to one selected user.
+The maintainer distinguishes loss of Immich-only relationships after Trash expiry from physical deletion of originals during this offline handling. A deliberate deletion in a writable external library is a different operation. The current Libraries documentation describes a 30-day Trash period for externally deleted files. Preserve backups and investigate promptly rather than assuming reindexing will reconstruct albums and faces. [Library lifecycle](https://docs.immich.app/features/libraries/)
+
+:::danger Trash, SQL and restore
+Do not run user-supplied SQL, clear Trash, delete the database or remove volumes to force a rescan result. A database restore replaces state and must be matched with the right external files and paths. Use a verified recovery set and the documented restore procedure; preserve original evidence if normal recovery fails.
+:::
+
+## Platform and version differences
+
+Synology's File Station path belongs on the host side; the UI import path still belongs to the container. Review shared-folder access without granting global write permissions. In Proxmox, an unprivileged LXC introduces UID mapping and another mount layer; a complete Linux VM follows the regular Compose model. On TrueNAS/Unraid, use the app/template's persistent-volume controls to express the same mapping rather than pasting Compose into an unrelated UI. [Libraries](https://docs.immich.app/features/libraries/), [Synology community guide](https://docs.immich.app/install/synology/)
+
+A [Proxmox/Ubuntu/SMB Reddit report](https://www.reddit.com/r/immich/comments/1unxce7/ext_library_unable_to_scan_files/) identifies v3.0.1 and a container path/access problem, with the author later reporting success. The final exact change was not documented, so permissions-disabling commands in replies are not confirmed fixes.
+
+[Issue #29724](https://github.com/immich-app/immich/issues/29724) reports stale duplicate matches after a case-only external-folder rename on macOS/APFS. The author did not identify an exact release. Its closed status is not evidence of a current fix; keep path-change behavior distinct from old read-only XMP reports.
+
+## If this does not work
+
+| Symptom | Next check | Verification |
+|---|---|---|
+| Zero scanned files | Container path, read/traverse access, exclusions, supported formats, worker mounts | Sample appears under the intended owner |
+| Original exists on NAS but download fails | Same file visible inside server/worker and NAS online | Original downloads from Immich |
+| New files appear only after manual scan | Schedule and network watcher limits | A scheduled scan finds a later sample |
+| Metadata reverts | Read-only state and sidecar job/log evidence | Field persists after reload/refresh in a controlled test |
+| Rename produces duplicate/new records | Source path changes and previous asset identity | Stop further renames; preserve DB and use recovery evidence |
+| Mass offline/Trash after outage | Restore mount before scan/cleanup | Existing assets return, or unresolved evidence is retained for support |
+
+Back up the external roots and sidecars with your NAS/filesystem backup tool, and keep the Immich database plus its normal upload/generated directories. A database dump alone cannot recover external originals; file-only backups cannot recreate all application associations. Follow [backup and restore](/backup/immich-backup).
+
+## FAQ
+
+### Can the existing folders automatically become albums?
+
+The official FAQ does not provide automatic folder-to-album mapping for an external library. Enable Folders under Account Settings → Features for folder browsing instead of assuming a scan creates albums. [Official FAQ](https://docs.immich.app/FAQ/#can-i-add-an-external-library-while-keeping-the-existing-album-structure)
+
+### Why do deleted items reappear with a read-only mount?
+
+Trash UI behavior and filesystem permission are different. The official FAQ explains that emptying Trash cannot remove a read-only original, so the file can appear again. With writable access, deletion can remove the source itself. [Official deletion FAQ](https://docs.immich.app/FAQ/#how-are-deletions-of-files-handled-in-external-libraries)
+
+### Does the upload checksum check deduplicate an external collection?
+
+The official FAQ limits upload duplicate checking to upload libraries. Do not assume a copied or renamed external file will retain its previous asset identity because its bytes are unchanged. [Official FAQ](https://docs.immich.app/FAQ/)
 
 ## Sources
 
-- [External Libraries](https://docs.immich.app/features/libraries/)
-- [External Library guide](https://docs.immich.app/guides/external-library/)
-- [XMP Sidecars](https://docs.immich.app/features/xmp-sidecars/)
-- [Issue #10538](https://github.com/immich-app/immich/issues/10538)
+- [External Libraries](https://docs.immich.app/features/libraries/) — Official Immich lifecycle, mounts, scanning and troubleshooting.
+- [External Library walkthrough](https://docs.immich.app/guides/external-library/) — Official Immich UI and verification steps.
+- [XMP Sidecars](https://docs.immich.app/features/xmp-sidecars/) — Official Immich field/sidecar behavior.
+- [Docker Compose](https://docs.immich.app/install/docker-compose/) — Official Immich apply/start command.
+- [FAQ](https://docs.immich.app/FAQ/) — Official Immich folder, deletion and duplicate questions.
+- [Synology guide](https://docs.immich.app/install/synology/) — Community contribution hosted by Immich; NAS path context.
+- [Read-only metadata, #10538](https://github.com/immich-app/immich/issues/10538) — GitHub issue; open historical and later unversioned reports.
+- [Remote-mount outage, #30820](https://github.com/immich-app/immich/discussions/30820) — GitHub discussion; v3.1.0 with unresolved recovery discrepancy.
+- [Folder rename, #29724](https://github.com/immich-app/immich/issues/29724) — GitHub issue; exact version unspecified, not a confirmed current fix.
+- [External scan on Proxmox/SMB](https://www.reddit.com/r/immich/comments/1unxce7/ext_library_unable_to_scan_files/) — Reddit; v3.0.1 user case, final exact change unspecified.

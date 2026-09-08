@@ -1,0 +1,172 @@
+{
+  "pages": {
+    "content/platforms/immich-for-synology.mdx": {
+      "words": 215,
+      "sources": [
+        "https://docs.immich.app/install/requirements/",
+        "https://docs.immich.app/install/synology/",
+        "https://github.com/immich-app/immich/discussions/28987"
+      ],
+      "rawBodyTokenWords": 234
+    },
+    "content/platforms/immich-proxmox.mdx": {
+      "words": 224,
+      "sources": [
+        "https://docs.immich.app/install/docker-compose/",
+        "https://docs.immich.app/install/requirements/",
+        "https://github.com/immich-app/immich/discussions/29317",
+        "https://github.com/immich-app/immich/discussions/29626"
+      ],
+      "rawBodyTokenWords": 250
+    },
+    "content/setup/how-to-update-immich.mdx": {
+      "words": 219,
+      "sources": [
+        "https://docs.immich.app/errors/",
+        "https://docs.immich.app/install/upgrading/",
+        "https://github.com/immich-app/immich/discussions/25771",
+        "https://github.com/immich-app/immich/releases"
+      ],
+      "rawBodyTokenWords": 243
+    },
+    "content/setup/immich-docker-compose.mdx": {
+      "words": 242,
+      "sources": [
+        "https://docs.immich.app/install/docker-compose/",
+        "https://docs.immich.app/install/post-install/",
+        "https://docs.immich.app/install/requirements/",
+        "https://github.com/immich-app/immich/discussions/8843"
+      ],
+      "rawBodyTokenWords": 267
+    },
+    "content/troubleshooting/immich-error-loading-image.mdx": {
+      "words": 287,
+      "sources": [
+        "https://docs.immich.app/administration/jobs-workers/",
+        "https://docs.immich.app/administration/system-integrity/",
+        "https://github.com/immich-app/immich/discussions/10570",
+        "https://github.com/immich-app/immich/issues/23574",
+        "https://github.com/immich-app/immich/issues/26720"
+      ],
+      "rawBodyTokenWords": 320
+    },
+    "content/storage/immich-external-library.mdx": {
+      "words": 234,
+      "sources": [
+        "https://docs.immich.app/features/libraries/",
+        "https://docs.immich.app/features/xmp-sidecars/",
+        "https://docs.immich.app/guides/external-library/",
+        "https://github.com/immich-app/immich/issues/10538"
+      ],
+      "rawBodyTokenWords": 259
+    },
+    "content/getting-started/how-to-use-immich.mdx": {
+      "words": 222,
+      "sources": [
+        "https://docs.immich.app/administration/backup-and-restore/",
+        "https://docs.immich.app/features/mobile-backup/",
+        "https://docs.immich.app/install/post-install/",
+        "https://github.com/immich-app/immich/discussions/27250"
+      ],
+      "rawBodyTokenWords": 249
+    },
+    "content/backup/immich-backup.mdx": {
+      "words": 321,
+      "sources": [
+        "https://docs.immich.app/administration/backup-and-restore/",
+        "https://docs.immich.app/administration/system-integrity/",
+        "https://github.com/immich-app/immich/issues/26522"
+      ],
+      "rawBodyTokenWords": 340
+    }
+  },
+  "originalResearchHashes": {
+    "research/.DS_Store": "a689bf763c6465cebf228140ff97f247c780910e9f1c21338e78e0d6bb2af927",
+    "research/\u9996\u9875\u8c03\u7814.md": "05952a17218e503f192ab5ae79daa652691ef6a1b6f32d1476bab0cccdcbd90b",
+    "research/keywords.json": "2fdd9dc0e473984de80f31a6dfe530ca1a505ea9d7a24894890e46b006b1ebcc",
+    "research/favicon_io/favicon-16x16.png": "0b77d8e0dc9d19133c3a7d932ed7f184ae23b2620a51e8252d8d06b6c53ed728",
+    "research/favicon_io/favicon.ico": "63ced761b03f01800ae2932474d6c2c789c20adc6a1f5309b016d1f74d40933b",
+    "research/favicon_io/android-chrome-192x192.png": "a760b64f525be910c17252d3e30df2279084e99dd2570ac67a383c5d168701d3",
+    "research/favicon_io/apple-touch-icon.png": "a6a707c88210bde5b85bf2f14f56c0c390aba06618bb38507af17223dc2380db",
+    "research/favicon_io/android-chrome-512x512.png": "88f165c21e276fdb4850ba2bc766c9f4a222bc4e66bb6fa6833037fe9e779576",
+    "research/favicon_io/site.webmanifest": "7a9e07ce1f7386689917602ddc5a75750ad842e605ff764f67173529c181bf04",
+    "research/favicon_io/favicon-32x32.png": "dfb914782b3a4caad2affa26d1b5a0f4eded010c1732e823ae771a0360103cb8",
+    "research/sources/fetch-log.json": "9fef4ea808e8031c1f17fecf10a2f5797eb4c271b710726b21c7e90497cebbcf",
+    "research/sources/source-index.json": "02de0b6e53c3f1f77ad7c2cff06fa025e11a9435b6e5162d8e2daec205fe621c",
+    "research/sources/snapshots/comments-30619.txt": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "research/sources/snapshots/issue-23574.txt": "f9cb81edd0bc94a5ce12c952213c25bb41efe78fe2042045ae3a0e2ebea6fa9f",
+    "research/sources/snapshots/comments-26720.txt": "7ce5299929654175f072d1a909e58cf732cae5713b6714808ea62f02cb308122",
+    "research/sources/snapshots/comments-26522.txt": "ab7664e3fa42961c66437a081688688548c9952ad7b610b24d58f6ff44763c47",
+    "research/sources/snapshots/docs-upgrading.txt": "ff704fbac802a79a51b7c37378cf3e2dfe26d24d20f42860fcda33a3f2b5c812",
+    "research/sources/snapshots/docs-mobile-backup.txt": "01af9c8379ee83d0b0973441cf446e9e651e3b89406f0d8faf860cbe08b15efd",
+    "research/sources/snapshots/photoprism-latest.txt": "9d9e5aa8d251ebd7703b7b2f090267e1140d1a685b5e30856dff551c57a40593",
+    "research/sources/snapshots/docs-unraid.txt": "a6678034edddf62417779a1287485932e6faeef08f2d8b95946a65a7d8654284",
+    "research/sources/snapshots/discussion-25771.txt": "41388f9ff7d64154b2dabb1ec27f4b7be76477b80836478c3ffd2c9f370a4d2b",
+    "research/sources/snapshots/photoprism-mobile.txt": "f249f54d69008629f3c218ac1f03aac179a5bac6d2306e11b5455f992db05750",
+    "research/sources/snapshots/docs-faq.txt": "51870b2cf4ff07ab765f82b81a3da3934cc5cf9dc18d881d2d3229b7581b44d0",
+    "research/sources/snapshots/docs-post-install.txt": "d0c53b24d5de9f3fd544fba0dc382e220f91d9e769dcc314ffda185e356ec43d",
+    "research/sources/snapshots/docs-xmp.txt": "56e33fd5848e8ddcb9c960090d12b4933ad4b1a37a29d6e07e7268e9efa961ec",
+    "research/sources/snapshots/synology-migration.txt": "e9f0b2f99a2d3262d132cd21484fa53e84b33afaa68905c25d8a231e1c298880",
+    "research/sources/snapshots/docs-jobs.txt": "8450e9f137e013c28cf2c244a5a0124ca353beeb2238aa3a484185205e5fbb1a",
+    "research/sources/snapshots/docs-compose.txt": "70e11e2ba904085dbca1a9f47fbf307665ba9b69cf3213cf216da21a093aabda",
+    "research/sources/snapshots/discussion-14492.txt": "e4cc5ebabf5daea523193bbbe4501a4f92a9ca1a7bdee797545b33075dc6952c",
+    "research/sources/snapshots/discussion-29317.txt": "f538aec7ee13cf84d18a42f43ceb456ebc57ba06cfe0ac5c051c055dbc95b7ce",
+    "research/sources/snapshots/docs-integrity.txt": "55d26b63a94e1df504f417e7fa7f8b05c6612d7970f10cfcbc9e731537fa1916",
+    "research/sources/snapshots/issue-30619.txt": "f091b91af32b3e5ac19d4c19bf3c54f6eca25176efd615470b361f22d075d8a5",
+    "research/sources/snapshots/docs-storage-template.txt": "c9ea26c2e3aa0c8f9bfdc5abcbe86f1198835e2cc9ed59ab957df0d93339fd4f",
+    "research/sources/snapshots/comments-23574.txt": "f9f4f97e15c00bb499e184b19b6c55d64033c50bf93d2402804efb7e9d15a19d",
+    "research/sources/snapshots/photoprism-discussion-3121.txt": "cd483ea609ef075de80d61a0f38ff101c6834364f42a272cd6bfe084f550b335",
+    "research/sources/snapshots/synology-release.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "research/sources/snapshots/issue-26522.txt": "769998b159be5fc6690c9e9128bfe3422cd7d5bae13f1e080ad6b29b531ffcf7",
+    "research/sources/snapshots/issue-26720.txt": "0459fc427b00447a314e2c46205ec08885beeaff63c69f1293e10d0105425006",
+    "research/sources/snapshots/discussion-4282.txt": "aee5a4b16c32882d97753d5aa533b303d77cb1585a932e259ccd0544ee72c028",
+    "research/sources/snapshots/comments-10825.txt": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "research/sources/snapshots/discussion-4701.txt": "60b1cdd203f49fc26e98dfd0b75715dd910cec608ae3b9a829e5e03996dfdd7b",
+    "research/sources/snapshots/docs-libraries.txt": "59d360c41fe5eedfb9b990ce33b5fb382db134dd8b72c71ee17e976dee898c73",
+    "research/sources/snapshots/discussion-10570.txt": "8511fc5efbcc05dd116e021c28b80bafd3135105709eb5fcd47d295ae0c072ef",
+    "research/sources/snapshots/discussion-28429.txt": "64322c761336064eeaf7ee70463fd75b0034f47f011c154ce9c206f41810a659",
+    "research/sources/snapshots/docs-requirements.txt": "5971e2baff7361718e4d4b460b879e125e70ce67282bf2bb37637a8c6a82ab63",
+    "research/sources/snapshots/discussion-28987.txt": "1c7019994c68fea159385c0e02d1ea7ebfaf07246d2a9f0e25d61b0e540ac87b",
+    "research/sources/snapshots/issue-10538.txt": "4afe66ddc6a3a0702b4034c491702c2739d3457c08c858eb8f3a8bfa304c6452",
+    "research/sources/snapshots/release-latest.txt": "a7668ca61699b77012e08e1bdb1fea1b656d2af16ea905c6702dcb65fe66adc1",
+    "research/sources/snapshots/photoprism-import.txt": "6656d3b0d85464d6e4edd6b4275354b17a35e75524e10c39a50113f8fb97d8b9",
+    "research/sources/snapshots/discussion-27696.txt": "2b29f94efe785a5a5fb8876aeae4929c86742bad6c8f28fd55c62ff0273c555b",
+    "research/sources/snapshots/docs-backup.txt": "1dcfe532ff4d14948afc0dd5d94b3277eceb49c9d21f68f42792b9bb8bbd57dd",
+    "research/sources/snapshots/issue-12472.txt": "860e264899acb926714923d7c683c54e60ca9bd0b8054db0eb240de660134a19",
+    "research/sources/snapshots/docs-search.txt": "63543d3784e7c445a9728c0d823758bac1406f9b0ec4934e97efed83146d5a2a",
+    "research/sources/snapshots/discussion-30710.txt": "1efb711d3fb766a93066cd1d29ac7f7da99c3eb7634d3386725fddaef16fe70e",
+    "research/sources/snapshots/discussion-27250.txt": "908ffa0602f9c06ade82c2f21b2074ffec2f6038029d8e51dbf09b3c14b6f48d",
+    "research/sources/snapshots/discussion-8843.txt": "6222ab12b6ad080600750eb5f966f356880d498ff317f56ea1b69075166437f9",
+    "research/sources/snapshots/synology-ios.txt": "3d2266036da6c7416ece7efe7f9908cd1c0d6523205719436846bfcba16e99ac",
+    "research/sources/snapshots/docs-errors.txt": "365f975e0b8d08925a1e46719427101086354f2051faec49541187289dce5912",
+    "research/sources/snapshots/stable-compose.txt": "dff378c67eb82fddce1856837b364c6a8ae9d815bff9607a6ec32d0903837c6a",
+    "research/sources/snapshots/comments-12472.txt": "0f3632a66e0d70fa4b146ecdace81cfbacd5b80240252f1b873775dd3dd1f6db",
+    "research/sources/snapshots/discussion-4763.txt": "f5865b7ca421e61329af89e1aacde95f0e97bed592e155032b24f410cb047ab8",
+    "research/sources/snapshots/docs-synology.txt": "2eab136923e2e622559b15dc7ebefaa42ba6a002adbe277ea7aa2e0b9a0621d2",
+    "research/sources/snapshots/synology-faq.txt": "4509eff1a4ffe6da9eeabf6c5bd01e968c2947329a507536dba0aca8281016ad",
+    "research/sources/snapshots/docs-external-guide.txt": "c09aa4d3b9c6196ce3e5e8bc0f6bd09e521c0a55446721a7a8f5ef53ebcdedc7",
+    "research/sources/snapshots/releases.txt": "33c87ab54529592ddfad6edb0f0bc7d51118a689f76b2c60df14896e1b67d1f4",
+    "research/sources/snapshots/docs-comparison.txt": "a2d6a25573cbbf3c60fc998105ef8aded3aeac62e5fa57b751c6345dc253e33b",
+    "research/sources/snapshots/comments-10538.txt": "3e44a933e479051d580d52a371f2b2839890b389ec0cda0a5a6dd8101e4c8fcf",
+    "research/sources/snapshots/photoprism-backup.txt": "b8b75ee7250b23ff92e6c1c718bb943a5119cfc43c017b2844d17b62102b50f4",
+    "research/sources/snapshots/issue-10825.txt": "90b6599ad05f72203fcee1caecfc3fa2792bb7b91fefc401ab2678649bf7ed89",
+    "research/sources/snapshots/discussion-29626.txt": "f2ac2df04a91f87f9287017ea1f46c35819600c3051c4ff9f0f5547722a26976",
+    "research/pages/how-to-update-immich.md": "4878dcc545183d7de57bdef69c92f5340e1a61368d3d07b5f53989775c77bd83",
+    "research/pages/immich-vs-photoprism.md": "8229ee5e715364ba9306cebea78a76865ad02af1ed4229c990e2fe3a189326fa",
+    "research/pages/immich-error-loading-image.md": "079ed18068c8b8f3487ee742d5aec0e4978ae217acd4796542dfa7e6480a5ccc",
+    "research/pages/immich-docker-compose.md": "d318cf65145d55b4229f413e3241e293bb2316c3d2fb4d04eb958328c032a81d",
+    "research/pages/immich-vs-synology-photos.md": "52f02313cce2f37581534ab1ff18dad552ce0fc1d18ad2652423ff3f55ad2ea5",
+    "research/pages/immich-for-synology.md": "2abd71e9d19a7c49189feb357643035c85315fb60ac269370bd3dc6046bf6c83",
+    "research/pages/immich-setup.md": "d201222bfa1042cefeaf5dab9ac593d933d18b5e7c4b577ec54e03b87cf0e1c3",
+    "research/pages/immich-backup.md": "e678b09487c5789d38f49e86812b98915505edf1fc1324d8d31d91cc551af820",
+    "research/pages/immich-unraid.md": "5515bc64c9e1e22ec8ef3229c716b2c7185ca36888fdeec7c4e13aa748899296",
+    "research/pages/immich-external-library.md": "fa8280aea3472be60cc67990a84c350e73e785fb93e762256a21c201aaba86e6",
+    "research/pages/how-to-use-immich.md": "9ed49e3bb644c9a992bc2d974679cae172a435dd02210220489fe46863bd41b6",
+    "research/pages/immich-proxmox.md": "b07b8b13ce188277796793e98b69100166896ce949b43ff3371f5298d3df1b4f",
+    "research/reports/seo-competitor-audit.md": "9c5a42506d46b891fd85f4d63b68f393964ee69fc7a9c37074b2eeb7425d04f7",
+    "research/reports/research-summary.md": "351fb85bb5d8c2651b6d266c7b891d3dede12f09542228b039b4fe39e5580f5f",
+    "research/reports/prelaunch-seo-audit.md": "6490dd37091f2f9f765ca9a6c3bc206d080b2b1deab5e419e9c6009cad7f5379",
+    "research/reports/prelaunch-url-inventory.md": "5fdce98b833e5f8bd128ecc391b9c3285f28a2d5a1ef20b039f40c3ee4c260a4"
+  },
+  "wordCountMethod": "Visible article body including headings, tables, code tokens, FAQ and source labels; excludes frontmatter, URLs, link targets and Markdown punctuation. Both HEAD and current use the same Unicode regex, preserving internal hyphens/apostrophes."
+}

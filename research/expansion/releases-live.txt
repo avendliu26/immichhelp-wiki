@@ -1,0 +1,59 @@
+https://api.github.com/repos/immich-app/immich/releases?per_page=8
+[
+  {
+    "tag_name": "v3.2.0-rc.3",
+    "prerelease": true,
+    "draft": false,
+    "published_at": "2026-09-04T20:32:12Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.2.0-rc.3"
+  },
+  {
+    "tag_name": "v3.2.0-rc.2",
+    "prerelease": true,
+    "draft": false,
+    "published_at": "2026-08-31T19:36:49Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.2.0-rc.2"
+  },
+  {
+    "tag_name": "v3.2.0-rc.1",
+    "prerelease": true,
+    "draft": false,
+    "published_at": "2026-08-28T18:14:36Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.2.0-rc.1"
+  },
+  {
+    "tag_name": "v3.1.0",
+    "prerelease": false,
+    "draft": false,
+    "published_at": "2026-07-29T14:20:10Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.1.0"
+  },
+  {
+    "tag_name": "v3.0.3",
+    "prerelease": false,
+    "draft": false,
+    "published_at": "2026-07-15T14:34:25Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.0.3"
+  },
+  {
+    "tag_name": "v3.0.2",
+    "prerelease": false,
+    "draft": false,
+    "published_at": "2026-07-09T18:03:44Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.0.2"
+  },
+  {
+    "tag_name": "v3.0.1",
+    "prerelease": false,
+    "draft": false,
+    "published_at": "2026-07-02T21:32:15Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.0.1"
+  },
+  {
+    "tag_name": "v3.0.0",
+    "prerelease": false,
+    "draft": false,
+    "published_at": "2026-07-02T13:58:12Z",
+    "html_url": "https://github.com/immich-app/immich/releases/tag/v3.0.0"
+  }
+]

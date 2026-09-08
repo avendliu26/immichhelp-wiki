@@ -10,33 +10,150 @@ updated: 2026-09-08
 draft: false
 ---
 
-## Direct answer
+## Direct Answer
 
-Read the release notes, update IMMICH_VERSION, then run docker compose pull && docker compose up -d from the directory containing your compose file. Back up the database before migrations and do not plan on downgrading.
+For an existing official Compose installation, first identify your running version and database image, read the intervening release notes, and save a recoverable database-and-media backup. Set the intended `IMMICH_VERSION`, incorporate the release's required Compose changes, then pull and recreate the services from the directory containing your existing configuration. [Official upgrading guide](https://docs.immich.app/install/upgrading/)
 
-## Current versions
+A routine v3 update and a migration from old v1/v2 are different operations. v3 cannot use pgvecto.rs; migrate that extension before crossing the v3 boundary. Keep the PostgreSQL major version appropriate to the existing database rather than copying a new image tag blindly. Downgrades, including within a minor version, are unsupported.
 
-Research checked Immich stable v3.1.0 and prerelease v3.2.0-rc.3 on 2026-09-08. A release candidate is not the same as the stable major-version tag.
+Verified September 8, 2026: stable is v3.1.0 (July 29); v3.2.0-rc.3 (September 4) is a prerelease. The `v3` metatag excludes release candidates. Upgrade mobile clients before the server as recommended by Immich's compatibility policy. [Releases](https://github.com/immich-app/immich/releases)
 
-## Upgrade rules
+## Step 1: Identify the upgrade path
 
-Immich recommends upgrading mobile clients before the server. The server expects the matching major version. Downgrading to an earlier version is unsupported. Read breaking changes before pulling images.
+| Current state | Required branch |
+|---|---|
+| v3, official Immich PostgreSQL image, VectorChord already active | Routine stable update below |
+| v2 with `DB_VECTOR_EXTENSION=pgvecto.rs` or old pgvecto.rs image | Complete the documented extension transition on a compatible pre-v3 installation first |
+| Very old v1 with invalid upgrade-path error | Follow the historical intermediate-version requirement before continuing |
+| Separate PostgreSQL, Unraid/TrueNAS app, native LXC or another packaged distribution | Use the distribution/database-specific migration procedure; the default Compose diff is not portable |
 
-## VectorChord migration
+Record the server and mobile versions, database image tag and PostgreSQL major, explicit `DB_VECTOR_EXTENSION` if set, and custom volumes/networks/hardware acceleration. An image tag in `.env` expresses intent; check the running application as well. [Version and extension policy](https://docs.immich.app/install/upgrading/)
 
-If your Compose database image still uses the older pgvecto.rs setup, the official migration guide requires a database backup first. After switching to VectorChord, do not downgrade below v1.133.0.
+## Step 2: Prepare a usable recovery set
 
-:::warning Historical upgrade paths
-The documented v1.137 path requires an intermediate release between v1.132.0 and v1.136.0. Avoid v1.136.0 when upgrading from v1.131.0 or earlier. These rules are historical and do not describe a normal v3 update.
+Follow the [backup guide](/backup/immich-backup) to save database dumps and actual originals, including external libraries. Preserve the old Compose file, `.env` and custom configuration privately. Confirm that the backup can be restored on an isolated target with compatible versions; keeping only old container images is not a rollback plan.
+
+Read all applicable breaking-change notices between source and target. Compare the target release Compose asset with your current file; transfer required service/image/environment changes while preserving your real paths and secrets. Do not replace `.env` with `example.env`, and do not combine repository-main files with stable images. [Release files](https://docs.immich.app/install/docker-compose/)
+
+:::danger Database migration and recovery
+Migration changes stored state. A later image may not understand the old schema, and an older image may not understand the migrated schema. Preserve a pre-migration dump and matching media before proceeding. Restore, database deletion, volume deletion and recursive permission changes are recovery operations requiring verified copies, not update steps.
 :::
 
-## Community evidence
+## Step 3: Apply a routine stable update
 
-A Synology upgrade helper in Discussion #25771 is community-maintained, not an Immich tool. Its author reports dry-run and backup features, while a user reported a script error. Do not treat it as a supported update mechanism.
+Use an exact target such as `IMMICH_VERSION=v3.1.0` for a deliberate version choice, or the stable major `v3` if that is your update policy. An exact old pin stays old even after `pull`. A release candidate requires an explicit prerelease choice and is outside this stable runbook.
+
+In a terminal on the Docker host, enter the directory containing the active `docker-compose.yml` and `.env`. Validate edited configuration first:
+
+```bash
+docker compose config --quiet
+```
+
+Expected: no configuration error. If it fails, resolve the indicated file, YAML or environment problem without starting the new services. This read-only command avoids printing resolved secrets. [Docker config](https://docs.docker.com/reference/cli/docker/compose/config/)
+
+Run the official update command in that same directory:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+`pull` fetches the images selected by your configuration; `up -d` recreates/starts services with that configuration only if pulling succeeds. A pull failure means the update command has not completed; check the target tag, registry access and available storage. A successful command still requires application verification. [Official update command](https://docs.immich.app/install/upgrading/)
+
+## Step 4: Wait for migrations and verify
+
+From the same Compose directory, inspect state and recent logs:
+
+```bash
+docker compose ps -a
+docker compose logs --tail=100
+```
+
+Expect the intended services to remain running and report healthy where health checks apply, without repeated exits or migration errors. During the documented VectorChord transition, `Reindexing clip_index` and `Reindexing face_index` can take time on large libraries or slower hardware; these messages alone are not a deadlock. Do not interrupt an error-free reindex merely because it takes longer than an ordinary restart. [Migration behavior](https://docs.immich.app/install/upgrading/), [Docker status](https://docs.docker.com/reference/cli/docker/compose/ps/), [Docker logs](https://docs.docker.com/reference/cli/docker/compose/logs/)
+
+Confirm the application reports the intended version. Log in from the web and each mobile-client type you use. Open and download an older original, play a video, upload a new test image and wait for its thumbnail. Test an external asset, search and people results if you use those features. These acceptance checks exercise the documented services and storage relationships; there is no single universal “migration succeeded” log line promised here.
+
+Review Administration → Maintenance for new integrity findings and Job Queues for failed processing. Refresh previously reported problems after correction; a full integrity check examines beyond existing findings. [System Integrity](https://docs.immich.app/administration/system-integrity/)
+
+## Migrating pgvecto.rs to VectorChord
+
+First decide whether this section applies. If the Compose database already uses `ghcr.io/immich-app/postgres` and you have not explicitly forced `DB_VECTOR_EXTENSION`, the official guide says it is already using VectorChord. Do not rerun a migration merely because an older blog contains it.
+
+For the historical default pg14/pgvecto.rs 0.2.0 stack, the official transition image is `ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0`. The documented diff also moves tuning/health-check configuration into the image and sets shared memory. Apply the complete relevant diff, not just one image line. If your original PostgreSQL or extension versions differ, choose the corresponding transition image from the official instructions. [Exact migration diff](https://docs.immich.app/install/upgrading/#migrating-to-vectorchord)
+
+1. Take the pre-migration backup and record the current PostgreSQL and extension versions.
+2. On a compatible pre-v3 installation, apply the matching official database-image and configuration changes.
+3. Start it and allow its migration/reindexing to finish without errors.
+4. Confirm the application is usable and the old forced pgvecto.rs configuration is no longer required before selecting v3.
+5. Take another recovery point after the transition, then perform the v3 update and verification.
+
+:::danger Extension and PostgreSQL boundaries
+The official migration warns against downgrading below v1.133.0 after switching to VectorChord; the current general policy disallows downgrades altogether. Do not change PostgreSQL major versions by pointing a different image at the same data directory. A shared/custom database needs its own documented migration procedure.
+:::
+
+For a separate database, consult [Pre-existing Postgres](https://docs.immich.app/administration/postgres-standalone/); the path depends on extension and database privileges. This guide deliberately does not fabricate a one-command SQL migration for every distribution.
+
+## v1, v2 and v3 differences
+
+| Boundary | What to do |
+|---|---|
+| Old v1 → v1.137.0 or later | Start successfully at an intermediate release from v1.132.0–v1.136.0 first; official Errors recommends v1.132.3 |
+| Source v1.131.0 or older | Avoid v1.136.0 as the intermediate because of a documented blocking bug |
+| Pre-v2.5 database backups | Use version-selected restore instructions; current UI recovery was changed in v2.5.0 |
+| v2 → v3 database | pgvecto.rs support is removed, including forced `DB_VECTOR_EXTENSION=pgvecto.rs` |
+| v2 → v3 amd64 ML | The guest/container CPU needs x86-64-v2 or newer |
+| v3 custom configuration | Review removed ML variables, OAuth validation and changed API responses/endpoints if your deployment uses them |
+
+The intermediate-version rule is necessary historical guidance, not a promise that every other release between an ancient install and v3 can be skipped. Follow intervening notes. [Errors](https://docs.immich.app/errors/), [v3 migration](https://immich.app/blog/v3-migration), [backup compatibility](https://docs.immich.app/administration/backup-and-restore/)
+
+## If this does not work
+
+| Observation | Next check | Safe response |
+|---|---|---|
+| Pull fails | Exact image tag and registry response; storage capacity | Fix retrieval; do not select RC to bypass a typo |
+| Server restarts during migration | Earliest database/server error and memory pressure | Preserve logs; distinguish a slow reindex from repeated process exits |
+| `Invalid upgrade path` | Actual old version and intermediate startup history | Apply official v1.132.3 guidance if that historical condition matches |
+| v3 rejects pgvecto.rs | Database image and explicit extension setting | Recover the pre-migration state as needed, then complete the documented transition |
+| ML fails after v3 | CPU exposed to VM/container and ML logs | Resolve v3 CPU/backend compatibility; do not mix unsupported old ML and new server versions |
+| Inconsistent media location / missing marker | Host mounts versus container destination | Correct mapping according to [Errors](https://docs.immich.app/errors/); do not move host files merely to silence the message |
+| Web works, phone fails | Mobile version, server URL and connection path | Apply matching client policy and test the same URL from the phone |
+| Thumbnails fail after update | Original accessibility and processing jobs | Follow [image troubleshooting](/troubleshooting/immich-error-loading-image) |
+
+If recovery is required, use the pre-update database, its matching software/configuration and corresponding media in the documented [restore workflow](/backup/immich-backup). Reverting the image tag alone is not a supported downgrade. Keep the failed instance's evidence until recovery has been verified.
+
+## Platform differences and real-world evidence
+
+On Synology, use the existing Container Manager project's update/rebuild controls with preserved paths and backups; inspect the current cleanup dialog before any operation that might remove volumes. Docker-in-LXC and community-native LXC installations have different ownership and packaging. Unraid/TrueNAS apps may own their database upgrade lifecycle. These differences prevent a universal copy-and-paste Compose migration.
+
+[Discussion #30621](https://github.com/immich-app/immich/discussions/30621) records one CachyOS/Compose/PostgreSQL 14 installation with 24,851 assets moving from v1.129.x through multiple checkpoints to v3. Its long sequence is a community-tested case, not an official requirement to visit every listed version. It supports recording and validating intermediate checkpoints.
+
+[Discussion #25771](https://github.com/immich-app/immich/discussions/25771) describes a community Synology updater. A v2.5.2 user reported a shell error, and no confirmed repair was established in this research. This guide does not make that helper part of the update path.
+
+## FAQ
+
+### Why were the old PostgreSQL health-check lines removed?
+
+The transition image incorporates those checks and additional tuning. Compare the complete official diff rather than reintroducing every removed line. [Official VectorChord FAQ](https://docs.immich.app/install/upgrading/)
+
+### Do I still need pgvecto.rs installed after the transition?
+
+It is needed for migration or restoring a backup that used it. The official FAQ describes an optional leaner image after a successful transition; keeping a recovery-compatible image available matters if you retain older dumps. [Official VectorChord FAQ](https://docs.immich.app/install/upgrading/)
+
+### Should I use SSD or HDD database tuning?
+
+The setting adjusts performance characteristics; it is not a different backup format. Use the setting matching the actual database storage, and prefer local SSD where available. Neither setting makes a network-share database supported. [Official VectorChord FAQ](https://docs.immich.app/install/upgrading/)
 
 ## Sources
 
-- [Upgrading](https://docs.immich.app/install/upgrading/)
-- [Errors](https://docs.immich.app/errors/)
-- [GitHub Releases](https://github.com/immich-app/immich/releases)
-- [Discussion #25771](https://github.com/immich-app/immich/discussions/25771)
+- [Upgrading](https://docs.immich.app/install/upgrading/) — Official Immich update commands, compatibility and VectorChord FAQ.
+- [Releases](https://github.com/immich-app/immich/releases) — Official GitHub releases; stable/prerelease metadata.
+- [Docker Compose](https://docs.immich.app/install/docker-compose/) — Official Immich release-file baseline.
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official Immich recovery prerequisites.
+- [Errors](https://docs.immich.app/errors/) — Official Immich historical upgrade/path errors.
+- [Migrating to v3](https://immich.app/blog/v3-migration) — Official Immich breaking changes.
+- [Pre-existing Postgres](https://docs.immich.app/administration/postgres-standalone/) — Official Immich custom-database boundary.
+- [System Integrity](https://docs.immich.app/administration/system-integrity/) — Official Immich verification.
+- [Compose config](https://docs.docker.com/reference/cli/docker/compose/config/) — Official Docker command reference.
+- [Compose ps](https://docs.docker.com/reference/cli/docker/compose/ps/) — Official Docker command reference.
+- [Compose logs](https://docs.docker.com/reference/cli/docker/compose/logs/) — Official Docker command reference.
+- [Old-version upgrade case, #30621](https://github.com/immich-app/immich/discussions/30621) — GitHub community guide; one documented environment.
+- [Synology updater, #25771](https://github.com/immich-app/immich/discussions/25771) — GitHub community discussion; unresolved script failure.

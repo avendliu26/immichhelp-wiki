@@ -1,0 +1,14 @@
+{
+  "name": "Immich Help",
+  "short_name": "Immich Help",
+  "description": "Independent help guides for Immich setup, storage, backups, and troubleshooting.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#6657d9",
+  "background_color": "#ffffff",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

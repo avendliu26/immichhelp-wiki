@@ -16,3 +16,6 @@
 .card-meta { display:block; color:var(--muted); font-size:12px; margin-top:14px; }
 .article-related { margin-top: 48px; padding-top: 8px; }
 .article-related h2 { font-size: 24px; margin-bottom: 12px; }
+.install-entry { display:grid; gap:12px; }
+.install-entry h2 { margin:0; }
+.install-entry p { max-width:680px; }

@@ -1,0 +1,98 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+[Feature] iOS app stops uploading photos when app is closed (no reliable background sync)
+#27250
+sofiafernandezmoreno
+started this conversation in
+Feature Request
+[Feature] iOS app stops uploading photos when app is closed (no reliable background sync)
+#27250
+sofiafernandezmoreno
+Mar 25, 2026
+·
+2 comments
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+sofiafernandezmoreno
+Mar 25, 2026
+I have searched the existing feature requests, both open and closed, to make sure this is not a duplicate request.
+Yes
+The feature
+On iOS, the Immich app stops uploading photos as soon as the app is closed or sent to the background. Upload only resumes when the app is reopened manually.
+This makes automatic backup unreliable compared to other photo backup apps.
+To Reproduce
+Steps to reproduce the behavior:
+Open the Immich app on iPhone
+Enable photo backup
+Take several new photos
+send it to background
+Wait some time
+Expected behavior
+Photos should continue uploading in the background, or at least resume automatically without requiring the user to reopen the app.
+Actual behavior
+Uploads stop completely when the app is closed. They only resume when reopening the app.
+Environment (please complete the following information):
+Device: iPhone (model: [e.g. iPhone 13])
+iOS version: [e.g. iOS 17.x]
+Immich app version: [e.g. 1.xx.x]
+Server version: [e.g. 1.xx.x]
+Installation method: [Docker / other]
+Additional context
+Background App Refresh is enabled
+Low Power Mode is disabled
+Full photo access is granted
+Issue persists even under optimal conditions
+This appears to be related to iOS background execution limitations, but other apps (e.g., Google Photos) seem to handle this more reliably.
+It would be helpful to clarify whether this is a limitation of iOS or if improvements/workarounds are planned.
+Platform
+Server
+Web
+Mobile
+You must be logged in to vote
+All reactions
+Replies:
+2 comments
+This comment was marked as duplicate.
+Sign in to view
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jscodin
+Jul 8, 2026
+I have the same issue, have the same phone (iPhone 13 mini) I'm on the newest update on both IOS and the docker container via unraid. However for me it doesn't continue to upload when I reopen the app, I have to toggle the backup on and off for it to start uploading again
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🆕
+Feature Request
+Labels
+None yet
+3 participants

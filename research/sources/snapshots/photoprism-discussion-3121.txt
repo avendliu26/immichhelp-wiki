@@ -1,0 +1,504 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+photoprism
+/
+photoprism
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+2.3k
+Star
+40.2k
+Using Docker mapped volumes to allow seamless migrations, backups of Photoprism,
+#3121
+nodecentral
+started this conversation in
+General
+Using Docker mapped volumes to allow seamless migrations, backups of Photoprism,
+#3121
+nodecentral
+Jan 17, 2023
+·
+8 comments
+·
+6 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+1. What is not working as documented?
+The issue is perhaps not specific to what’s not working as documented, as it does not seem to be specifically called out, but as i can’t get what I’m trying to do to work, this post is more to confirm if my approach is even possible.
+My goal : To be able to map all key Photoprism volumes to locally mapped directories to allow for seamless migrations of the anpp and also to back up of my entire Photoprism instance. Previous attempts just to update the mapping from one local folder to another resulted in Photoprism starting up and not seeing any of the previous indexing / face mapping that I’d done before.. (I’ve lost hours of work in the process)
+2. How can we reproduce it?
+Deleted the active containers, and tried to move from this local mapping..
+volumes:
+      - /share/Container/photoprism/import:/photoprism/import
+      - /share/Container/photoprism/storage:/photoprism/storage
+      - /share/Container/photoprism/backup:/photoprism/backup
+      - /share/Multimedia/Pictures:/photoprism/originals
+To
+volumes:
+      - /share/VM/photoprism/import:/photoprism/import
+      - /share/VM/photoprism/storage:/photoprism/storage
+      - /share/VM/photoprism/backup:/photoprism/backup
+      - /share/Multimedia/Pictures:/photoprism/originals
+But when i loaded the updated docker_compose.yml it started from scratch again ..
+3. What behavior do you expect?
+I expected to be able to use my mapped folders as my backup and migration facility without the need to re-do, re-index all the data again
+4. What could be the cause of your problem?
+I can only assume something that’s needed to achieve this is not stored / mapped to one of the local folders ? Maybe config, or cache ?
+5. Can you provide us with example files for testing, error logs, or screenshots?
+My full docker_compose is as follows..
+version: '3.5'
+# https://docs.photoprism.app/getting-started/config-options/
+services:
+  photoprism:
+    image: photoprism/photoprism:latest
+    depends_on:
+      - mariadb
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ports:
+      - "2342:2342" # HTTP port (host:container)
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_ORIGINALS_LIMIT: 5000
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"
+      PHOTOPRISM_LOG_LEVEL: "info"
+      PHOTOPRISM_PUBLIC: "false"  
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_EXPERIMENTAL: "false"               # enables experimental features
+      PHOTOPRISM_DISABLE_CHOWN: "false"              # disables storage permission updates on startup
+      PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables settings UI and API
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
+      PHOTOPRISM_DISABLE_FACES: "false"              # disables facial recognition
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification
+      PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW files
+      PHOTOPRISM_RAW_PRESETS: "false"
+      PHOTOPRISM_JPEG_QUALITY: 85    
+      PHOTOPRISM_DETECT_NSFW: "false"
+      PHOTOPRISM_UPLOAD_NSFW: "true" 
+      PHOTOPRISM_DATABASE_DRIVER: "mysql" 
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL dB server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB or MySQL dB schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL dB user name
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL dB user password
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
+      PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
+      PHOTOPRISM_BACKUP_PATH: "/photoprism/backup"
+   
+    working_dir: "/photoprism" # do not change or remove
+    volumes:
+      - /share/Container/photoprism/import:/photoprism/import
+      #- /share/Container/photoprism/export:/photoprism/export
+      - /share/Container/photoprism/storage:/photoprism/storage
+      - /share/Container/photoprism/backup:/photoprism/backup
+      #- /share/Container/photoprism/config:/photoprism/config
+      #- /share/Container/photoprism/cache:/photoprism/cache
+      - /share/Multimedia/Pictures:/photoprism/originals
+      
+  mariadb:
+    restart: unless-stopped
+    image: mariadb:10.8
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    volumes:
+      - "/share/Container/photoprism/database:/var/lib/mysql" # DO NOT REMOVE
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "insecure"
+      MARIADB_ROOT_PASSWORD: "insecure"
+6. Which software versions do you use?
+Details in docker_compose above..
+All browsers.
+7. On what kind of device is PhotoPrism installed?
+QNAP NAS TD453D , 4 Core, 16Gb Memory
+8. Do you use a Reverse Proxy, Firewall, VPN, or CDN?
+No.
+You must be logged in to vote
+All reactions
+Replies:
+8 comments
+·
+6 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+graciousgrey
+Jan 17, 2023
+Maintainer
+Please note that GitHub Issues is not a support forum :)
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+graciousgrey
+Jan 17, 2023
+Maintainer
+Have you read our backup guide already?
+https://docs.photoprism.app/user-guide/backups/
+https://docs.photoprism.app/user-guide/backups/restore/
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+Author
+Hi
+@graciousgrey
+, many thanks for putting this in the right place..
+I have looked at those links, although it was not the easiest to follow, and as the vast majority of my other dockers based apps allowed me to just backup/move the mapped volumes I was hoping it would be possible with Photoprism..
+With the above in mind, are you able to confirm that it’s not possible to do what I am attempting above ? (As it would greatly simplify the whole migration and back up process - if I can get it to work :-). - At the moment, it feels like something required is missing from the mapped volumes )
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+graciousgrey
+Jan 17, 2023
+Maintainer
+In general changing the volumes should work.
+Did you run
+docker-compose stop
+before editing the .yml file and moving the files and
+docker-compose up
+afterwards?
+Are you sure that there are no
+permission issues
+with your new volumes?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+Author
+Hi, yep, i did ensure it was stopped, and looking at the local mapped folders involved, they all seem to have the same owner, group and permissions ? Which is weird - any other ideas ?
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+graciousgrey
+Jan 17, 2023
+Maintainer
+The only thing you did was stopping the container, editing the volumes, moving the files and starting the container again?
+Or did you change something related to the database or removed files from the storage folder?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+Author
+Yes, correct, as far as i can recall it was a simple pick and shift, i don’t think i did anything else….
+Just to confirm, are the following 3 location/mappings, all i need to focus on if i want to move (or backup) my docker instance and preserve everything ? There are no other aspects like in the config or cache that are required,,
+Photoprism
+volumes:
+      - /share/Container/photoprism/storage:/photoprism/storage
+      - /share/Multimedia/Pictures:/photoprism/originals
+MariadB
+volumes:
+      - "/share/Container/photoprism/database:/var/lib/mysql"
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+Author
+Could the issue be to do with how the storage folder is used when it’s not defined in the env (
+https://photoprism.app/kb/config-options
+)?
+Would it be better to define all paths as specific environment variables and then do the volume mapping ? Something like this…
+PHOTOPRISM_BACKUP_PATH: "/photoprism/backup"
+      PHOTOPRISM_CACHE_PATH: "/photoprism/cache"
+      PHOTOPRISM_CONFIG_PATH: "/photoprism/config"
+      PHOTOPRISM_ASSETS_PATH: "/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
+      PHOTOPRISM_IMPORT_PATH: "/photoprism/import"
+      PHOTOPRISM_EXPORT_PATH: "/photoprism/import"
+      PHOTOPRISM_SIDECAR_PATH: "/photoprism/sidecar"
+      PHOTOPRISM_ORIGINALS_PATH: "/photoprism/originals"
+   
+    working_dir: "/photoprism" # do not change or remove
+    volumes:
+      - /share/Container/photoprism/import:/photoprism/import
+      - /share/Container/photoprism/export:/photoprism/export
+      - /share/Container/photoprism/storage:/photoprism/storage
+      - /share/Container/photoprism/config:/photoprism/config
+      - /share/Container/photoprism/sidecar:/photoprism/sidecar
+      - /share/Container/photoprism/backup:/photoprism/backup
+      - /share/Container/photoprism/assets:/photoprism/assets
+      - /share/Container/photoprism/cache:/photoprism/cache
+      - /share/Multimedia/Pictures:/photoprism/originals
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 17, 2023
+Author
+I’ve just noticed that Photoprism changes the owner and group of the Database folder when you have it as a mapped volume.
+Here are the folders owners / groups assigned when I started…
+[/share/Container/photoprism] # ls -la
+total 40
+drwxrwxrwx 10 admin administrators 4096 2023-01-17 22:07 ./
+drwxrwxrwx 10 admin administrators 4096 2023-01-17 11:26 ../
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:50 assets/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 11:08 backup/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:50 cache/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:50 config/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 22:07 database/
+drwxrwxrwx  2 admin administrators 4096 2022-07-25 18:44 import/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:39 sidecar/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:57 storage/
+And here are the results after the container has been created…
+[/share/Container/photoprism] # ls -la
+total 40
+drwxrwxrwx 10 admin administrators 4096 2023-01-17 22:07 ./
+drwxrwxrwx 10 admin administrators 4096 2023-01-17 11:26 ../
+drwxrwxrwx  4 admin administrators 4096 2023-01-17 22:08 assets/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 22:08 backup/
+drwxrwxrwx  4 admin administrators 4096 2023-01-17 22:08 cache/
+drwxrwxrwx  3 admin administrators 4096 2023-01-17 22:08 config/
+drwxrwxrwx  6   999            999 4096 2023-01-17 22:08 database/
+drwxrwxrwx  2 admin administrators 4096 2022-07-25 18:44 import/
+drwxrwxrwx  2 admin administrators 4096 2023-01-17 21:39 sidecar/
+drwxrwxrwx  4 admin administrators 4096 2023-01-17 22:08 storage/
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 18, 2023
+Author
+UPDATE - It looks like some progress has been made; I’ve been able to delete the container and create a new one, using the same mapped volumes/locations, and it looks like everything previously there, is visible again.
+But if i copy the mapped folders to a new location, and then update the docker_compose to point there (
+share/Container/
+to
+share/home/
+) it does not work, even though it’s all the same content (just in a different location and new mapping)
+Log of Photoprism is as follows..
+[/share/Container/photoprism] # docker logs -f pprism_photoprism_1
+started 221118-jammy as root (amd64-prod)
+Problems? Our Troubleshooting Checklists help you quickly diagnose and solve them:
+https://docs.photoprism.app/getting-started/troubleshooting/
+file umask....: "0002" (u=rwx,g=rwx,o=rx)
+home directory: /photoprism
+assets path...: /opt/photoprism/assets
+storage path..: /photoprism/storage
+config path...: /photoprism/config
+cache path....: /photoprism/cache
+backup path...: /photoprism/backup
+import path...: /photoprism/import
+originals path: /photoprism/originals
+running as uid 0
+/opt/photoprism/bin/photoprism start
+time="2023-01-18T00:08:27Z" level=error msg="dial tcp: lookup mariadb on 127.0.0.11:53: no such host"
+Log from the associated mariadb is as follows
+[/share/Container/photoprism] # docker logs -f pprism_mariadb_1
+2023-01-18 00:06:57+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.8.6+maria~ubu2204 started.
+2023-01-18 00:07:01+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2023-01-18 00:07:01+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.8.6+maria~ubu2204 started.
+2023-01-18 00:07:02+00:00 [Note] [Entrypoint]: Initializing database files
+2023-01-18  0:07:03 0 [Warning] mariadbd: io_uring_queue_init() failed with ENOMEM: try larger memory locked limit, ulimit -l, or https://mariadb.com/kb/en/systemd/#configuring-limitmemlock under systemd (262144 bytes required)
+2023-01-18  0:07:03 0 [Warning] InnoDB: liburing disabled: falling back to innodb_use_native_aio=OFF
+2023-01-18  0:07:05 0 [ERROR] InnoDB: preallocating 100663296 bytes for file ./ib_logfile101 failed with error 28
+2023-01-18  0:07:05 0 [ERROR] InnoDB: Cannot set log file ./ib_logfile101 size to 96.000MiB
+2023-01-18  0:07:05 0 [ERROR] InnoDB: Database creation was aborted with error Generic error. You may need to delete the ibdata1 file before trying to start up again.
+2023-01-18  0:07:05 0 [ERROR] Plugin 'InnoDB' init function returned error.
+2023-01-18  0:07:05 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
+2023-01-18  0:07:05 0 [ERROR] Unknown/unsupported storage engine: InnoDB
+2023-01-18  0:07:05 0 [ERROR] Aborting
+
+Installation of system tables failed!  Examine the logs in
+/var/lib/mysql/ for more information.
+
+The problem could be conflicting information in an external
+my.cnf files. You can ignore these by doing:
+
+    shell> /usr/bin/mariadb-install-db --defaults-file=~/.my.cnf
+
+You can also try to start the mysqld daemon with:
+
+    shell> /usr/sbin/mariadbd --skip-grant-tables --general-log &
+
+and use the command line tool /usr/bin/mariadb
+to connect to the mysql database and look at the grant tables:
+
+    shell> /usr/bin/mysql -u root mysql
+    mysql> show tables;
+
+Try 'mysqld --help' if you have problems with paths.  Using
+--general-log gives you a log in /var/lib/mysql/ that may be helpful.
+
+The latest information about mysql_install_db is available at
+https://mariadb.com/kb/en/installing-system-tables-mysql_install_db
+You can find the latest source at https://downloads.mariadb.org and
+the maria-discuss email list at https://launchpad.net/~maria-discuss
+
+Please check all of the above before submitting a bug report
+at https://mariadb.org/jira
+Note: If i update the files/folders and mapping back to the original location
+share/Container
+it works again !???
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+nodecentral
+Jan 18, 2023
+Author
+I carried out a couple more migration tests today, and so far they’ve all been successfull, which is good - yesterday’s issue may have been unique..
+If anyone else is able to help test the backing up and/or migrating of their Docker instance, by just using the mapped volumes - it would be very helpful
+Photoprism env and volumes =
+PHOTOPRISM_BACKUP_PATH: "/photoprism/backup"
+      PHOTOPRISM_CACHE_PATH: "/photoprism/cache"
+      PHOTOPRISM_CONFIG_PATH: "/photoprism/config"
+      #PHOTOPRISM_ASSETS_PATH: "/opt/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
+      PHOTOPRISM_IMPORT_PATH: "/photoprism/import"
+      #PHOTOPRISM_EXPORT_PATH: "/photoprism/export"
+      PHOTOPRISM_SIDECAR_PATH: "/photoprism/sidecar"
+      PHOTOPRISM_ORIGINALS_PATH: "/photoprism/originals"
+   
+    working_dir: "/photoprism" # do not change or remove
+    volumes:
+      - /share/Container/photoprism/import:/photoprism/import
+      #- /share/Container/photoprism/export:/photoprism/export
+      - /share/Container/photoprism/storage:/photoprism/storage
+      - /share/Container/photoprism/config:/photoprism/config
+      - /share/Container/photoprism/sidecar:/photoprism/sidecar
+      - /share/Container/photoprism/backup:/photoprism/backup
+      #- /share/Container/photoprism/assets:/opt/photoprism/assets
+      - /share/Container/photoprism/cache:/photoprism/cache
+      - /share/Multimedia/Pictures:/photoprism/originals
+MariadB volume =
+volumes:
+      - "/share/Container/photoprism/database:/var/lib/mysql" # DO NOT REMOVE
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+uxDaniel
+Aug 19, 2023
+level=error msg="dial tcp: lookup mariadb on 127.0.0.11:53: no such host"
+@nodecentral
+where you able to fix this issue? I gave up trying to keep my database and I'm starting from scratch (or so I think).
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+lastzero
+Aug 19, 2023
+Maintainer
+https://docs.photoprism.app/getting-started/faq/#ive-configured-an-external-database-but-cant-connect
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+lastzero
+Aug 19, 2023
+Maintainer
+Also see the Troubleshooting Checklist we provide:
+https://docs.photoprism.app/getting-started/troubleshooting/mariadb/#cannot-connect
+All reactions
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+💬
+General
+Labels
+None yet
+4 participants
+Converted from issue
+This discussion was converted from issue
+#3120
+on January 17, 2023 14:41.

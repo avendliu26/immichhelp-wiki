@@ -1,0 +1,118 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+Looking for advice: Migrating an existing Immich install to the Proxmox Community Script LXC
+#29317
+xchen326
+started this conversation in
+General
+Looking for advice: Migrating an existing Immich install to the Proxmox Community Script LXC
+#29317
+xchen326
+Jun 25, 2026
+·
+1 comments
+·
+3 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+xchen326
+Jun 25, 2026
+Hi All. First of all, I want to thank the Immich developers. I really appreciate everything you all have done and the hard work that goes on behind the scenes to continuously improve the project. Kudos to everyone involved!
+I’m in a bit of a dilemma right now. I currently have a production Immich instance running in a Proxmox LXC that was deployed using the Proxmox Docker Community Script (
+https://community-scripts.org/scripts/docker
+). At the time I set it up, the Docker installation was the recommended and supported method.
+I have Intel iGPU (N305) passthrough configured, bind mounts set up, and everything is working exactly as expected. My wife and I both use it as our primary photo library. Unfortunately, I don’t have any backups at the moment (I know… not ideal), and I don’t have another NAS to do a backup.
+Ever since the Proxmox Community Scripts project released the dedicated Immich LXC, I’ve been tempted to switch over. Part of me says, “If it isn’t broken, don’t fix it,” but the tinkerer devil in me keeps saying, “Come on… do it.”
+So I’d like to ask the community:
+Is there any real benefit to migrating from my current Docker-in-LXC setup to the dedicated Immich LXC?
+If you were in my situation, would you make the switch?
+If I do decide to migrate, what’s the recommended approach? Which files and databases should I migrate so everything carries over correctly?
+My biggest concern is making the migration completely transparent for my wife. Ideally, I’d like everything to remain exactly the same—same account, same password, same albums, same people, same memories, etc.—so she won’t even notice that anything changed.
+I’d really appreciate hearing from anyone who’s made this migration. Thanks!
+You must be logged in to vote
+All reactions
+Replies:
+1 comment
+·
+3 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+Jun 25, 2026
+Maintainer
+At the time I set it up, the Docker installation was the recommended and supported method.
+It still is, it's also the
+only
+method that is recommended and supported.
+You must be logged in to vote
+All reactions
+3 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+xchen326
+Jun 26, 2026
+Author
+Understood, thank you. It sounds like it's best to leave things as they are and save myself the trouble.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+kuchar91
+Sep 6, 2026
+Same as you. After reinstalling whole proxmox host i was wondering about migrating from lxc docker immich into lxc immich. Did you find some detailed guide?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+xchen326
+Sep 7, 2026
+Author
+nope, ended up not making any change. you can do it too, fight off the itch lol.
+All reactions
+😄
+1
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+💬
+General
+Labels
+None yet
+3 participants

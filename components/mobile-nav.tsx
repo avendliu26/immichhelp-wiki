@@ -1,0 +1,3 @@
+'use client';
+import { useState } from 'react'; import { Menu, X } from './icons'; import { navigation } from '@/src/config/navigation';
+export function MobileNav(){const [open,setOpen]=useState(false);return <><button className="header-action mobile-only" onClick={()=>setOpen(!open)} aria-label="Toggle navigation">{open?<X size={19}/>:<Menu size={19}/>}</button>{open&&<nav className="mobile-sidebar" aria-label="Mobile navigation">{navigation.map(group=><div className="sidebar-group" key={group.title}><div className="sidebar-title">{group.title}</div>{group.items.map(item=><a onClick={()=>setOpen(false)} className="sidebar-link" href={item.href} key={item.href}>{item.title}</a>)}</div>)}</nav>}</>}

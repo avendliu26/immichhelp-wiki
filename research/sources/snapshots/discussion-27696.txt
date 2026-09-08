@@ -1,0 +1,56 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+Installing on Proxmox using community script
+#27696
+MichiFr
+started this conversation in
+Show and tell
+Installing on Proxmox using community script
+#27696
+MichiFr
+Apr 11, 2026
+·
+0 comments
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+MichiFr
+Apr 11, 2026
+I've successfully installed Immich 2.7.3. as an LXC container on my Proxmox node using the ProxmoxVE community script, that does automatically install and configure all settings for the VM.
+I can access the WebIf and use the Android app to upload and organise photos.
+Next, I tried to set up some Storage Templates. However, the appropriate setting is available, at least the link to the documentation, but there is no switch to enable this feature nor setting up any template at all.
+What are the prerequisites for Storage Templates or better asked, which part of the installation was left out from the script? Anyone with a similar setup who can share his experience?
+You must be logged in to vote
+All reactions
+Replies:
+0 comments
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙌
+Show and tell
+Labels
+None yet
+1 participant

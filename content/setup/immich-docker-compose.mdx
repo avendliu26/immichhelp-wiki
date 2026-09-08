@@ -1,0 +1,48 @@
+---
+title: "Immich Docker Compose: The Recommended Install"
+description: "Set up Immich with the current Docker Compose files, correct storage paths, and version-aware checks."
+category: Install & Setup
+keywords: immich docker compose, docker compose install, immich setup
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+Docker Compose is Immich's recommended production deployment. Download the compose file and environment template from the current release, set UPLOAD_LOCATION and local DB_DATA_LOCATION, then run docker compose up -d.
+
+## Requirements
+
+Immich documents 6 GB RAM minimum and 8 GB recommended. Postgres should use local SSD storage and never a network share. Use docker compose; the legacy docker-compose command is deprecated.
+
+## Installation
+
+Download the files from the official Docker Compose guide, rename the environment template to .env, set a random alphanumeric DB_PASSWORD, and choose a timezone if needed.
+
+:::warning Keep the release files together
+The compose file on the repository's main branch may not match the latest release. Use the release download linked by the official guide.
+:::
+
+Start the stack with docker compose up -d, then open port 2283 and register the first user. The first registered user becomes the admin.
+
+## Storage and verification
+
+Keep DB_DATA_LOCATION on a filesystem that supports ownership and permissions. Confirm the four services are healthy, finish onboarding, and review the post-install backup guidance.
+
+## Platform notes
+
+The official Compose stack includes Redis and Postgres. An Unraid community template can have different prerequisites. Docker in Proxmox LXC is not recommended; a full VM is the supported boundary described by the requirements.
+
+:::danger Reset commands
+Never use docker compose down -v or delete the database directory as a routine troubleshooting step. Those actions can remove volumes and require a verified restore.
+:::
+
+## Sources
+
+- [Docker Compose](https://docs.immich.app/install/docker-compose/)
+- [Requirements](https://docs.immich.app/install/requirements/)
+- [Post installation](https://docs.immich.app/install/post-install/)
+- [Discussion #8843](https://github.com/immich-app/immich/discussions/8843)

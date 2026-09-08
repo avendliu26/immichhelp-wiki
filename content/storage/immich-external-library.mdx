@@ -1,0 +1,41 @@
+---
+title: "Immich External Library: Mounts, Scans, and Metadata"
+description: "Add an existing photo folder to Immich while understanding read-only mounts, rescans, ownership, and XMP limits."
+category: Backup & Storage
+keywords: immich external library, external library mount, xmp sidecar
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+An external library lets Immich scan files outside its internal library. Mount the same path into the server and worker containers, create the library as an administrator, and scan it. The path entered in Immich must be the path visible inside the container.
+
+## Read-only versus writable
+
+A read-only mount prevents Immich from deleting media or writing XMP sidecars. The library guide says metadata added to an external asset is stored inside Immich and can be lost if the asset moves or is rescanned as a new asset. The XMP guide and Issue #10538 document that read-only metadata writes can silently fail.
+
+:::warning Treat the open issue as unresolved
+Issue #10538 is an open v1.106.3 report. It contains user workarounds and conflicting observations. Do not promise that tags, dates, or locations will persist on a read-only external mount.
+:::
+
+## Scan checklist
+
+- Mount the path with forward slashes and avoid symlinks across mounts.
+- Confirm the path with docker exec and ls inside the server container.
+- Add the container path, not the host path, to the library.
+- Scan after external changes. A deleted file moves to trash on rescan and is removed after 30 days.
+
+## Network and ownership
+
+Automatic file watching is experimental and may not work on network drives. Use periodic refreshes for network storage. An external library belongs to one selected user.
+
+## Sources
+
+- [External Libraries](https://docs.immich.app/features/libraries/)
+- [External Library guide](https://docs.immich.app/guides/external-library/)
+- [XMP Sidecars](https://docs.immich.app/features/xmp-sidecars/)
+- [Issue #10538](https://github.com/immich-app/immich/issues/10538)

@@ -1,0 +1,48 @@
+---
+title: "Immich Error Loading Image: Trace the Cause Safely"
+description: "A source-backed path for missing originals, failed thumbnails, storage mounts, and version-specific Immich image errors."
+category: Troubleshooting
+keywords: immich error loading image, broken thumbnail, missing file, refresh thumbnails
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+“Error loading image” is a symptom, not one confirmed cause. Start with the System Integrity report and server logs. Check whether the original exists at the path Immich stores, then check whether the thumbnail job completed. Do not delete library files from the host.
+
+## Quick diagnosis
+
+1. Open the maintenance page and review missing files, untracked files, and checksum mismatches.
+2. Confirm the original and thumbnail paths are mounted inside the container.
+3. Check the Jobs page for thumbnail generation failures.
+4. Record the server version before comparing a GitHub report.
+
+## What real reports show
+
+Issue #26720 (v2.5.6, Debian 13.3/Raspberry) found database assets whose underlying upload files were missing. A later maintainer comment says write synchronization changes were merged, but that does not repair already missing files.
+
+Issue #23574 (v2.2.1, Ubuntu/Docker) includes ENOENT errors for thumbnail paths. Discussion #10570 (v1.106.4) reports improvement after refreshing thumbnails, but it is unanswered and historical.
+
+:::warning Version-specific evidence
+These reports span v1, v2, and v3-era releases. A community workaround is evidence about that environment, not a current universal fix.
+:::
+
+## Safe next step
+
+Use the integrity report and logs to classify the failure before changing storage. If the file is missing, restore the original from backup or treat the asset as a data-recovery case. If only generated thumbnails are missing, use the documented job controls and watch the logs.
+
+:::danger Do not remove files to make the error disappear
+Immich documentation warns that manually changing or removing files in internal library folders can create missing or untracked assets. Back up first and use the application or documented recovery flow.
+:::
+
+## Sources
+
+- [System Integrity](https://docs.immich.app/administration/system-integrity/)
+- [Jobs and Workers](https://docs.immich.app/administration/jobs-workers/)
+- [Issue #26720](https://github.com/immich-app/immich/issues/26720)
+- [Issue #23574](https://github.com/immich-app/immich/issues/23574)
+- [Discussion #10570](https://github.com/immich-app/immich/discussions/10570)

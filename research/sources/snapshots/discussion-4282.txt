@@ -1,0 +1,889 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+[Feature] Avoid resyncing if deleted manually
+#4282
+RebeliusGaming
+started this conversation in
+Feature Request
+[Feature] Avoid resyncing if deleted manually
+#4282
+RebeliusGaming
+Sep 29, 2023
+·
+39 comments
+·
+39 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+RebeliusGaming
+Sep 29, 2023
+The feature
+It would be great to avoid immich reuploading a photo that has been deleted in immich.
+Platform
+Server
+Web
+Mobile
+You must be logged in to vote
+All reactions
+👀
+16
+Replies:
+39 comments
+·
+39 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+arnelap
+Oct 17, 2024
+Yes, this would be nice!
+i understand deleting stuff is scary,... could be a setting with a big disclaimer?
+I would even go as far as deleting the image on all devices if it's deleted on the server. Mostly im just cleaning up blurry and failed pictures and then they just reappear!!!
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Sjustein
+Feb 9, 2025
+I just had this 'issue' happen to me as well. It would be great if immich could have a sort of blacklist of deleted photo's, so they will not be re-synced by the mobile app. I think the blacklist is currently in place (correct me if I'm wrong), where images that are in the trash, because immich doesn't care where the image is, if it exists somewhere, it will not re-upload the image. However, images in the trash are cleared after 30 days, so older images will still be re-uploaded.
+I think, the desired feature would be:
+When an image is deleted, it is added to a blacklist, in addition to moving the image to the trash.
+When an image is restored from the trash, it is removed from the blacklist again.
+If my assumption is correct, upping the deletion time from trash also solves the issue. I'll do some testing, but let me know whether I'm correct.
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Sjustein
+Feb 9, 2025
+Immich indeed re-uploads images that are permanently deleted from trash. I've mitigated the issue temporarily by upping the trash auto deletion time, but it's a workaround for sure.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jbcortes
+Mar 20, 2025
+This issue is what keeps me from using the mobile app on a regular basis. Given the amount of time that it took me to initially go through all my photos/videos on the server and remove duplicate and unwanted photos, it was really frustrating to then see that the mobile app re-uploaded all the files I had deleted.
+I've also seen this issue mentioned in:
+#8285
+#12051
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+verisgit
+Apr 27, 2026
+Also:
+#23897
+Possible solution proposed
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+StoricU
+Mar 21, 2025
+This would be very nice.
+Doing general housekeeping in the browser now just don't work, since the photos just pop back up 😅
+After what I understood when I asked about this on the dicscord, the feature are on the roadmap and should be implemented in the next few releases.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+tzhouML
+Mar 24, 2025
+My mouth honestly dropped when I saw how poorly this is handled in immich. An option to only sync photos beyond <custom_date> in the mobile apps would probably eliminate all my qualms surrounding this issue.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+lachsh
+Mar 24, 2025
+My approach along these lines has just been adding all photos before <custom_date> to an album on my phone that I exclude from immich, once I'm confident they've been uploaded – then I just need to make sure to only dedupe/tidy up photos that are already present in that album on my phone.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Tkd-Alex
+May 30, 2025
++1, I've built a custom env where the photos are synced with Immich from my Android and iPhone to a dedicated home-server. Then the photos are backupped trought "syncthing" to another driver and I've a mechanism that delete the photos on the Immich server uploaded more than x days ago (clear storage). Now I see the mobile app re-upload all the photos. So I'm now out of space
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Valenwe
+Aug 3, 2025
++1
+Because I use an external library on Read Only with my pictures inside, I usually move my phone pictures to my external folders. But then when I move my phone's medias to my external library, the phone's application re-backup my moved files (because it sees them as deleted assets) and create tons of duplicates.
+The solution to this would be to keep track of backup-ed medias and not backup them again, even if they do not appear in the server. Because we know we already sent the media once, no need to send it again.
+Another solution could be to backup only medias created after a given date, or the last backup date.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+geransmith
+Oct 3, 2025
+Adding a vote for this one.
+My wife was more than frustrated to find out that she spent hours deduplicating photos in the web UI, only to have them uploaded again by the app. There needs to be some way to make it so that photos don’t get automatically reuploaded.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+SP2FET
+Oct 11, 2025
+Same issue for me - spent 2 days of cleaning up the library just to figure out, that mobile app (android) reuploaded all of the deleted photos... Previously I've been using photoprism with photosync app and it handled such cases perfectly, syncing only new files.
+Is there any possibility to speed up any work on that particular feature?
+Thanks in advance
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+msebald
+Nov 2, 2025
+Same problem here for me/us.
+I am using FolderSync for Android until now to sync/backup files to my home server. There is an option to only transfer new/changed files to the destination and do not transfer deleted files (at the destination) from the smartphone again.
+For sure this needs to be implemented in a different way in Immich - by maybe keeping the hashs of deleted files and offer an option on the mobile clients (and also the web interface when uploading directly) to only upload files which were not deleted before.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+hodlemperor
+Nov 14, 2025
+I’m adding my specific case here since my issue (
+#23897
+) was closed as a duplicate — and after reading this thread, I fully agree that it belongs here.
+There is one important scenario that makes this problem even more severe:
+✔ When using an External Library (+ mobile backup enabled)
+If a photo exists both:
+on the phone (mobile backup), and
+in a read-only External Library
+Immich cannot remember that the user
+intentionally
+deleted the upload version after a merge.
+Once Trash expires, the mobile app sees the file as “missing” and re-uploads it again → creating a duplicate again → and the cycle repeats forever.
+✔ Merge duplicates does
+not
+fix this in practice
+Technically, the user can merge duplicates:
+keep the External Library asset
+delete the upload version
+…but after 30 days, the deleted-upload is gone, Immich forgets the hash, and the phone uploads the same file again.
+So even the merge workflow is broken unless Immich can permanently remember excluded hashes.
+✔ Realistic migration workflows make this unavoidable
+This is also not an edge case.
+Most users have:
+years or decades of photos remaining on their phone (even from 2006 or older),
+previous backup systems they don’t fully trust,
+overlapping content between phone and NAS/External Library while checking that everything was backed up correctly.
+It is not realistic to expect users to:
+wipe their phone before migrating, or
+sanitize their entire External Library so that it never overlaps with their mobile library.
+✔ The feature requested here (a permanent “deleted hash registry”) is exactly what solves it
+A server-side list of hashes that were intentionally deleted would:
+prevent mobile clients from re-uploading them
+make the merge workflow actually viable
+stop duplicate loops
+allow External Libraries + mobile backup to coexist without chaos
+Thanks — this FR is absolutely essential for users combining mobile backup with External Libraries.
+You must be logged in to vote
+All reactions
+👍
+11
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jazmit
+Dec 17, 2025
+The "deleted files hash registry" would fix many pain points for me using Immich, dealing with unorganized files being shared between and uploaded from multiple users.  Often we delete unwanted files only for them to be restored later and have to delete them again.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+brianpooe
+Dec 17, 2025
+Is this being worked on? wonder if its even a feature request or just a defect hey.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+kiwi-software-dev
+Dec 18, 2025
+Hi, i am also wondering if this is something that will come to immich's standard functionality anytime?
+I got nothing to add, just to say i got the same problem. Deleted duplicates come back after moving them to trash and cleaning that up.
+That's a pity for me :/
+Actually, instead of deleting filed, i am currently archiving them, since storage space is the least issue for me.
+Maybe it would help to - instead of deleting - be able to archive duplicates so they are removed from the timeline
+and
+not reuploaded?
+That would be the faster fix, at least for me.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+timberpile
+Jan 7, 2026
+I came to Immich from Synology Photos and love it!
+Except that...
+I spent hours and hours cleaning through old photos that were uploaded from my phone. Months later I realized that all that work was for naught :/
+I expected Immich to work like Synology Photos, which DOES remember which files were already uploaded but deleted.
+Having a blacklist for deleted file hashes would be a good solution to this problem.
+The existing feature "Sync remote deletions"  that deletes files on the phone when deleted on the server is NOT a solution to this problem. I want to keep these deleted photos on my phone, and have Immich be my curated photo collection.
+I hope this feature gets implemented in the future, as it would make Immich a lot better for me!
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+lrosm
+Jan 9, 2026
++1 on this, my wife was going mad about cleaning up and them reappearing. Seems like a simple fix?
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+sdmironov
+Mar 28, 2026
+TL;DR Use FolderSync.
+So, my situation is:
+2 phones: mine and wife's
+immich web where I manage the library
+wife doesn't want my actions in the web to affect the library on her phone
+Task:
+to upload all photos from multiple phones to immich
+to sort these photos in immich web (albums, removes, etc)
+to not sync this changes back
+Solution:
+rclone-server with webdav on the host where immich is hosted
+FolderSync android app on both phones that syncs all files from DCIM/Camera folder to webdav (one way, upload only)
+webdav folder is mounted inside immich container (
+-v /srv/immich/external:/mnt/external
+)
+immich is configured to use this folder (
+/mnt/external
+) as External Library
+Works like a charm.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+s-martin
+Apr 3, 2026
+It took me a while to understand why assets would reappear after some time (i.e. 30 days) in the duplicate utility.
+I think for most users (at least for me) it’s unclear that the duplicate utility works only in combination with syncing deletions to the mobile device (which is even experimental).
+I think the feature is desperately needed (I personally think this is a bug or unexpected behavior and not a missing feature).
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+D4Ci0
+Apr 3, 2026
+Use PhotoSync instead of the slugish built-in backup feature in the Immich app
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+s-martin
+Apr 3, 2026
+Yeah, looks like a possible mitigation. Nevertheless I would prefer a built-in solution as an external tool would have side effects. From what I see with PhotoSync I can't separate users.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+verisgit
+Apr 27, 2026
+Having the same problem. It's described accurately above from
+#23897
+. Like many, I've spent hours deduplicating and cleaning up photos only to waste my time as they all get reuploaded and come back the following day - meaning I cannot use the deduplicate feature or manage my photos in immich as my phone will just overwrite it.
+The phone app needs to give the user a way to stop this from happening, either by keeping track of and not uploading duplicates or via some kind of data cutoff that updates after each sync completes. Keeping a hash of every permanently deleted asset per user, and having the upload check consult that table before accepting a backup upload, seems likely the best way forward. A draft implementation exists at
+oleost#1
+.
+Until this is resolved, Immich's deduplication feature and web UI library management are effectively broken for anyone using mobile backup. It's exactly the same as having a plethora of unmanaged duplicates in iCloud or Google Photos.
+Happy to donate some $ to someone getting
+oleost#1
+or similar over the line.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+verisgit
+Apr 27, 2026
+Found a bit of a clunky workaround for the time being; it's tedious, but better than 30k photos and videos resurrecting themselves on every backup run.
+Immich iOS — Stop Deleted/Deduplicated Photos Re-syncing
+Problem
+The iOS client has no awareness of server-side deletions. Every sync cycle it re-uploads anything it thinks is missing — including photos you've already deleted or deduped within immich, constantly repopulating anything you've cleaned up on the server.
+Solution
+Use a manually managed excluded iOS album as a sync fence.
+Steps
+1. Let Immich fully sync your library first.
+Don't delete or deduplicate anything yet. Upload all photos from your phone.
+2. Create an album in iOS Photos called
+excluded
+.
+3. Select your entire library and add it to the album.
+iOS has no "select all" — workaround: scroll to the end of your library, tap
+Select
+, drag back to highlight a few photos, then with your other hand tap the
+clock icon
+to jump to the top. Everything in between gets selected. Add to
+excluded
+.
+4. In Immich → Backup Settings, add
+excluded
+to the excluded albums list.
+Previously synced photos won't re-upload. New photos aren't in the album yet, so they'll sync normally.
+Ongoing
+After every sync to Immich, you will need to figure out what new photos were added and then manually add them to
+excluded
+. This prevents them from being re-uploaded if you later edit or delete it server-side.
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+rogersia
+Apr 29, 2026
+The only workaround I have done so far is extend the trash folder auto delete to a stupid amount of time, but it completely eliminates the benefit of deleting and emptying trash
+You must be logged in to vote
+All reactions
+👍
+1
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+May 9, 2026
+@bo0tzz
+mentioned needing a formal PR to get this trivial task knocked out quickly.  Is there anyone in this thread that has the prerequisite skills to do so?  I’m a user, not a coder, and have not used GitHub past the forum-style discussions.  I tried poking around to try to figure out how to make a PR happen because the current functionality is no bueno, but couldn’t get it done.  If someone can point me to “GitHub PRs for Dummies” or I can assist somehow with idiot-level grunt work, I’m happy to help however I can to get this fixed.  We’re at 2.5+ years since the OP flagged this as an issue, so I’m assuming we are not requesting a  fix correctly or in the right forum.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+GovSat1
+Jun 10, 2026
++1 Very annoying - and it is not obvious this is the case until you look through older photos or catch iOS app re-uploading older pics
+You must be logged in to vote
+All reactions
+👍
+2
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+aptura-scott
+Jun 16, 2026
+Is this on any feature plan for Immich?
+You must be logged in to vote
+All reactions
+👍
+2
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+burninghead13
+Jul 1, 2026
+My iOS app is just reuploading all deleted duplicates...
+The server should tell the app that this files have been deleted.
+Just like it works with iCloud Photos. I delete it on the Mac, the Mac tells the server and the server tells the other clients that these files have been deleted
+You must be logged in to vote
+All reactions
+👍
+2
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+ChrisPrefect
+Jul 14, 2026
+This is fixed. At least on my server. Claude code fixed it with one prompt.
+As with so many bugs in this app that the developers will not fix, and with vibe-coded PRs being declined, there is a simple solution that solves all problems with Immich: Just tell Claude Code to fork the repository and implement all the fixes and features you want directly on your own server.
+It works wonderfully. I now have my own fork of Immich with all the features I want, and I can simply ask for new features, which Claude implements immediately. I have made the app so much better without having to wait for the developers to fix bugs.
+I do not think the old model of having a centrally managed repository with pull requests will survive much longer.
+You must be logged in to vote
+All reactions
+👍
+2
+😄
+1
+😕
+2
+10 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+aptura-scott
+Jul 14, 2026
+Someone else already did back in March
+oleost#1
+All reactions
+👍
+2
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+GovSat1
+Jul 14, 2026
+I don't believe they accept LLM PR's which was the case with that one. There are some architectural decisions involved but they should be trivial. This just needs to get some traction.
+@alextran1502
+@bo0tzz
+any feedback here?
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+oleost
+Jul 14, 2026
+Someone else already did back in March
+oleost#1
+Did you actually try this one and it worked decent?
+Or did you use another prompt /solution?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+s-martin
+Jul 14, 2026
+Someone else already did back in March
+oleost#1
+It’s not a PR here, so immich maintainers don’t look at it
+All reactions
+😄
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+FiniteUI
+Jul 14, 2026
+Yes, that PR is not in the actual immich repository, and the PR states that it hasn't been tested
+at all
+. So that's not going anywhere
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+Jul 14, 2026
+It is astonishing that we are coming up on the three-year anniversary of this request and it hasn't been solved.  If there was still a bounty platform, I'd throw $50 at a merged solution just to solve for the annoyance.  The only reason I can think of that it hasn't been fixed is that it was originally opened as a [Feature] and not a "holy sh!t, this is a huge problem affecting usability" bug.
+My workaround has been to set the Trash "number of days to keep" setting in Administration to 1,825 days (5 years) and continue to hope that someone smarter than me can actually do the thing on GitHub that gets this baked into the code once and for all.  Maybe in the next 5 years I need to learn how to code.  :)
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+theadin
+Jul 14, 2026
+okay but all those deleted images and videos will still take up space on the server
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+Jul 14, 2026
+They do.  It absolutely sucks, hence why I refuse to call it a "fix" and only a "workaround" for code that should've been fixed years ago.  Not only that, but if you want to legitimately restore an image, you have to dig through a pile of correctly deleted images.  I have the storage space to do this for now but was planning on uploading a ton of archived photos (some of which will inevitably not be used and end up in trash) and I expect it to get unwieldy soon.
+Net-net - it's the only workaround I've found so far that doesn't require jumping through extra hoops (exclusion folders, copying elsewhere and then importing to Immich, etc).
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+laforcem
+Jul 14, 2026
+I'm rather surprised that no one appears to have simply asked the maintainers if this is a work in progress. Turns out it is:
+#28280
+Clearly, this is a bit more complex from a design perspective than may meet the eye. Encouraging to see it being actively worked on!
+You must be logged in to vote
+All reactions
+👍
+3
+🎉
+2
+6 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+msebald
+Jul 15, 2026
+Yes, it is not that complicated. But it should be possible to force upload a picture. And also, if a picture moves back from trash and not getting wiped, it should get purged out of the deleted files hash registry as well.
+All reactions
+👍
+2
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+aptura-scott
+Jul 17, 2026
+Yeah, it's super simple, we just dont want every subsequent phone sync removing everything we've done in immich.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Jul 17, 2026
+Maintainer
+Anything with destructive nature should be explicit and taken with care and with human supervision. So that is why we are not wanting to hide it via a "hash registry" solution to silently not updating things again and will cause so much confusion to the users why some assets are not uploading, the counts are then mismatching.
+The solution we are going for is very explicit.
+You delete assets on the web
+When you open the mobile app, it sees that you are deleting these assets and they are still presented on your local device, it would ask you if you also want to delete these assets on your local device.
+The goal is to have a pristine and explicit communication about the deletion process.
+The complexity is how to propagate to all the data flow path that the app has, and how to make it work with all use cases.
+Those are my simple answers to the problem we are trying to solve. If you want to read more about the LLM counter arguments of why it is not so simple, feel free to read more below.
+Click to expand!
+Why "just add a deleted-hash registry" is 10% of the feature
+The registry table itself is trivial — nobody disputes that. Every hard part of this feature lives in the questions that sentence doesn't answer, and they're the same questions
+#28280
+is grappling with.
+"Deleted" is not one event. Assets go through trash → permanent deletion, and permanent deletion happens from at least five code paths: explicit "delete forever," trash emptying, the trash retention job, library offline-file cleanup, and account deletion — plus utilities like the duplicate-dedupe flow that delete assets as a side effect of keeping another copy. Which of these record intent-to-never-see-again? If the duplicate utility tombstones the hash of the copy it discarded, and that byte-identical file exists on your second phone, backup silently skips it forever. If external-library cleanup tombstones, re-adding a file to a watched folder stops working. Each path needs an explicit decision, and each wrong default is a data-loss bug report. The registry also has to be written at trash-empty time, not delete time, and unwound on restore — across all of those paths, atomically with bulk jobs.
+The failure mode is silent data loss in a backup product. Hash-matching is a guess about intent. The moment the guess is wrong — user deleted accidentally, trash auto-emptied after 30 days, and they still have the photo on their phone believing it's backed up — the system silently refuses to back it up, indefinitely. "But there's force upload" only helps if the user knows something was skipped. So now you need: a rejected-uploads surface on mobile and web, per-asset review, badges/counts, and a way to clear registry entries. That is precisely the "approve deletions" UX in
+feat(mobile): review remote-trashed assets before syncing deletions
+#28280
+that this thread is calling over-engineered. The complexity wasn't invented by the maintainers; it's inherent, and it reappears the moment you make the simple version safe.
+It's an API-contract change with a client fleet in the wild. Upload dedupe today is a two-state contract: created or duplicate (asset-media.service.ts returns AssetMediaStatus.DUPLICATE with the existing id, and mobile marks the local asset backed up; /assets/bulk-upload-check works the same way in batch). A tombstone introduces a third state: "rejected, and no asset exists." Every client — both mobile platforms, the CLI, third-party tools built on the SDKs — must handle it and persist it locally, or their backup loop re-hashes and re-attempts those files on every single pass forever. Old clients that don't understand the new status will treat it as an error and surface perpetual backup failures. So: OpenAPI change, both SDKs, mobile local-state schema, CLI, and a version-skew story for servers ahead of clients.
+It has to participate in multi-device sync anyway. The proposal quietly assumes one phone. With two devices (or a reinstalled app), the "don't re-upload this" state must reach every client — otherwise device B re-attempts everything device A's deletions tombstoned, hitting point 3's retry problem at scale. That means tombstones become a synced entity type in the v2 sync stream (which already has to model AssetDeleteV1, partner deletes, album-asset deletes as distinct events, with checkpointing and acks), with all the ordering and backfill questions that entails. "The server just rejects it" doesn't remove the state from the system; it moves it somewhere clients rediscover it the expensive way.
+Hashes are a weaker identity than this thread assumes. The checksum is over file bytes, and the ecosystem loves rewriting bytes: iOS transcoding/re-export, iCloud offload-and-redownload, Google Takeout metadata stripping, edits, even re-saving. The registry fails open on every one of those — the photo comes back anyway — so the feature is unreliable in many of the exact scenarios that generate this complaint, while adding permanent risk in the scenarios where it does match. And as a bonus, "Immich keeps hashes of things I deleted, forever" is itself a retention/privacy surface that needs a management UI and a growth policy.
+The maintainers' direction attacks the root cause; the registry hard-codes one guess. The actual defect is that backup is one-way: deletion intent never propagates to the device, so device and server disagree forever.
+feat(mobile): review remote-trashed assets before syncing deletions
+#28280
+makes the deletion an explicit, user-resolvable sync event — which subsumes this request (choose "keep deleted, don't re-upload" and you get your registry behavior) and handles the accidental-deletion case without silent loss. The registry, by contrast, bakes in one answer ("server deletion always wins, silently") and still needs most of the same plumbing (new API state, client persistence, multi-device propagation, review UX) once you patch its failure modes.
+So: the disagreement isn't about whether a hash table is easy to create. It's that "compare against a registry and skip" is a one-line description of a cross-cutting change to the upload contract, the sync protocol, five deletion paths, three client platforms, and the failure semantics of a system whose one job is not losing people's photos. "Simple" versions of sync-adjacent features are how you end up with the bug reports that take years to live down.
+All reactions
+👍
+7
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+GovSat1
+Jul 17, 2026
+That makes sense. I'm for any solution over the current situation, which is that: I think a user would assume that assets deleted from Immich would NOT be re-uploaded from mobile app unless the user decided to explicitly re-upload the entire device.
+In my case I was curating photos for months before realizing they were being uploaded again after the trash retention period expired. This was... frustrating. Until a solution exists, a warning when initially uploading from the mobile app regarding this behavior would help out here. (Along with the unlimited trash retention period work around)
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+Jul 17, 2026
+@alextran1502
+- first off, THANK YOU for jumping in to discuss, and provide detailed insight on the reasoning, status, etc.
+The three-mode approach in
+#28280
+is a meaningful step forward, but I want to flag a use case that I don't think it covers cleanly.  To summarize in this thread, here's the three statuses being referenced in the PR:
+Sync remote deletions:
+Android-only automatic behavior.
+Review remote deletions:
+matching local assets shown for review.
+Off:
+the app does not automatically modify local media.
+Scenario:  I'm at a hardware store and snap a photo of a price tag. It uploads to Immich automatically. During my weekly photo housekeeping via web browser/home PC, I delete it from Immich. I don't need it in my library. I don't care if it stays on my phone, and I don't want to be prompted about it. I just want it gone from Immich (curated collection of photos), permanently, without it re-uploading on the next sync.
+The "Off" mode comes closest to what I want - leave my phone alone - but as I understand it, Off still allows re-upload since there's no suppression of previously-deleted assets. Review mode introduces friction I don't want for casual deletions I'm confident about. Sync is too aggressive for iOS anyway.
+What I'm describing is essentially Off + re-upload suppression. The app doesn't touch my phone, doesn't prompt me, but quietly remembers "this was intentionally deleted from Immich" and doesn't queue it for re-upload. The decision is server-side and silent.
+I understand the hash registry approach has edge cases, and the explicit review flow addresses those correctly. But could the Off mode be extended to suppress re-uploads of permanently-deleted assets without triggering the review queue? That would serve users who want Immich to manage the library without managing the phone.
+Thanks again....
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+Jul 17, 2026
+@laforcem
+- did you specifically point the maintainers to this thread and ask them if there was work in progress?  And they said "yep, this PR will solve that issue"?  If that is the case, I'm concerned that they believe the PR you referenced is going to solve this issue when it appears to be a separate thing that doesn't address this specifically.  I'd love to be wrong, but if I'm reading the PR correctly, they are offering a solution to something else that isn't actually our problem.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+laforcem
+Jul 17, 2026
+I believe this has already been answered by Alex in the other thread, so hope you've got the clarification you were looking for!
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Merlin-2504
+Aug 6, 2026
+Prevent re-uploading intentionally deleted assets
+Another important requirement is that Immich should remember assets that were already uploaded and then intentionally deleted from the server.
+Currently, when a photo still exists on the phone and is deleted from the Immich server, the mobile backup may upload the same photo again. This creates an unwanted loop:
+The photo is uploaded from the phone.
+The photo is intentionally deleted in Immich.
+The mobile app detects that the photo is missing from the server.
+The same photo is uploaded again.
+Immich should provide two separate deletion options:
+Delete and prevent this asset from being uploaded again
+Delete but allow the asset to be uploaded again later
+The server could store the checksum of intentionally deleted assets in an exclusion list. The mobile app should then recognize that the asset was already processed and deliberately deleted.
+This is especially important for family accounts, duplicate cleanup and workflows that combine mobile uploads with an external photo library.
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+verisgit
+Aug 6, 2026
+Yes, that is the point of this thread: we upload from our devices, attempt to manage our photos in Immich, and then the following day it's all back the way it was because the devices reupload everything and we've all wasted our time.
+We are trying to convince the Immich developers that we want to use their product to manage our photos; currently, we can't because any deletions are constantly reverted unless other annoying manual workarounds are put in place.
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Merlin-2504
+Aug 6, 2026
+I hope the user management system arrives soon.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Rotaryracer
+Aug 6, 2026
+Hey all - I've been making a ruckus in posts above; figured I'd try to summarize where (I think) we're at, and the progress being made.
+The good news - there's real movement on this after 2.5 years. The bad news - it's not merged yet.
+alextran1502 jumped in and explained why the "just add a hash registry" approach is more complex than it sounds - multiple deletion paths, silent failure risks in a backup product, multi-device sync complications, etc. All reasonable points. His preferred solution is more explicit about the deletion process, which makes sense even if it's more work.
+He pointed to PR
+#28280
+(PeterOmbodi) as the active fix. That PR was closed because a core maintainer (shenlong-tanwen) needed to first refactor the underlying trash sync architecture. That refactor is PR
+#29922
+, which is the foundation everything else builds on. Still open, awaiting code owner review, but has been tested against a live server this week with good results.
+PeterOmbodi then opened PR
+#30275
+last week, rebuilding the review flow on top of
+#29922
+'s new architecture. Much cleaner than
+#28280
+- 11 commits vs. 304. Has screenshots, video, full test coverage. alextran1502 personally intervened when a bot auto-closed it. It's currently in Draft status while
+#29922
+is still pending.
+The specific use case I care about (and I think most of us do) - delete from Immich, phone left alone, no prompts, no re-upload - should actually be handled in
+#29922
+'s Off mode, per a direct response from shenlong-tanwen to my comment. It's a single-line change that blacklists permanently deleted assets from re-uploading.
+#30275
+is the Review mode UI on top of that, which is a separate feature for users who want explicit control over device-side deletions.
+My best guess on sequence -
+#29922
+merges → update Immich → set mobile sync to Off → the re-upload bug is fixed.
+If you're watching this thread, also watch
+#29922
+. That seems to be the one that unblocks everything else.
+You must be logged in to vote
+All reactions
+0 replies
+This comment was marked as low quality.
+Sign in to view
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🆕
+Feature Request
+Labels
+None yet
+42 participants
+and others

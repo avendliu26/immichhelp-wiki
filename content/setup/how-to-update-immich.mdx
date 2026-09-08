@@ -1,0 +1,42 @@
+---
+title: "How to Update Immich Safely"
+description: "Follow Immich's release notes, major-version policy, database migration warnings, and rollback limits before upgrading."
+category: Install & Setup
+keywords: how to update immich, immich upgrade, vectorchord migration
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+Read the release notes, update IMMICH_VERSION, then run docker compose pull && docker compose up -d from the directory containing your compose file. Back up the database before migrations and do not plan on downgrading.
+
+## Current versions
+
+Research checked Immich stable v3.1.0 and prerelease v3.2.0-rc.3 on 2026-09-08. A release candidate is not the same as the stable major-version tag.
+
+## Upgrade rules
+
+Immich recommends upgrading mobile clients before the server. The server expects the matching major version. Downgrading to an earlier version is unsupported. Read breaking changes before pulling images.
+
+## VectorChord migration
+
+If your Compose database image still uses the older pgvecto.rs setup, the official migration guide requires a database backup first. After switching to VectorChord, do not downgrade below v1.133.0.
+
+:::warning Historical upgrade paths
+The documented v1.137 path requires an intermediate release between v1.132.0 and v1.136.0. Avoid v1.136.0 when upgrading from v1.131.0 or earlier. These rules are historical and do not describe a normal v3 update.
+:::
+
+## Community evidence
+
+A Synology upgrade helper in Discussion #25771 is community-maintained, not an Immich tool. Its author reports dry-run and backup features, while a user reported a script error. Do not treat it as a supported update mechanism.
+
+## Sources
+
+- [Upgrading](https://docs.immich.app/install/upgrading/)
+- [Errors](https://docs.immich.app/errors/)
+- [GitHub Releases](https://github.com/immich-app/immich/releases)
+- [Discussion #25771](https://github.com/immich-app/immich/discussions/25771)

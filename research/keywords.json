@@ -1,0 +1,69 @@
+{
+  "categories": [
+    {
+      "category": "guide",
+      "keywords": [
+        "how to use immich",
+        "immich setup",
+        "immich install",
+        "how to update immich"
+      ]
+    },
+    {
+      "category": "installation",
+      "keywords": [
+        "immich docker compose",
+        "immich for synology",
+        "immich proxmox",
+        "immich unraid",
+        "immich on windows",
+        "install immich on raspberry pi"
+      ]
+    },
+    {
+      "category": "troubleshooting",
+      "keywords": [
+        "immich error loading image",
+        "immich web ui not working",
+        "immich sync failed cannot process backup"
+      ]
+    },
+    {
+      "category": "backup-storage",
+      "keywords": [
+        "immich backup",
+        "immich external library",
+        "migrate immich to new server",
+        "google photos to immich",
+        "immich reverse proxy"
+      ]
+    },
+    {
+      "category": "features",
+      "keywords": [
+        "immich facial recognition",
+        "immich partner sharing",
+        "immich edit image",
+        "immich kiosk"
+      ]
+    },
+    {
+      "category": "developer",
+      "keywords": [
+        "immich api",
+        "immich api key",
+        "immich cli",
+        "immich plugins"
+      ]
+    },
+    {
+      "category": "comparison",
+      "keywords": [
+        "immich vs photoprism",
+        "immich vs synology photos",
+        "immich vs nextcloud",
+        "immich alternative"
+      ]
+    }
+  ]
+}

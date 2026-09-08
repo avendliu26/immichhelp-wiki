@@ -1,0 +1,528 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+[Docker] 2.7.5 -> 3.0.1 restart loop
+#29626
+Closed
+Answered
+by
+CoderDeltaLAN
+evilmumi
+asked this question in
+Q&A
+[Docker] 2.7.5 -> 3.0.1 restart loop
+#29626
+evilmumi
+Jul 6, 2026
+·
+2 comments
+·
+7 replies
+Answered
+by
+CoderDeltaLAN
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+evilmumi
+Jul 6, 2026
+I have searched the existing issues, both open and closed, to make sure this is not a duplicate report.
+Yes
+The bug
+I am using portainer for docker. I switch v2 to v3 in the ENV.
+After starting the stack again. It starts do a little bit and then force a restart or something like that.
+I see that the docker machine in my proxmox is getting into trouble;
+I've read some old with memory or CPU lack during updates but not sure how to track
+The OS that Immich Server is running on
+24.04.4 LTS
+Version of Immich Server
+v3.0.1
+Version of Immich Mobile App
+v3.0.1
+Platform with the issue
+Server
+Web
+Mobile
+Device make and model
+No response
+Your docker-compose.yml content
+#
+#
+WARNING: To install Immich, follow our guide: https://docs.immich.app/install/docker-compose
+#
+#
+Make sure to use the docker-compose.yml of the current release:
+#
+#
+https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+#
+The compose file on main may not be compatible with the latest release.
+name
+:
+immich
+services
+:
+immich-server
+:
+container_name
+:
+immich_server
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+#
+extends:
+#
+file: hwaccel.transcoding.yml
+#
+service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+volumes
+:
+#
+Do not edit the next line. If you want to change the media storage location on your system, edit the value of UPLOAD_LOCATION in the .env file
+-
+${UPLOAD_LOCATION}:/data
+-
+/etc/localtime:/etc/localtime:ro
+env_file
+:
+      -
+stack.env
+ports
+:
+      -
+'
+2283:2283
+'
+depends_on
+:
+      -
+redis
+-
+database
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+immich-machine-learning
+:
+container_name
+:
+immich_machine_learning
+#
+For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
+#
+Example tag: ${IMMICH_VERSION:-release}-cuda
+image
+:
+ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+#
+extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
+#
+file: hwaccel.ml.yml
+#
+service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+volumes
+:
+      -
+model-cache:/cache
+env_file
+:
+      -
+stack.env
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+redis
+:
+container_name
+:
+immich_redis
+image
+:
+docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+healthcheck
+:
+test
+:
+redis-cli ping || exit 1
+restart
+:
+always
+database
+:
+container_name
+:
+immich_postgres
+image
+:
+ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+environment
+:
+POSTGRES_PASSWORD
+:
+[REDACTED]
+POSTGRES_USER
+:
+${DB_USERNAME}
+POSTGRES_DB
+:
+${DB_DATABASE_NAME}
+POSTGRES_INITDB_ARGS
+:
+'
+--data-checksums
+'
+#
+Uncomment the DB_STORAGE_TYPE: 'HDD' var if your database isn't stored on SSDs
+#
+DB_STORAGE_TYPE: 'HDD'
+volumes
+:
+#
+Do not edit the next line. If you want to change the database storage location on your system, edit the value of DB_DATA_LOCATION in the .env file
+-
+${DB_DATA_LOCATION}:/var/lib/postgresql/data
+shm_size
+:
+128mb
+restart
+:
+always
+volumes
+:
+model-cache
+:
+Your .env content
+UPLOAD_LOCATION=/mnt/immich/library
+DB_DATA_LOCATION=./postgres
+IMMICH_VERSION=v3
+DB_PASSWORD=[REDACTED]
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+Reproduction steps
+change IMMICH_VERSION from v2 to v3
+start stack
+3.wait
+...
+Relevant log output
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id/assets, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/tags/:id/assets, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] TimelineController {/api/timeline}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/timeline/buckets, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/timeline/bucket, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] TrashController {/api/trash}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/trash/empty, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/trash/restore, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/trash/restore/assets, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] UserAdminController {/api/admin/users}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/calendar-heatmap, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/sessions, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/statistics, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/preferences, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/preferences, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/preferences, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/admin/users/:id/restore, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] UserController {/api/users}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/calendar-heatmap, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/preferences, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/preferences, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/preferences, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/license, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/license, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/license, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/onboarding, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/onboarding, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/me/onboarding, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/:id, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/profile-image, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/profile-image, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/users/:id/profile-image, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] VideoStreamController {/api/assets}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/assets/:id/video/stream/main.m3u8, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/assets/:id/video/stream/:sessionId/:variantIndex/playlist.m3u8, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/assets/:id/video/stream/:sessionId/:variantIndex/:filename, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/assets/:id/video/stream/:sessionId, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] ViewController {/api/view}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/view/folder/unique-paths, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/view/folder, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RoutesResolver] WorkflowController {/api/workflows}:
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows, POST} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/triggers, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/:id, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/:id/share, GET} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/:id, PUT} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/:id, PATCH} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:RouterExplorer] Mapped {/api/workflows/:id, DELETE} route
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:NestApplication] Nest application successfully started
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:Bootstrap] Immich Server is listening on http://[::1]:2283 [v3.0.1] [production] 
+[Nest] 29  - 07/06/2026, 9:45:41 AM     LOG [Api:MachineLearningRepository] Machine learning server became healthy (http://immich-machine-learning:3003).
+Initializing Immich v3.0.1
+Detected CPU Cores: 8
+(node:7) ExperimentalWarning: WASI is an experimental feature and might change at any
+time
+(Use
+`
+node --trace-warnings ...
+`
+to show where the warning was created)
+Starting api worker
+Starting microservices worker
+(node:7) ExperimentalWarning: WASI is an experimental feature and might change at any
+time
+(Use
+`
+node --trace-warnings ...
+`
+to show where the warning was created)
+(node:29) ExperimentalWarning: WASI is an experimental feature and might change at any
+time
+(Use
+`
+node --trace-warnings ...
+`
+to show where the warning was created)
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:WebsocketRepository] Initialized websocket server
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:DatabaseRepository] targetLists=1, current=1
+for
+clip_index of 26717 rows
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:DatabaseRepository] targetLists=1, current=1
+for
+face_index of 16801 rows
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:DatabaseRepository] Running migrations
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:DatabaseRepository] Finished running migrations
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:DatabaseService] Checking
+for
+schema drift
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService] Detected schema drift. For more information, see https://docs.immich.app/errors#schema-drift or run
+`
+immich-admin schema-check
+`
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The index
+"
+geodata_places
+"
+.
+"
+idx_geodata_places_name
+"
+is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The index
+"
+geodata_places
+"
+.
+"
+idx_geodata_places_admin2_name
+"
+is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The index
+"
+geodata_places
+"
+.
+"
+idx_geodata_places_admin1_name
+"
+is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The index
+"
+geodata_places
+"
+.
+"
+idx_geodata_places_alternate_names
+"
+is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The constraint
+"
+geodata_places
+"
+.
+"
+geodata_places_pkey
+"
+(primary-key) is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM    WARN [Microservices:DatabaseService]   - The constraint
+"
+naturalearth_countries
+"
+.
+"
+naturalearth_countries_pkey
+"
+(primary-key) is missing and needs to be created
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:StorageService] Verifying system mount folder checks, current state: {
+"
+mountChecks
+"
+:{
+"
+thumbs
+"
+:true,
+"
+upload
+"
+:true,
+"
+backups
+"
+:true,
+"
+library
+"
+:true,
+"
+profile
+"
+:true,
+"
+encoded-video
+"
+:true}}
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:StorageService] Successfully verified system mount folder checks
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:MetadataService] Bootstrapping metadata service
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:MetadataService] Initializing metadata service
+[Nest] 7  - 07/06/2026, 9:46:00 AM     LOG [Microservices:MapRepository] Initializing metadata repository
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:WebsocketRepository] Initialized websocket server
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:DatabaseRepository] targetLists=1, current=1
+for
+clip_index of 26717 rows
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:DatabaseRepository] targetLists=1, current=1
+for
+face_index of 16801 rows
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:DatabaseRepository] Running migrations
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:DatabaseRepository] Finished running migrations
+[Nest] 29  - 07/06/2026, 9:46:01 AM     LOG [Api:DatabaseService] Checking
+for
+schema drift
+Additional information
+No response
+You must be logged in to vote
+All reactions
+Answered by
+CoderDeltaLAN
+Jul 6, 2026
+Hey, that silent death right after the MapRepository line points to the OOM killer. Run dmesg | grep -i oom on the VM to confirm, then give it more RAM or add swap and let it boot once. The geodata import takes a few minutes and after that the loop is gone, you can lower the RAM back afterwards.
+View full answer
+Replies:
+2 comments
+·
+7 replies
+This comment was marked as low quality.
+Sign in to view
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+evilmumi
+Jul 7, 2026
+Author
+is there any chance to get this fixed without hardware change of docker vm? is it only at first start?
+All reactions
+This comment was marked as low quality.
+Sign in to view
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+evilmumi
+Jul 8, 2026
+Author
+OK docker is running in a lxc on proxmox  - there is no dmesg. I tested and gave the VM additional RAM temporary. That allowed me to restart immich some times. Now it seems that it can also run with RAM size before
+You must be logged in to vote
+All reactions
+👍
+1
+5 replies
+This comment was marked as low quality.
+Sign in to view
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+evilmumi
+Jul 8, 2026
+Author
+Thanks. What do you mean with supported vm? What on and why is my setup not supported?
+All reactions
+This comment was marked as low quality.
+Sign in to view
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+evilmumi
+Jul 8, 2026
+Author
+Fine. Thanks. We can close this here.
+All reactions
+👍
+1
+🚀
+1
+This comment was marked as low quality.
+Sign in to view
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+2 participants
+Converted from issue
+This discussion was converted from issue
+#29625
+on July 06, 2026 10:02.

@@ -1,0 +1,677 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+immich_server cannot connect with immich-machine-learning
+#28987
+Unanswered
+LordDarkneo
+asked this question in
+Q&A
+immich_server cannot connect with immich-machine-learning
+#28987
+LordDarkneo
+May 6, 2026
+·
+8 comments
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+LordDarkneo
+May 6, 2026
+I have searched the existing issues, both open and closed, to make sure this is not a duplicate report.
+Yes
+The bug
+Hello there,
+After a brand fresh new install on DSM following the documentation provided there:
+https://docs.immich.app/install/synology/
+I am having quite a lot of error when it comes to facial recognition (and I guess it does not work).
+I saw other issue with this case here, but none seem to be applicabe to my case...
+The OS that Immich Server is running on
+DSM 7.2.2-72806 Update 4
+Version of Immich Server
+v2
+Version of Immich Mobile App
+NA
+Platform with the issue
+Server
+Web
+Mobile
+Device make and model
+No response
+Your docker-compose.yml content
+#
+#
+WARNING: To install Immich, follow our guide: https://docs.immich.app/install/docker-compose
+#
+#
+Make sure to use the docker-compose.yml of the current release:
+#
+#
+https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+#
+The compose file on main may not be compatible with the latest release.
+name
+:
+immich
+services
+:
+immich-server
+:
+container_name
+:
+immich_server
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+#
+extends:
+#
+file: hwaccel.transcoding.yml
+#
+service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+volumes
+:
+#
+Do not edit the next line. If you want to change the media storage location on your system, edit the value of UPLOAD_LOCATION in the .env file
+-
+${UPLOAD_LOCATION}:/data
+-
+/etc/localtime:/etc/localtime:ro
+-
+/volume1/photo:/mnt/external_photos:ro
+env_file
+:
+      -
+.env
+ports
+:
+      -
+'
+2283:2283
+'
+depends_on
+:
+      -
+redis
+-
+database
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+immich-machine-learning
+:
+container_name
+:
+immich_machine_learning
+#
+For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
+#
+Example tag: ${IMMICH_VERSION:-release}-cuda
+image
+:
+ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+#
+extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
+#
+file: hwaccel.ml.yml
+#
+service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+volumes
+:
+      -
+model-cache:/cache
+env_file
+:
+      -
+.env
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+redis
+:
+container_name
+:
+immich_redis
+image
+:
+docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+healthcheck
+:
+test
+:
+redis-cli ping || exit 1
+restart
+:
+always
+database
+:
+container_name
+:
+immich_postgres
+image
+:
+ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+environment
+:
+POSTGRES_PASSWORD
+:
+[REDACTED]
+POSTGRES_USER
+:
+${DB_USERNAME}
+POSTGRES_DB
+:
+${DB_DATABASE_NAME}
+POSTGRES_INITDB_ARGS
+:
+'
+--data-checksums
+'
+#
+Uncomment the DB_STORAGE_TYPE: 'HDD' var if your database isn't stored on SSDs
+#
+DB_STORAGE_TYPE: 'HDD'
+volumes
+:
+#
+Do not edit the next line. If you want to change the database storage location on your system, edit the value of DB_DATA_LOCATION in the .env file
+-
+${DB_DATA_LOCATION}:/var/lib/postgresql/data
+shm_size
+:
+128mb
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+volumes
+:
+model-cache
+:
+Your .env content
+#
+You can find documentation for all the supported env variables at https://docs.immich.app/install/environment-variables
+#
+The location where your uploaded files are stored
+UPLOAD_LOCATION=./library
+#
+The location where your database files are stored. Network shares are not supported for the database
+DB_DATA_LOCATION=./postgres
+#
+To set a timezone, uncomment the next line and change Etc/UTC to a TZ identifier from this list: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+TZ=America/Toronto
+#
+The Immich version to use. You can pin this to a specific version like "v2.1.0"
+IMMICH_VERSION=v2
+#
+Connection secret for postgres. You should change it to a random password
+#
+Please use only the characters `A-Za-z0-9`, without special characters or spaces
+DB_PASSWORD=[REDACTED]
+#
+The values below this line do not need to be changed
+#
+##################################################################################
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+Reproduction steps
+Adding my external libraries
+Generating thumnails, and all scan job
+Execution facial recongnition - Does not work
+Relevant log output
+[Nest] 7  - 05/05/2026, 10:50:08 PM    WARN [Microservices:VersionService] Unable to run version check: Error: Failed to fetch latest release
+Error: Failed to fetch latest release
+    at ServerInfoRepository.getLatestRelease (/usr/src/app/server/dist/repositories/server-info.repository.js:61:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async VersionService.handleVersionCheck (/usr/src/app/server/dist/services/version.service.js:124:76)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+-----------------------------------------------------
+[Nest] 7  - 05/06/2026, 12:00:04 AM   ERROR [Microservices:{
+"
+id
+"
+:
+"
+0bf2a7e2-2f28-4a82-a7f7-acf18f8606d8
+"
+}] Unable to run job handler (AssetGenerateThumbnails): Error: Input file contains unsupported image format
+Error: Input file contains unsupported image format
+    at Sharp.toBuffer (/usr/src/app/server/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/output.js:163:17)
+    at MediaRepository.decodeImage (/usr/src/app/server/dist/repositories/media.repository.js:120:31)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async MediaService.decodeImage (/usr/src/app/server/dist/services/media.service.js:186:32)
+    at async MediaService.extractOriginalImage (/usr/src/app/server/dist/services/media.service.js:197:44)
+    at async MediaService.generateImageThumbnails (/usr/src/app/server/dist/services/media.service.js:213:32)
+    at async MediaService.handleGenerateThumbnails (/usr/src/app/server/dist/services/media.service.js:153:25)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+[Nest] 7  - 05/06/2026, 12:00:04 AM   ERROR [Microservices:{
+"
+id
+"
+:
+"
+0bed7861-d8ce-450f-a8e2-bf10ac22cbe5
+"
+}] Unable to run job handler (AssetGenerateThumbnails): Error: Input file contains unsupported image format
+Error: Input file contains unsupported image format
+    at Sharp.toBuffer (/usr/src/app/server/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/output.js:163:17)
+    at MediaRepository.decodeImage (/usr/src/app/server/dist/repositories/media.repository.js:120:31)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async MediaService.decodeImage (/usr/src/app/server/dist/services/media.service.js:186:32)
+    at async MediaService.extractOriginalImage (/usr/src/app/server/dist/services/media.service.js:197:44)
+    at async MediaService.generateImageThumbnails (/usr/src/app/server/dist/services/media.service.js:213:32)
+    at async MediaService.handleGenerateThumbnails (/usr/src/app/server/dist/services/media.service.js:153:25)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+------------------------------------
+39m05/05/2026, 9:14:57 PM �[31m  ERROR�[39m �[33m[Microservices:{
+"
+source
+"
+:
+"
+upload
+"
+,
+"
+id
+"
+:
+"
+d4a8f4e3-aa1f-408b-97e0-7665f8d034a5
+"
+}]�[39m �[31mUnable to run job handler (Ocr): Error: Machine learning request
+'
+{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}
+'
+failed
+for
+all URLs�[39m
+2026/05/05 21:14:57	stdout	�[33m[Nest] 7  - �[39m05/05/2026, 9:14:57 PM �[33m   WARN�[39m �[33m[Microservices:MachineLearningRepository]�[39m �[33mMachine learning request to
+"
+http://immich-machine-learning:3003
+"
+failed with status 500: Internal Server Error�[39m
+2026/05/05 21:14:57	stderr	    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+2026/05/05 21:14:57	stderr	    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+2026/05/05 21:14:57	stderr	    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+2026/05/05 21:14:57	stderr	    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+2026/05/05 21:14:57	stderr	    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+2026/05/05 21:14:57	stderr	    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026/05/05 21:14:57	stderr	    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+2026/05/05 21:14:57	stderr	Error: Machine learning request
+'
+{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}
+'
+failed
+for
+all URLs
+2026/05/05 21:14:57	stderr	�[31m[Nest] 7  - �[39m05/05/2026, 9:14:57 PM �[31m  ERROR�[39m �[33m[Microservices:{
+"
+source
+"
+:
+"
+upload
+"
+,
+"
+id
+"
+:
+"
+f7cb9e13-c16f-44a1-93a0-81450a773580
+"
+}]�[39m �[31mUnable to run job handler (Ocr): Error: Machine learning request
+'
+{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}
+'
+failed
+for
+all URLs�[39m
+2026/05/05 21:14:57	stdout	�[33m[Nest] 7  - �[39m05/05/2026, 9:14:57 PM �[33m   WARN�[39m �[33m[Microservices:MachineLearningRepository]�[39m �[33mMachine learning request to
+"
+http://immich-machine-learning:3003
+"
+failed with status 500: Internal Server Error�[39m
+2026/05/05 21:14:57	stderr	    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+2026/05/05 21:14:57	stderr	    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+2026/05/05 21:14:57	stderr	    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+2026/05/05 21:14:57	stderr	    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+2026/05/05 21:14:57	stderr	    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+2026/05/05 21:14:57	stderr	    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026/05/05 21:14:57	stderr	    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+2026/05/05 21:14:57	stderr	Error: Machine learning request
+'
+{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}
+'
+failed
+for
+all URLs
+2026/05/05 21:14:57	stderr	�[31m[Nest] 7  - �[39m05/05/2026, 9:14:57 PM �[31m  ERROR�[39m �[33m[Microservices:{
+"
+source
+"
+:
+"
+upload
+"
+,
+"
+id
+"
+:
+"
+00ab3e22-8276-4b13-8a2b-451f96901bf1
+"
+}]�[39m �[31mUnable to run job handler (Ocr): Error: Machine learning request
+'
+{"ocr":{"detection":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.5,"maxResolution":736}},"recognition":{"modelName":"PP-OCRv5_mobile","options":{"minScore":0.8}}}}
+'
+failed
+for
+all URLs�[39m
+2026/05/05 21:14:57	stdout	�[33m[Nest] 7  - �[39m05/05/2026, 9:14:57 PM �[33m   WARN�[39m �[33m[Microservices:MachineLearningRepository]�[39m �[33mMachine learning request to
+"
+http://immich-machine-learning:3003
+"
+failed with status 500: Internal Server Error�[39m
+2026/05/05 21:14:57	stderr	    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.71.0/node_modules/bullmq/dist/cjs/classes/worker.js:570:32
+2026/05/05 21:14:57	stderr	    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+2026/05/05 21:14:57	stderr	    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:51:30)
+2026/05/05 21:14:57	stderr	    at async OcrService.handleOcr (/usr/src/app/server/dist/services/ocr.service.js:53:28)
+2026/05/05 21:14:57	stderr	    at async MachineLearningRepository.ocr (/usr/src/app/server/dist/repositories/machine-learning.repository.js:150:26)
+2026/05/05 21:14:57	stderr	    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026/05/05 21:14:57	stderr	    at MachineLearningRepository.predict (/usr/src/app/server/dist/repositories/machine-learning.repository.js:117:15)
+Additional information
+I have been trying to add the different errors I am having in the logs
+You must be logged in to vote
+All reactions
+Replies:
+8 comments
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+May 6, 2026
+Maintainer
+Did you also cover the firewall rules in the guide?
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+LordDarkneo
+May 6, 2026
+Author
+Did you also cover the firewall rules in the guide?
+Yes sir
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+by-justin
+May 18, 2026
+It's not a firewall issue, even inside the immich-ml container it can't get to port 3003.
+#
+ss -tunlp
+Netid       State         Recv-Q        Send-Q               Local Address:Port                Peer Address:Port       Process       
+udp         UNCONN        0             0                       127.0.0.11:35391                    0.0.0.0:
+*
+tcp         LISTEN        0             4096                    127.0.0.11:46821                    0.0.0.0:
+*
+tcp         LISTEN        2049          2048
+*
+:3003
+*
+:
+*
+users:
+((
+"python"
+,
+pid
+=
+72
+,
+fd
+=
+3
+)
+,
+("python"
+,
+pid
+=
+39
+,
+fd
+=
+3
+))
+#
+curl -vv localhost:3003
+*
+Trying 127.0.0.1:3003...
+*
+Trying [::1]:3003...
+*
+connect to 127.0.0.1 port 3003 failed: Connection timed out
+*
+connect to ::1 port 3003 failed: Connection timed out
+*
+Failed to connect to localhost port 3003 after 134802 ms: Couldn
+'
+t connect to server
+* Closing connection 0
+curl: (28) Failed to connect to localhost port 3003 after 134802 ms: Couldn
+'
+t connect to server
+Edit: Delete the model cache and rerunning all ML tasks did it for me. I suppose the cache was somehow corrupted and let to ml server hanging on it
+Edit2: After I let the task run for some time, the same issue appeared again. Am using openvino docker container.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Dodofant
+May 19, 2026
+Please note: your container is called immich_machine_learning, but immich_server is trying to access the container immich-machine-learning. That is why the connection is failing:
+2026
+/
+05
+/
+05
+21
+:
+14
+:
+57
+stdout	�[
+33m
+[
+Nest
+]
+7
+-
+�[39
+m05
+/
+05
+/
+2026
+,
+9
+:
+14
+:
+57
+PM
+�[
+33m
+WARN
+�[
+39m
+�[
+33m
+[
+Microservices
+:
+MachineLearningRepository
+]�[
+39m
+�[33
+mMachine
+learning
+request
+to
+"
+http://immich-machine-learning:3003
+"
+failed
+with
+status
+500
+:
+Internal
+Server
+Error
+�[
+39m
+Try one of the following:
+Set MACHINE_LEARNING_URL=http://immich_machine_learning:3003 (underscore) in the .env file
+Add an alias immich-machine-learning to the ML container in Compose
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+May 19, 2026
+Maintainer
+That shouldn't matter. The compose service uses dashes, and docker DNS holds multiple aliases.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Dodofant
+May 19, 2026
+Normally, it shouldn't matter. But I've had two instances where that was exactly the problem.
+For me, making this adjustment in ENV or Compose helped.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+LordDarkneo
+May 20, 2026
+Author
+Hello,
+Well that's worth a try anyhow! I'll make the changes in the env file and keep you posted
+EDIT:Well the modification in the .env file doesnt seem to be enough
+And the alias is not allowed
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+LordDarkneo
+May 20, 2026
+Author
+Hello! I tested few more things today:
+deactivating the DSM firewall : it did not help
+clearing and restarting external libraries tasks: it did not help
+Also, I dont know if it is 'normal' but I cannot access the url from my network, and I wanted to run the curl command on the ML container, but curl is not installed.... (neither ss, netstat or lsof)...
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+4 participants
+Converted from issue
+This discussion was converted from issue
+#28259
+on June 11, 2026 10:51.

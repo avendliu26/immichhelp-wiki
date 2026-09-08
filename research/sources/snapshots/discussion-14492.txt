@@ -1,0 +1,84 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+New Install - iPhone 16 Live Photos Issue
+#14492
+Closed
+Unanswered
+satguys
+asked this question in
+Q&A
+New Install - iPhone 16 Live Photos Issue
+#14492
+satguys
+Dec 5, 2024
+·
+2 comments
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+satguys
+Dec 5, 2024
+I just installed Immich earlier and the week on Ubuntu using the Snap.  I am running the version v1.121.0.
+I successfully imported all the photos from my iPhone 16 Pro Max, however all the Live Photos that I have taken with my iPhone 16 show as Error Loading Image.  If I point to the Play Icon in the top right of the error loading image graphic, I can see my moving live image.
+This is only happening on Live Images I have taken with my new iPhone 16, the live images I have taken with my old iPhone 13 Pro Max show thumbnails fine.
+I have tried rebuilding thumbnails with no success.  Since its just happening on new images from iPhone 16 Pro Max, I am guessing the issue is a setting on my iPhone and not an issue with Immich.
+Has anyone had this issue like this?  How do I fix it?
+Thanks in advance!
+You must be logged in to vote
+All reactions
+Replies:
+2 comments
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+Dec 5, 2024
+Maintainer
+You're using an unsupported installation method, and this sort of issue is often based in mismatched system dependencies and such, so this isn't something we can really help with.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Dec 5, 2024
+Maintainer
+I suggest you use the official docker-compose method to install Immich
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+3 participants

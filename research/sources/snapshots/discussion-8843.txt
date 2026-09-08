@@ -1,0 +1,83 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+Setup Q: Do I need to install postgresql14 and redis docker apps if I use the compose (official) method?
+#8843
+Closed
+Answered
+by
+schuhbacca
+DMcWetty
+asked this question in
+Q&A
+Setup Q: Do I need to install postgresql14 and redis docker apps if I use the compose (official) method?
+#8843
+DMcWetty
+Apr 16, 2024
+·
+1 comment
+Answered
+by
+schuhbacca
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+DMcWetty
+Apr 16, 2024
+I used the official compose method to setup Immich on Unraid and everything is working really well. I went back and noticed that there were numerous docker apps added during setup. Two of them are immich_postgres and immich_redis apps. Do I need to have the "proper" Docker apps for those also installed or are they just redundant? Immich seems to work with or without them, but I didn't want to break any kind of functionality.
+You must be logged in to vote
+All reactions
+Answered by
+schuhbacca
+Apr 16, 2024
+You do not. If you used the docker compose method then postgres and redis are included. You don't need to install anything additional for immich. The compose method just "pins" specific versions of items. Pay attention to future release notes and make the compose updates if there are any.
+View full answer
+Replies:
+1 comment
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+schuhbacca
+Apr 16, 2024
+Collaborator
+You do not. If you used the docker compose method then postgres and redis are included. You don't need to install anything additional for immich. The compose method just "pins" specific versions of items. Pay attention to future release notes and make the compose updates if there are any.
+You must be logged in to vote
+All reactions
+0 replies
+Answer selected by
+DMcWetty
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+2 participants

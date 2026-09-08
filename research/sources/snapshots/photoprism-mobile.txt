@@ -1,0 +1,132 @@
+Syncing with Mobile Devices
+¶
+You can use any app that supports the
+WebDAV protocol
+to synchronize photos and videos between your phone and PhotoPrism.
+Based on our own experience, we can highly recommend
+PhotoSync
+as it is one of the most feature-rich and sophisticated apps currently available for iOS and Android. Note that some transfer options, such as
+WebDAV
+or
+SMB
+, may require an upgrade after the free trial ends.
+An overview of
+mobile sync apps
+for iOS and Android can be found below.
+WebDAV access can be disabled under
+Settings > Advanced
+. Since it requires write permissions and authentication, the built-in WebDAV server is automatically disabled when running in
+read-only
+or
+public mode
+.
+Using PhotoSync
+¶
+Set PhotoPrism or WebDAV as Target
+¶
+Open PhotoSync and click
+Click
+Configure
+Select PhotoPrism as target
+Enter your settings
+Server:
+Your server url, e.g. "example.com".
+Port:
+Your port. If you are using HTTPS the port is 443.
+Login:
+Your username, e.g. "admin".
+Password:
+[REDACTED] admin password.
+Directory:
+/import/ or /originals/ depending on your preferred
+ingestion method
+.
+Use SSL:
+Should be enabled.
+PikaPods
+users can find more information
+here
+.
+Click
+Done
+You may adapt transfer details to match your preferences
+Set Up Automatic Sync
+¶
+Open PhotoSync and click
+Click
+Autotransfer
+Click
+Add new trigger
+and choose one or more trigger
+Choose PhotoPrism as target
+Click
+Done
+Because PhotoSync uses WebDAV to send files, PhotoPrism automatically starts importing/indexing when it receives new files.
+Sync Apps for iOS and Android
+¶
+As an alternative to
+PhotoSync
+, you can also use a wide range of other apps to synchronize your pictures with PhotoPrism, either
+directly via WebDAV
+or by sharing the
+originals
+folder
+as an
+SMB network drive
+through your
+operating system
+or
+cloud provider
+:
+Name
+Platform
+Synchronization
+Price
+Download
+PhotoSync Pro
+iOS, Android
+WebDAV
+, SMB
+€6.99
+App Store
+,
+Google Play
+PhotoSync Premium
+iOS, Android
+WebDAV
+, SMB
+€24.99
+App Store
+,
+Google Play
+EasySync
+Android
+WebDAV
+€2.99
+Google Play
+,
+F-Droid
+Syncthing Fork
+Android
+Syncthing
+Free
+Google Play
+FolderSync Pro
+Android
+WebDAV
+, SMB
+€6.49
+Google Play
+Owlfiles Pro
+iOS, Android
+WebDAV
+, SMB
+€59.99
+App Store
+,
+Google Play
+Note that this overview is provided for your convenience only and that we are unable to provide
+technical support
+for any of these apps. If you have problems, please contact the author or ask the community for help. You are
+welcome to suggest
+additional sync apps, so we can include them in this list.

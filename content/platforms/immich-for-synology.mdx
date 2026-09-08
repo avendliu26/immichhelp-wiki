@@ -1,0 +1,39 @@
+---
+title: "Immich for Synology: Container Manager Notes"
+description: "Use Immich's community Synology guide with firewall, storage, and update caveats clearly separated."
+category: Platforms
+keywords: immich for synology, immich synology, synology container manager
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+Immich documents a Synology Container Manager path, but labels it a community contribution and says it is not officially supported by the Immich team. Follow the Docker Compose baseline and treat DSM firewall and subnet configuration as platform-specific work.
+
+## Installation outline
+
+Create the application, Postgres, and library directories under a Docker folder. Upload the release compose and environment files, create a Container Manager project, and apply the values from the Docker Compose guide.
+
+The guide uses port 2283 and asks Synology users to allow communication between the container address and that port. A fixed Docker subnet can prevent firewall rules from breaking when containers are rebuilt.
+
+## Storage and updates
+
+Check whether DB_STORAGE_TYPE HDD is appropriate for a database on hard disks. Before updating, back up photos and videos, read release notes, stop and clean the project through Container Manager, rebuild, and re-check the firewall address.
+
+:::warning Community approach
+This page documents the Immich team's published community guide. It is not a claim that Synology Container Manager is an official supported distribution.
+:::
+
+## Real case
+
+Discussion #28987 reports DSM 7.2.2-72806 Update 4 with Immich v2 and machine-learning connection errors. The thread includes competing user suggestions and no confirmed maintainer fix, so the failure remains unresolved research.
+
+## Sources
+
+- [Synology install guide](https://docs.immich.app/install/synology/)
+- [Requirements](https://docs.immich.app/install/requirements/)
+- [Discussion #28987](https://github.com/immich-app/immich/discussions/28987)

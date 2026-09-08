@@ -1,0 +1,42 @@
+---
+title: "Immich Setup: First Login to First Backup"
+description: "A practical, source-backed setup path covering the first admin, storage template, mobile backup, and server backup."
+category: Install & Setup
+keywords: immich setup, immich first install, immich post install
+status: review
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+After the services start, register the first user, review storage settings, install the mobile app if needed, and configure a server backup. Immich's post-install guide treats the database and media backup as separate responsibilities.
+
+## First login
+
+The first user to register becomes the admin. Use the web endpoint shown by your deployment, then create other users from Administration when needed.
+
+## Storage template
+
+The storage template changes how uploaded filenames and folders are organized. If you change it for an existing library, use the documented Storage Template Migration job and keep a backup first.
+
+## Mobile backup
+
+From the mobile backup screen, choose the albums to upload and enable backup. Immich uses content checksums to skip files already on the server. iOS background execution and Android battery optimization can affect timing.
+
+## Server backup
+
+Follow the [backup and restore guide](/backup/immich-backup). A database dump contains metadata and paths, not the photos and videos themselves. Keep both layers and an off-site copy.
+
+:::warning Independent guide
+Immich Help is an independent community guide. Check the current Immich documentation and release notes before applying a version-sensitive step.
+:::
+
+## Sources
+
+- [Post-installation steps](https://docs.immich.app/install/post-install/)
+- [Mobile Backup](https://docs.immich.app/features/mobile-backup/)
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
+- [Discussion #8843](https://github.com/immich-app/immich/discussions/8843)

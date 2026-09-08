@@ -1,0 +1,100 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+Photoprism → Immich: Migrating favorites and albums
+#4701
+v411e
+started this conversation in
+Community Guides
+Photoprism → Immich: Migrating favorites and albums
+#4701
+v411e
+Oct 29, 2023
+·
+2 comments
+·
+1 reply
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+v411e
+Oct 29, 2023
+I recently switched from Photoprism to Immich. To make the migration easier, I wrote a small CLI tool that migrates the albums and favorites from Photoprism to Immich.
+Feel free to use it or create a PR if something is missing.
+→
+https://github.com/v411e/ppim-migrator
+You must be logged in to vote
+All reactions
+🎉
+5
+❤️
+3
+Replies:
+2 comments
+·
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Oct 29, 2023
+Maintainer
+Thank you, I will pin this to the discussion for people to find the information easier
+You must be logged in to vote
+All reactions
+🎉
+2
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+mirisbowring
+Nov 1, 2023
+Oh man! Would have needed this 2 months ago where i did this fully manual 😆
+You must be logged in to vote
+All reactions
+😄
+1
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+ipnetxyz
+Nov 21, 2023
+Same here, but I'm happy the ones which will switch next have this tool to help 👍
+All reactions
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+📖
+Community Guides
+Labels
+None yet
+4 participants

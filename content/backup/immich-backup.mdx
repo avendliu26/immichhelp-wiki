@@ -1,0 +1,52 @@
+---
+title: "Immich Backup and Restore: What Must Be Saved"
+description: "Understand the difference between Immich database backups, uploaded media, restore points, and high-risk recovery commands."
+category: Backup & Storage
+keywords: immich backup, immich restore, database backup, 3-2-1
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+An Immich database backup is not a photo backup. The database stores file paths and metadata, while photos and videos remain in the upload location. A dependable plan saves both and keeps an off-site copy.
+
+## What to back up
+
+- Database dumps in UPLOAD_LOCATION/backups or a manually created dump.
+- Original photos and videos in UPLOAD_LOCATION/library, upload, and profile as applicable.
+- Generated folders such as thumbs and encoded-video if you want to avoid regenerating them.
+- External-library mount contents and matching mount configuration when used.
+
+Immich recommends a 3-2-1 strategy. The official guide says the backup tool itself is your responsibility.
+
+## Restore from the web interface
+
+For an existing installation, use Administration → Maintenance → Restore database backup. Immich creates a restore point before replacing the current database. On a fresh installation, restore the prior storage folders first, start the services, and use Restore from backup.
+
+The v2.5.0 restore process changed. Older backups may require the version selector and older instructions.
+
+## High-risk commands
+
+:::danger docker compose down -v and database deletion
+The command removes volumes. Deleting DB_DATA_LOCATION permanently resets the database directory. Use these only with a verified database and media backup, a tested recovery plan, and a fresh target you intend to rebuild.
+:::
+
+The command-line restore also expects a completely fresh install. If the server has already run, the official guide warns that existing relations or migrations can conflict. Some deployments may need DB_SKIP_MIGRATIONS=true during database-only recovery.
+
+## Verification checklist
+
+After restore, verify the admin account, albums, originals, and a sample of thumbnails. Check the integrity report and run the relevant thumbnail/transcoding jobs if generated content was not backed up.
+
+## Real case
+
+Issue #26522 reports “no admin exists” during an Unraid restore on v2.5.6. A user comment says initializing an admin first and restoring from Settings worked for them; this is a user-reported workaround, not an official guarantee.
+
+## Sources
+
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
+- [Issue #26522](https://github.com/immich-app/immich/issues/26522)
+- [System Integrity](https://docs.immich.app/administration/system-integrity/)

@@ -1,0 +1,42 @@
+---
+title: "How to Use Immich: A Source-Backed Starting Path"
+description: "Get from first login to mobile backup, server backups, and a clear understanding of Immich's storage model."
+category: Getting Started
+keywords: how to use immich, immich mobile backup, immich first setup
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+Start with the first admin account, configure storage, enable only the mobile albums you intend to back up, and set up a separate server backup. Mobile backup and server backup protect different layers.
+
+## First steps
+
+The first user registered becomes the administrator. From the post-install flow, set a storage template only if its path behavior is understood, install the mobile app, sign in to the server endpoint, and enable backup from the selected albums.
+
+## Mobile backup behavior
+
+Immich calculates a content checksum and skips files already on the server. The default is Wi-Fi-only uploads. On iOS, Background App Refresh must be enabled, but iOS decides when background tasks run. Android battery optimization can stop background work on some models.
+
+## Server backup
+
+Follow the [backup guide](/backup/immich-backup) after importing media. Save the database and original files together. A database dump alone does not contain photos or videos.
+
+## Real user case
+
+Discussion #27250 reports iOS uploads stopping when the app is closed. The report is a feature request and includes no universal fix. Treat reopening the app as a practical observation, not a guaranteed repair.
+
+:::warning Keep two backup concepts separate
+“Backed up on the phone” and “server database backed up” are different states. Verify both before using any free-space or deletion workflow.
+:::
+
+## Sources
+
+- [Post-installation steps](https://docs.immich.app/install/post-install/)
+- [Mobile Backup](https://docs.immich.app/features/mobile-backup/)
+- [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/)
+- [Discussion #27250](https://github.com/immich-app/immich/discussions/27250)

@@ -1,0 +1,1 @@
+import Link from 'next/link'; export function Breadcrumbs({title,category}:{title:string;category:string}){return <div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href={`/${category.toLowerCase().replaceAll(' ','-')}`}>{category}</Link><span>/</span><strong>{title}</strong></div>}

@@ -1,0 +1,472 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+"Error loading image" - loads okay when you click 'Refresh Thumbnails'
+#10570
+Closed
+Unanswered
+sharmalakshay
+asked this question in
+Q&A
+"Error loading image" - loads okay when you click 'Refresh Thumbnails'
+#10570
+sharmalakshay
+Jun 23, 2024
+·
+10 comments
+·
+9 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+sharmalakshay
+Jun 23, 2024
+The bug
+A lot of images show as blur and when you click to open, you get the message "Error loading image".
+But if then you click 'Refresh Thumbnails', close the image and re-open, it opens fine!
+Also can't load the thumnails for the People n Places!
+The OS that Immich Server is running on
+Debian
+Version of Immich Server
+v1.106.4
+Version of Immich Mobile App
+v1.106.3
+Platform with the issue
+Server
+Web
+Mobile
+Your docker-compose.yml content
+version
+:
+"
+3.8
+"
+name
+:
+immich
+services
+:
+immich-server
+:
+container_name
+:
+immich_server
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+volumes
+:
+      -
+${UPLOAD_LOCATION}:/usr/src/app/upload
+-
+${THUMB_LOCATION}:/usr/src/app/upload/thumbs
+-
+/etc/localtime:/etc/localtime:ro
+env_file
+:
+      -
+stack.env
+ports
+:
+      -
+2283:3001
+depends_on
+:
+      -
+redis
+-
+database
+restart
+:
+always
+immich-machine-learning
+:
+container_name
+:
+immich_machine_learning
+image
+:
+ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+volumes
+:
+      -
+model-cache:/cache
+env_file
+:
+      -
+stack.env
+restart
+:
+always
+redis
+:
+container_name
+:
+immich_redis
+image
+:
+redis:6.2-alpine@sha256:afb290a0a0d0b2bd7537b62ebff1eb84d045c757c1c31ca2ca48c79536c0de82
+restart
+:
+always
+database
+:
+container_name
+:
+immich_postgres
+image
+:
+tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+env_file
+:
+      -
+stack.env
+environment
+:
+POSTGRES_PASSWORD
+:
+[REDACTED]
+POSTGRES_USER
+:
+${DB_USERNAME}
+POSTGRES_DB
+:
+${DB_DATABASE_NAME}
+volumes
+:
+      -
+pgdata:/var/lib/postgresql/data
+restart
+:
+always
+volumes
+:
+pgdata
+:
+model-cache
+:
+Your .env content
+UPLOAD_LOCATION=/mnt/immich_disk/all1
+IMMICH_VERSION=release
+DB_PASSWORD=[REDACTED]
+DB_HOSTNAME=immich_postgres
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+REDIS_HOSTNAME=immich_redis
+THUMB_LOCATION=/immich_thumbs
+Reproduction steps
+1. Open Immich web
+2. Scroll down a little to see old images (2-3 weeks)
+3. Lots of images with blur
+Relevant log output
+No response
+Additional information
+The disk I use for backups is an HDD and I have recently chosen to store the thumnails on the sd card with hopes of better load-times when searching for images of people or things.
+I have deleted the old thumbnails and have re-created them on the sd card.
+This issue existed BEFORE I did all that but it wasn't that bad. Now more than half of the images show up like that.
+Also, I use both an iPhone and an Android to upload.
+You must be logged in to vote
+All reactions
+👀
+1
+Replies:
+10 comments
+·
+9 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+Jun 23, 2024
+Maintainer
+This doesn't seem like a bug, but like something went wrong when you shuffled things around. Rerunning the thumbnail jobs should fix it.
+You must be logged in to vote
+All reactions
+4 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+CorentinDy
+Jul 9, 2024
+I have the same issue, rerunned the thumbnail job and still the same
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+sharmalakshay
+Jul 9, 2024
+Author
+I have the same issue, rerunned the thumbnail job and still the same
+Did you change your
+THUMB_LOCATION
+recently?
+Make sure it is set correctly
+Delete the thumbnails folder
+Restart the container
+Re-run the thumbnails
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+CorentinDy
+Jul 9, 2024
+I have no THUMB_LOCATION
+I tried to delete the thumbs folder and still nothing
+new pictures are available to show and thumbnail is present too but all previous upload is not
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+tuckersnow1
+Jul 18, 2024
+Any update?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+ahmadyusuf
+Aug 6, 2024
+I have the same issue as well, but for me, even refresh thumbnails doesn't fix the problem, I can't see the photo at all
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+neroxyr
+Aug 19, 2024
+I have the same issue
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Saneckg
+Aug 13, 2024
+I have the same issue as well, but for me, even refresh thumbnails doesn't fix the problem, I can't see the photo at all
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+empiler
+Aug 19, 2024
+i got very same issue
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bbryanlls
+Aug 31, 2024
+Had the same issue, rebuilding the app with
+docker compose up -d --force-recreate
+resolved this issue for me.
+I found that the cause was that the files inside the
+/thumbs
+directory inside the
+immich_server
+container were missing. The files in the
+/thumbs
+directory outside of docker were not missing when the issue was encountered.
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+ahmadyusuf
+Aug 31, 2024
+Thanks
+@bbryanlls
+for your answer.
+Just trying to do that but didn't fix the issue for me, unfortunately.
+However, I noticed that the number of files under "thumbs" is much less than my images. I have about 30k photos, but under thumbs there are only about 5k , I tried running the "generate thumbnails" job and it shows about 30k waiting but at the end , only 5k files are there
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+amrit92
+Sep 12, 2024
+This worked for me after trying generate thumbnails couple of times with no luck.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+durgeksh
+Aug 31, 2024
+Looks like there is some issue with v1.113.0. I reverted back to v1.112.1 and it worked fine.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alfondotnet
+Sep 1, 2024
+Interesting. good to know that when downloading the image, the image is still there, will try reverting, thanks
+All reactions
+👍
+1
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+0ranki
+Sep 6, 2024
+I noticed the issue too. After a bit of inspecting, I noticed the thumbnail generation broke after updating from v1.111.0 to 1.112.1.
+My images are also almost all from external libraries. I reverted to v1.111.0 (including the database to the state prior to updating), scanned for new files and thumbnails loaded. Without the db restore the thumbnails stayed broken.
+I noticed in the
+immich-server
+container logs with v1.112.1, 1.113.1 and 1.114.0 that the thumbnails are looked from
+upload/thumbs/...
+directory, which seems wrong.
+I also tried deleting the contents of the
+thumbs
+(not upload/thumbs, that doesn't exist) directory and re-scanning all files, according to logs everything was working but no thumbnail files were generated to the
+thumbs
+directory.
+All in all, reverting to 1.111.0 fixed the issue, but 1.112.1 didn't help. This is with podman + separate microservices container.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+cole21771
+Sep 8, 2024
+#12472
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+damienallen
+Sep 22, 2024
+So, I had the same issue and I think I found one possible solution!
+For those of us using docker compose, there used to be an
+immich_microservices
+container which was at some point deprecated. I noticed that it was mentioned as an orphaned container when running
+up
+which seemed normal at first (since it's no longer in my compose). However, when inspecting all my running containers I noticed that microservices was still running and erroring out often.
+What worked for me was:
+Stopping the
+immich_microservices
+container
+Running
+docker compose up -d --remove-orphans
+You must be logged in to vote
+All reactions
+🎉
+1
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Chivier
+Oct 25, 2024
+Bro, you saved me!
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+piotr-kubica
+Feb 11, 2025
+Looks like the reason is that it does not detect the assets:
+root@50b8ae4d038d:/usr/src/app# immich upload --recursive /usr/src/app/upload/
+Crawling for assets...
+Hashing files           | ████████████████████████████████████████ | 100% | ETA: 0s | 59756/59756 assets
+Checking for duplicates | ████████████████████████████████████████ | 100% | ETA: 0s | 59756/59756 assets
+Found 59756 new files and 0 duplicates
+Uploading assets | ███████████████████████████████████████░ | 97% | ETA: 12m10s | 1.9 TB/1.9 TB
+Successfully uploaded 57009 new assets (1.8 TB)
+Skipped 2741 duplicate assets (52.7 GB)
+but during next scan (no images added)
+root@50b8ae4d038d:/usr/src/app# immich upload --recursive /usr/src/app/upload/
+Crawling for assets...
+Hashing files           | ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ | 0% | ETA: 49616s | 1359/139522 assets
+ Checking for duplicates | ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ | 0% | ETA: 0s | 0/139522 assets
+59756 is much less than 139522
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+17 participants
+Converted from issue
+This discussion was converted from issue
+#10569
+on June 23, 2024 11:23.

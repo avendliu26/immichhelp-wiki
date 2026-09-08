@@ -1,0 +1,40 @@
+---
+title: "Immich on Proxmox: Choose the Supported Boundary"
+description: "What Immich documents for Proxmox, Docker in LXC, full VMs, storage, and migration decisions."
+category: Platforms
+keywords: immich proxmox, immich lxc, immich virtual machine
+status: published
+lastReviewed: 2026-09-08
+verifiedVersion: v3.1.0
+updated: 2026-09-08
+draft: false
+---
+
+## Direct answer
+
+Immich runs well in a full virtual machine. The current requirements say Docker inside an LXC container is not recommended and advise switching to a supported VM when troubleshooting becomes difficult. Docker Compose remains the recommended production method.
+
+## Recommended layout
+
+Use a supported 64-bit Linux guest, Docker Engine with the Compose plugin, local storage for Postgres, and at least 6 GB RAM. For v3 on amd64, the machine-learning container requires x86-64-v2.
+
+## What the community record says
+
+In Discussion #29317, a user asked whether to migrate a working Docker-in-LXC install to the Proxmox community Immich LXC. A maintainer replied that Docker is still the only recommended and supported method. The discussion does not provide a migration recipe.
+
+Discussion #29626 describes a v2.7.5 → v3.0.1 restart loop in Docker on Proxmox. A responder suspected memory pressure during initial geodata work; the author reported temporarily adding RAM helped. This remains environment-specific.
+
+:::warning Community approach
+A Proxmox helper script or dedicated LXC is a community deployment path. Treat it separately from Immich's supported Docker Compose documentation.
+:::
+
+## Before migrating
+
+Back up the database and media, record the current container paths, and test a restore. Do not start a migration solely because a working LXC setup feels untidy; the source record contains no official dedicated-LXC migration procedure.
+
+## Sources
+
+- [Requirements](https://docs.immich.app/install/requirements/)
+- [Docker Compose](https://docs.immich.app/install/docker-compose/)
+- [Discussion #29317](https://github.com/immich-app/immich/discussions/29317)
+- [Discussion #29626](https://github.com/immich-app/immich/discussions/29626)

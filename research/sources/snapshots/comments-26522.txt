@@ -1,0 +1,58 @@
+[
+  {
+    "html_url": "https://github.com/immich-app/immich/issues/26522#issuecomment-4091415705",
+    "created_at": "2026-03-19T16:20:44Z",
+    "updated_at": "2026-03-19T16:21:16Z",
+    "body": "Can you navigate to `/api/server/config` and let me know if the `isOnboarded` value is set to `true` or `false`? (from your original instance)",
+    "user": {
+      "login": "jrasm91",
+      "id": 4334196,
+      "node_id": "MDQ6VXNlcjQzMzQxOTY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4334196?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jrasm91",
+      "html_url": "https://github.com/jrasm91",
+      "followers_url": "https://api.github.com/users/jrasm91/followers",
+      "following_url": "https://api.github.com/users/jrasm91/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jrasm91/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jrasm91/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jrasm91/subscriptions",
+      "organizations_url": "https://api.github.com/users/jrasm91/orgs",
+      "repos_url": "https://api.github.com/users/jrasm91/repos",
+      "events_url": "https://api.github.com/users/jrasm91/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jrasm91/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "author_association": "MEMBER"
+  },
+  {
+    "html_url": "https://github.com/immich-app/immich/issues/26522#issuecomment-4836794278",
+    "created_at": "2026-06-29T20:36:32Z",
+    "updated_at": "2026-06-29T20:36:32Z",
+    "body": "Had the same issue trying to restore from an existing backup. [Restore from onboarding](https://docs.immich.app/administration/backup-and-restore/#restore-from-onboarding) did not work for me. What worked though was first initializing the server with an admin user and then do the restore from the [settings](https://docs.immich.app/administration/backup-and-restore/#restore-from-settings).",
+    "user": {
+      "login": "Eldaroth",
+      "id": 26259681,
+      "node_id": "MDQ6VXNlcjI2MjU5Njgx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26259681?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Eldaroth",
+      "html_url": "https://github.com/Eldaroth",
+      "followers_url": "https://api.github.com/users/Eldaroth/followers",
+      "following_url": "https://api.github.com/users/Eldaroth/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Eldaroth/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Eldaroth/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Eldaroth/subscriptions",
+      "organizations_url": "https://api.github.com/users/Eldaroth/orgs",
+      "repos_url": "https://api.github.com/users/Eldaroth/repos",
+      "events_url": "https://api.github.com/users/Eldaroth/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Eldaroth/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "author_association": "NONE"
+  }
+]

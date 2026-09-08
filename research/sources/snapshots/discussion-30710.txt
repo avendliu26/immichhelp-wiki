@@ -1,0 +1,535 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+"Error Loading Image" instead of thumbnail on all new images
+#30710
+Unanswered
+10caret100
+asked this question in
+Q&A
+"Error Loading Image" instead of thumbnail on all new images
+#30710
+10caret100
+Aug 11, 2026
+·
+4 comments
+·
+5 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+10caret100
+Aug 11, 2026
+I have searched the existing issues, both open and closed, to make sure this is not a duplicate report.
+Yes
+The bug
+All of a sudden, no intended or known changes to the Immich Docker stack, and I am getting this in the Web interface of the Immich Server on all new syncs from my iPhone (the images/videos show OK on my iPhone):
+If I open any of these images, I get this:
+I tried refreshing the thumbnails -
+no go.
+I deleted all the affected images in Immich, then permanently deleted them from the Immich trash, then resynced them from my iPhone Immich app -
+no go.
+Logs don't show any errors.
+The OS that Immich Server is running on
+Docker inside ProxMox LXC
+Version of Immich Server
+v3.1.0
+Version of Immich Mobile App
+v3.1.0
+Platform with the issue
+Server
+Web
+Mobile
+Device make and model
+iPhone 12 Pro
+Your docker-compose.yml content
+#
+#
+WARNING: To install Immich, follow our guide: https://docs.immich.app/install/docker-compose
+#
+#
+Make sure to use the docker-compose.yml of the current release:
+#
+#
+https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+#
+The compose file on main may not be compatible with the latest release.
+name
+:
+immich
+services
+:
+immich-server
+:
+container_name
+:
+immich_server
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+#
+extends:
+#
+file: hwaccel.transcoding.yml
+#
+service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
+volumes
+:
+#
+Do not edit the next line. If you want to change the media storage location on your system, edit the value of UPLOAD_LOCATION in the .env file
+-
+${UPLOAD_LOCATION}:/data
+-
+/etc/localtime:/etc/localtime:ro
+-
+/mnt/ext_media/laptop/ext_f_drive/pcloud/:/mnt/ext_media/laptop/ext_f_drive/pcloud/:ro
+env_file
+:
+      -
+stack.env
+ports
+:
+      -
+'
+2283:2283
+'
+depends_on
+:
+      -
+redis
+-
+database
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+immich-machine-learning
+:
+container_name
+:
+immich_machine_learning
+#
+For hardware acceleration, add one of -[armnn, cuda, rocm, openvino, rknn] to the image tag.
+#
+Example tag: ${IMMICH_VERSION:-release}-cuda
+image
+:
+ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-openvino
+#
+extends: # uncomment this section for hardware acceleration - see https://docs.immich.app/features/ml-hardware-acceleration
+#
+file: hwaccel.ml.yml
+#
+service: cpu # set to one of [armnn, cuda, rocm, openvino, openvino-wsl, rknn] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+env_file
+:
+      -
+stack.env
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+device_cgroup_rules
+:
+      -
+'
+c 226:* rmw
+'
+devices
+:
+      -
+/dev/dri:/dev/dri
+volumes
+:
+      -
+/dev/bus/usb:/dev/bus/usb
+-
+model-cache:/cache
+redis
+:
+container_name
+:
+immich_redis
+image
+:
+docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+healthcheck
+:
+test
+:
+redis-cli ping || exit 1
+restart
+:
+always
+database
+:
+container_name
+:
+immich_postgres
+image
+:
+ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+environment
+:
+POSTGRES_PASSWORD
+:
+[REDACTED]
+POSTGRES_USER
+:
+${DB_USERNAME}
+POSTGRES_DB
+:
+${DB_DATABASE_NAME}
+POSTGRES_INITDB_ARGS
+:
+'
+--data-checksums
+'
+#
+Uncomment the DB_STORAGE_TYPE: 'HDD' var if your database isn't stored on SSDs
+#
+DB_STORAGE_TYPE: 'HDD'
+volumes
+:
+#
+Do not edit the next line. If you want to change the database storage location on your system, edit the value of DB_DATA_LOCATION in the .env file
+-
+${DB_DATA_LOCATION}:/var/lib/postgresql/data
+shm_size
+:
+128mb
+restart
+:
+always
+healthcheck
+:
+disable
+:
+false
+volumes
+:
+model-cache
+:
+Your .env content
+UPLOAD_LOCATION=/mnt/immich_data/library
+DB_DATA_LOCATION=/mnt/immich_data/db
+IMMICH_VERSION=v3
+DB_PASSWORD=[REDACTED]
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+Reproduction steps
+Take new photos/videos in iPhone
+Wait a bit or force sync to Immich Server by opening Immich App on iPhone
+Go to the Web interface for the Immich server
+All newly synced images show "Error loading image" as thumbnails and when opened to be viewed. All newly synced videos show "Error loading image" as thumbnails but show OK when opened to be viewed.
+Relevant log output
+Additional information
+No response
+You must be logged in to vote
+All reactions
+Replies:
+4 comments
+·
+5 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+bo0tzz
+Aug 11, 2026
+Maintainer
+Can you set the log level to verbose, rerun thumbnail generation for one of these assets from the menu, and post the resulting logs?
+You must be logged in to vote
+All reactions
+👍
+1
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+10caret100
+Aug 11, 2026
+Author
+Here's part of the log when I run the "Generate Thumbnails" job manually, which I think is directly related to my issue. The entire Immich Server docker container restarts itself on these ERRORS. It would then continue the job, encounter another error with the next image to thumbnailize, and the container would restart itself yet again.
+[Nest] 7  - 08/11/2026, 12:42:53 PM VERBOSE [Microservices:MediaService] Thumbnail generation for image 1522e2f7-5e84-4301-8e33-8798e996d12b /mnt/ext_media/laptop/ext_f_drive/pcloud/1/Backup/3.jpg
+
+[Nest] 7  - 08/11/2026, 12:42:53 PM   ERROR [Microservices:{"id":"150f4455-62f9-433e-879e-d2ac7a791910"}] Unable to run job handler (AssetGenerateThumbnails): Error: vipspng: libpng read error
+
+Error: vipspng: libpng read error
+
+    at Sharp.toBuffer (/usr/src/app/server/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/output.js:163:17)
+
+    at MediaRepository.decodeImage (/usr/src/app/server/dist/repositories/media.repository.js:109:68)
+
+    at MediaService.decodeImage (/usr/src/app/server/dist/services/media.service.js:188:59)
+
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+    at async MediaService.extractOriginalImage (/usr/src/app/server/dist/services/media.service.js:199:44)
+
+    at async MediaService.generateImageThumbnails (/usr/src/app/server/dist/services/media.service.js:215:32)
+
+    at async MediaService.handleGenerateThumbnails (/usr/src/app/server/dist/services/media.service.js:155:25)
+
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:78:30)
+
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+
+    at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.80.5/node_modules/bullmq/dist/cjs/classes/worker.js:589:32
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+10caret100
+Aug 11, 2026
+Author
+Here's a different call stack from the log:
+`[Nest] 7  - 08/11/2026, 12:42:53 PM    WARN [Microservices:MediaService] Asset 157b5ce4-7807-49a0-ae96-09b266f2a89c has transparency but the configured format is jpeg which does not support it, consider using a format that does, such as webp
+[Nest] 7  - 08/11/2026, 12:42:53 PM   ERROR [Microservices:{"id":"157b5ce4-7807-49a0-ae96-09b266f2a89c"}] Unable to run job handler (AssetGenerateThumbnails): Error: Processed image is too large for the WebP format
+Error: Processed image is too large for the WebP format
+at Sharp.toFile (/usr/src/app/server/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/output.js:90:19)
+
+at MediaRepository.generateThumbnail (/usr/src/app/server/dist/repositories/media.repository.js:138:14)
+
+at MediaService.generateImageThumbnails (/usr/src/app/server/dist/services/media.service.js:241:34)
+
+at async MediaService.handleGenerateThumbnails (/usr/src/app/server/dist/services/media.service.js:155:25)
+
+at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:78:30)
+
+at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+
+at async /usr/src/app/server/node_modules/.pnpm/bullmq@5.80.5/node_modules/bullmq/dist/cjs/classes/worker.js:589:32
+`
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+tabahi
+Aug 17, 2026
+I have the same issue after updating to v3.1. The uploads from last 2 weeks show "Error loading image". All older photos load fine.
+In the logs it seems, the database is directing towards a 2-digit hex directory that doesn't exist. Regentrating thumbnails doesn't fix it.
+You must be logged in to vote
+All reactions
+2 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+10caret100
+Aug 17, 2026
+Author
+Check your "Generate Thumbnails" job and make sure it is not paused. Mine was paused and after I started it again the "Error loading image" overlay issue was fixed. I have another problem related to WebP format (see above). Hopefully someone will take a look and express an opinion.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+comedyasart
+Sep 7, 2026
+Additional data point: consistent, reproducible failure with a specific error
+Adding details from my own instance, which looks like it might narrow this down — I'm hitting the exact same "Error Loading Image" symptom, but my logs actually contain a specific error message (mine says logs show nothing, some other reports in this thread say the same, so maybe this varies by asset type).
+Environment
+Immich version:
+v3.1.0
+(upgraded from v3.0.x)
+Deployment: official Docker Compose (
+immich-server
+,
+immich-machine-learning
+,
+valkey
+,
+postgres:14-vectorchord0.4.3-pgvectors0.2.0
+)
+Host: TrueNAS SCALE, bind-mounted storage (not NFS)
+Library: ~20k assets, mostly phone-shot JPEGs/HEIC and some video —
+no RAW camera files
+in the affected set as far as I can tell
+What I did
+After upgrading to v3.1.0, thumbnails broke across a large chunk of the library (not just newly synced items — existing assets that displayed fine before the upgrade).
+Full stack restart (
+docker compose down
+/
+up -d
+) — no change.
+Administration → Jobs → Thumbnail Generation →
+Missing
+— no change.
+Administration → Jobs → Thumbnail Generation →
+All
+— same assets fail every time.
+The error
+Every failure in my server log is the same handler error:
+Unable to run job handler (AssetGenerateThumbnails): Error: dcrawload: unable to unpack: Unsupported file format or not RAW file
+Error: dcrawload: unable to unpack: Unsupported file format or not RAW file
+    at Sharp.toBuffer (/usr/src/app/server/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp/lib/output.js:163:17)
+    at MediaRepository.decodeImage (/usr/src/app/server/dist/repositories/media.repository.js:109:68)
+    at MediaService.decodeImage (/usr/src/app/server/dist/services/media.service.js:188:59)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async MediaService.extractOriginalImage (/usr/src/app/server/dist/services/media.service.js:199:44)
+    at async MediaService.generateImageThumbnails (/usr/src/app/server/dist/services/media.service.js:215:32)
+    at async MediaService.handleGenerateThumbnails (/usr/src/app/server/dist/services/media.service.js:155:25)
+    at async JobService.onJobRun (/usr/src/app/server/dist/services/job.service.js:78:30)
+    at async EventRepository.onEvent (/usr/src/app/server/dist/repositories/event.repository.js:91:13)
+A couple of assets instead throw
+Error: Unknown error
+or
+Error: Input file contains unsupported image format
+from the same code path, but the large majority (~95%) are the
+dcrawload
+message above.
+Given
+dcrawload
+is libvips'/sharp's RAW (LibRaw-based) loader, and none of my affected files are RAW, it looks like
+MediaService.decodeImage
+is routing ordinary JPEG/HEIC assets through the RAW decode path and failing there — rather than a corrupt-file or storage-path issue.
+Key finding: it's deterministic, not flaky
+I captured full container logs from two separate "Regenerate All" runs, two days apart.
+Exactly 183 assets fail both times, and it's the same 183 asset IDs both times
+(verified by diffing the failing asset IDs from each log). This isn't random/transient — the same specific assets consistently hit this code path and fail, while the rest of the library thumbnails fine. That suggests something about those particular files (format variant, embedded metadata, color profile, etc.) is triggering the RAW-loader branch in
+decodeImage
+, rather than a systemic library-wide problem.
+Other containers
+No related errors in
+immich_machine_learning
+,
+immich_redis
+, or
+immich_postgres
+logs during the same window — this appears isolated to
+immich-server
+'s media decode path.
+Happy to share the full sanitized server log or test against a specific asset if it'd help narrow down which file characteristic triggers this.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Sjefske
+Sep 2, 2026
+Same here. I'm seeing the same issue on v3.1.0 (native install via community-script on Proxmox LXC, not Docker) and traced it a bit further, which might help narrow down the cause.
+Setup: immich-web and immich-ml both run as systemd services under the
+immich
+user (confirmed via
+systemctl show
+and
+ps
+). No Docker involved.
+What I found:
+Affected assets DO have a matching row in
+asset_file
+for both
+preview
+and
+thumbnail
+types, with a valid-looking path.
+The files at those paths physically exist on disk and are non-corrupt (normal file sizes, e.g. 24-28KB webp).
+However, several of these thumbnail files are owned by
+root:root
+with permissions
+600
+(rw-------), even though every immich process on the system runs as user
+immich
+.
+A newly generated thumbnail (created after re-running the "Missing" job) was correctly owned by
+immich:immich
+, also with
+600
+permissions.
+Since the serving process runs as
+immich
+and cannot read files owned by
+root
+with mode 600, the API request for that thumbnail fails - this shows up as a 404 in the browser console rather than a 403, which is what pointed me toward permissions rather than a missing/corrupt file.
+Re-running "Generate Thumbnails > Missing" did NOT pick up these already-broken assets, since the DB already has an
+asset_file
+record for them - the job doesn't consider them "missing."
+Manually running
+chown -R immich:immich
+on the thumbs directory fixed the already-broken ones, but doesn't address the root cause of some job writing files as
+root
+in the first place.
+Given that this is a non-Docker/native systemd setup and I still see
+root
+-owned files despite every process running as
+immich
+, it doesn't look like a Docker-user-mapping issue (as sometimes cited for similar reports) - the root ownership is happening within the app itself for some subset of thumbnail-generation runs. Worth checking if there's a job path (e.g. one triggered indirectly, such as during a metadata-extraction pass) that briefly executes with different privileges or a different working context than the standard thumbnail worker.
+Happy to pull more logs/DB output if useful.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Sjefske
+Sep 2, 2026
+my daily work around is to do as follow
+pct exec 104 -- bash -c "find /opt/immich/upload/thumbs -print0 | xargs -0 -P 8 -n 500 chown immich:immich"
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+tabahi
+Sep 7, 2026
+Update: Checking again after a month. Now almost all the images uploaded during server:v2 era are missing thumbnails and original photos. It seems the problem slowly spreads chronologically backwards as the v3 scans and runs jobs on old database. To be clear, I have only started using immich a year ago.
+This thread seems to be converted to discussion. We may need to find a relevant "issue".
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+5 participants
+Converted from issue
+This discussion was converted from issue
+#30709
+on August 11, 2026 10:56.

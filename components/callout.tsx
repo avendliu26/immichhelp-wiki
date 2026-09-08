@@ -1,0 +1,1 @@
+import type { ReactNode } from 'react'; export function Callout({type='info',title,children}:{type?:'note'|'tip'|'info'|'warning'|'danger';title?:string;children:ReactNode}){return <aside className={`callout ${type}`}><div className="callout-title">{title || type[0].toUpperCase()+type.slice(1)}</div><div>{children}</div></aside>}

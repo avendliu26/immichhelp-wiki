@@ -1,0 +1,56 @@
+# Keyword
+
+主关键词：how to update immich
+
+# Search Intent
+
+用户需要围绕“how to update immich”获得可核验信息。
+
+# Source Summary
+
+## Official Sources
+
+1. https://docs.immich.app/install/upgrading/ — Upgrading；official-docs；最后检查 2026-09-08；提供当前文档事实。
+2. https://docs.immich.app/install/docker-compose/ — Docker Compose；official-docs；最后检查 2026-09-08；提供部署基线。
+
+## GitHub Issues / Discussions
+
+1. https://github.com/immich-app/immich/discussions/25771 — 真实记录；涉及版本/环境：v3.1.0；状态和确认程度见来源；不把用户建议当官方修复。
+
+## Community Sources
+
+- https://github.com/immich-app/immich/discussions/25771；GitHub/相关社区；场景：Synology helper is community script and had a reported bug; not official；仅作补充证据。
+
+# Verified Facts
+
+- Fact: Read release notes。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: high
+- Fact: update IMMICH_VERSION。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: high
+- Fact: docker compose pull && up -d。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: high
+- Fact: server needs matching major。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: high
+- Fact: downgrades unsupported。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: medium
+- Fact: vectorchord migration needs DB backup。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: medium
+- Fact: v1.137 path requires intermediate release。 Source: Upgrading；scope: how to update immich；Version: v3.1.0；Confidence: medium
+
+# Real User Scenarios
+
+- Environment: v3.1.0；Symptom: Synology helper is community script and had a reported bug; not official；Likely cause: 需按来源核对；Confirmed fix: 未提供或仅个案；Source: https://github.com/immich-app/immich/discussions/25771；Version: v3.1.0；Confidence: medium
+- Environment: Docker Compose；Symptom: 用户按旧教程操作；Likely cause: version difference；Confirmed fix: 以当前官方文档和 release notes 为准；Source: https://docs.immich.app/install/upgrading/；Version: current；Confidence: high
+
+# Version Notes
+
+当前稳定版 v3.1.0；prerelease v3.2.0-rc.3。v3.1.0 资料可能受版本变化影响。
+
+# Risky Operations
+
+- Command / action: 数据库恢复、删除卷、迁移或权限递归修改；Risk: 数据丢失或路径变化；Why risky: 官方文档含 warning/caution；Source: https://docs.immich.app/administration/backup-and-restore/；Preconditions: 完整备份并验证；Safer alternative: 维护页/小范围测试；Backup required: yes
+
+# Conflicts
+
+Source A: 官方文档给出当前流程。 Source B: 社区记录可能是旧版本或平台特例。 Reason: version/platform difference；保留冲突。
+
+# Recommended Article Structure
+
+H1；Direct Answer；适用版本；官方流程；真实场景；平台差异；风险操作；FAQ；Sources
+
+ready-for-writing: true
+missing: []

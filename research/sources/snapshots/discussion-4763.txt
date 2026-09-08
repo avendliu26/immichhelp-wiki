@@ -1,0 +1,1092 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+[BUG] Android App duplicate with external library
+#4763
+toxic0berliner
+started this conversation in
+Feature Request
+[BUG] Android App duplicate with external library
+#4763
+toxic0berliner
+Oct 10, 2023
+·
+28 comments
+·
+3 replies
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Oct 10, 2023
+The bug
+Given the warning to not use immich as the sole backup app for your pictures, I am still using an external app that backups all my pictures from my android phone to my NAS.
+I just moved from a custom importer script to the external library feature.
+But now, immich is not able to recognize anymore that the same picture is on my phone and on the server. I get a duplicate for each picture, one with a cloud only icon for the one on the server, and one with a crossed cloud for the one on my phone.
+In the past I used to get a proper deduplication with a single picture and a checkmark inside the little cloud icon.
+Maybe something broke and external libs are not matched against the local android pictures ?
+The OS that Immich Server is running on
+Docker image running on ubuntu 22.04
+Version of Immich Server
+v1.81.1
+Version of Immich Mobile App
+1.80.0 build.104
+Platform with the issue
+Server
+Web
+Mobile
+Your docker-compose.yml content
+version
+:
+"
+3.8
+"
+services
+:
+immich-server
+:
+container_name
+:
+immich_server
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+command
+:
+[ "start.sh", "immich" ]
+volumes
+:
+      -
+immich-upload:/usr/src/app/upload
+-
+orion-photo:/mnt/orion/photo
+env_file
+:
+      -
+stack.env
+depends_on
+:
+      -
+redis
+-
+database
+-
+typesense
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+immich-server
+immich-microservices
+:
+container_name
+:
+immich_microservices
+image
+:
+ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+command
+:
+[ "start.sh", "microservices" ]
+volumes
+:
+      -
+immich-upload:/usr/src/app/upload
+-
+orion-photo:/mnt/orion/photo
+env_file
+:
+      -
+stack.env
+depends_on
+:
+      -
+redis
+-
+database
+-
+typesense
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+immich-microservices
+immich-machine-learning
+:
+container_name
+:
+immich_machine_learning
+image
+:
+ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+volumes
+:
+      -
+model-cache:/cache
+env_file
+:
+      -
+stack.env
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+immich-machine-learning
+immich-web
+:
+container_name
+:
+immich_web
+image
+:
+ghcr.io/immich-app/immich-web:${IMMICH_VERSION:-release}
+env_file
+:
+      -
+stack.env
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+immich-web
+typesense
+:
+container_name
+:
+immich_typesense
+image
+:
+typesense/typesense:0.24.1@sha256:9bcff2b829f12074426ca044b56160ca9d777a0c488303469143dd9f8259d4dd
+environment
+:
+      -
+TYPESENSE_API_KEY=[REDACTED]
+-
+TYPESENSE_DATA_DIR=/data
+logging
+:
+driver
+:
+none
+volumes
+:
+      -
+tsdata:/data
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+typesense
+redis
+:
+container_name
+:
+immich_redis
+image
+:
+redis:6.2-alpine@sha256:70a7a5b641117670beae0d80658430853896b5ef269ccf00d1827427e3263fa3
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+redis
+database
+:
+container_name
+:
+immich_postgres
+image
+:
+postgres:14-alpine@sha256:28407a9961e76f2d285dc6991e8e48893503cc3836a4755bbc2d40bcc272a441
+env_file
+:
+      -
+stack.env
+environment
+:
+POSTGRES_PASSWORD
+:
+[REDACTED]
+POSTGRES_USER
+:
+${DB_USERNAME}
+POSTGRES_DB
+:
+${DB_DATABASE_NAME}
+PG_DATA
+:
+/var/lib/postgresql/data
+volumes
+:
+      -
+pgdata:/var/lib/postgresql/data
+restart
+:
+always
+networks
+:
+immichnet
+:
+aliases
+: 
+          -
+database
+photo
+:
+container_name
+:
+immich_proxy
+image
+:
+ghcr.io/immich-app/immich-proxy:${IMMICH_VERSION:-release}
+labels
+:
+traefik.http.services.photo.loadbalancer.server.port
+:
+8080
+traefik.docker.network
+:
+traefiknetwork
+subdomain
+:
+photo
+environment
+:
+#
+Make sure these values get passed through from the env file
+-
+IMMICH_SERVER_URL=${IMMICH_SERVER_URL}
+-
+IMMICH_WEB_URL=${IMMICH_WEB_URL}
+#
+ports:
+#
+- 2283:8080
+depends_on
+:
+      -
+immich-server
+-
+immich-web
+restart
+:
+always
+networks
+:
+traefiknetwork
+:
+aliases
+: 
+          -
+photo
+immichnet
+:
+aliases
+: 
+          -
+immich_proxy
+volumes
+:
+pgdata
+:
+driver
+:
+local-persist
+driver_opts
+:
+mountpoint
+:
+${BASE_VOLUMES}/${STACKNAME}/pgdata
+model-cache
+:
+driver
+:
+local-persist
+driver_opts
+:
+mountpoint
+:
+${BASE_VOLUMES}/${STACKNAME}/model-cache
+tsdata
+:
+driver
+:
+local-persist
+driver_opts
+:
+mountpoint
+:
+${BASE_VOLUMES}/${STACKNAME}/tsdata
+orion-photo
+:
+driver
+:
+local-persist
+driver_opts
+:
+mountpoint
+:
+${BASE_ORION}/photo
+immich-upload
+:
+driver
+:
+local-persist
+driver_opts
+:
+#
+mountpoint: ${BASE_ORION}/photo/immich
+mountpoint
+:
+${BASE_ORION}/docker/volumes/immich
+networks
+:
+traefiknetwork
+:
+name
+:
+traefiknetwork
+driver
+:
+bridge
+external
+:
+true
+immichnet
+:
+name
+:
+immichnet
+driver
+:
+bridge
+external
+:
+false
+attachable
+:
+true
+Your .env content
+STACKNAME=photo
+BASE_VOLUMES=/var/lib/docker/local-persist
+BASE_ORION=/mnt/orion
+PUID=5678
+PGID=100
+TZ=Europe/Paris
+UMASK=0
+LOCAL_NETWORK=192.168.0.0/16
+REALHOST=myhostname
+DB_HOSTNAME=immich_postgres
+DB_USERNAME=myuser
+DB_PASSWORD=[REDACTED]
+DB_DATABASE_NAME=immich
+REDIS_HOSTNAME=immich_redis
+UPLOAD_LOCATION=
+${BASE_ORION}
+/photo/immich
+TYPESENSE_API_KEY=[REDACTED]
+PUBLIC_LOGIN_PAGE_MESSAGE=
+IMMICH_WEB_URL=http://immich-web:3000
+IMMICH_SERVER_URL=http://immich-server:3001
+IMMICH_MACHINE_LEARNING_URL=http://immich-machine-learning:3003
+LOG_LEVEL=debug
+Reproduction steps
+0.backup your android pictures to the future external library folder
+1.spin up the stack, add a user and the external library,
+let
+it discover all pictures
+2.start the android app, login,
+let
+it scan
+local
+pictures 
+3.all pictures are show twice
+Additional information
+No response
+You must be logged in to vote
+All reactions
+Replies:
+28 comments
+·
+3 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Oct 10, 2023
+Maintainer
+I think this is not the intended use case. The external library is used for existing libraries while uploading assets will go into the default library.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Oct 10, 2023
+Author
+Damn, it would be a bit sad if that's the case. I trashed my previous install... 50k pictures, with many faces, takes over 3 days to scan and several weeks to ignore the over 40k faces and rename all my friends....
+I'm really not sure I'm ready or even should move everything to the immich primary library... Really difficult to add the dedup algorithm to external libraries ?
+It was working fine in the pas with my custom script that imported into the library with an external path... But that started to fail as well mid September (not importing new ones) so I thought external library would be best.
+Even if I were to switch to immich as primary app including for backup, I have over 250GB of pictures on my phone, not really looking forward to moving it on my NAS from where they are to immich....
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Oct 10, 2023
+Author
+I tried to not grant the permission to use Android pictures but the app keeps asking, so can't use external library at all as long as there is any overlap with the content of the phone, can't use the app without it seeing local android pictures...
+Makes it unusable for me.
+I'm thankfully not your only user and you don't really need me, sure, but I fail to see why external library really shouldn't be treated as the primary library in case the picture on the phone is already on the server in an external library...
+Was liking the face recognition, places, timeline, overall swiftness of the UI. I can't believe I'm the only one with such need but I'm also not ready to fork or PR to fix it as I'm a bad dev, so I hope I can convince you 😁
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Oct 10, 2023
+Maintainer
+I am not sure what you are trying to achieve, from my POV you can
+backup assets from your phone to the default library
+if you have an existing external library, then mount it and use the
+library
+feature.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Oct 10, 2023
+Author
+I have 250gb of pictures already on my phone and already on the NAS where I run immich.
+Just trying to use Immich and not move all my existing pictures.
+The NAS also store some pictures and movies that I remove from my phone since then. So ideally I'd import all existing files AND enable backup, all to the primary library, but that would mean moving or duplicating over 500gb of pictures and videos...
+So I'd really like instead to keep the existing files where they are, not enable the backup as the one I already have works fine, but still be able to use Immich to see and analyse all my pictures and be able to share them with friends.
+This is why I would need the external library AND the android photos to work together and not show up twice, else I'll not use Immich on my phone, not invest time in "maintaining" it and ultimately it'll end up fully unused.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+mattjmeier
+Oct 24, 2023
+I think this is an important issue. I am also experiencing it (while loving Immich overall!) and fully agree.
+I'm sure many people possess duplicated photos in their external libraries for a variety of reasons. Some of those reasons may be vestigial or even superfluous. In my personal case, even the result of laziness.
+as noted here, and the most pressing reason - other backup methods used prior to Immich will have backed up photos from the device already to the external library. This problem
+would
+go away over time, if one was using Immich as the sole backup source, but in my case ~2000 photos that were already backed up to an external source would still
+forever be duplicated in the Immich timeline
+.
+selecting images to print or share with others in the past can result in duplicated subsets of images over libraries
+other backups, editing workflows, etc.
+Obviously, there are other deduplication methods that could take care of things like the duplicated folders. But for people with larger photo collections (mine is ~100k), that is a lot to manage and go through. I love the idea of having the Immich UI put all the photos into a timeline for me without too much intervention. It is working so incredibly well!!
+As I have pointed out (
+#4240 (reply in thread)
+) I think there is a relatively simple solution to this: don't display two images in the timeline that share the same file checksum. Why would this ever be the desired behavior? If they are
+identical
+images, then I am confident that no one would want them displayed adjacent to each other in the timeline. If there are reasons someone would want this, I am very curious to hear it.
+How could a solution be implemented? I propose that they could either be considered a type of 'stack' (i.e., keep the assets tracked separately, but displayed as one), or alternatively, subjected to the same checksum searching that already applies to the "Upload" library (i.e., consider it a single asset). The former option could give users more flexibility, the latter may be easier to implement.
+I love Immich and hope to continue using it! I really feel strongly about this though. I would be willing to help out with a PR, although the learning curve would be really steep for me as I am not familiar with the languages used in Immich.
+Thanks for everyone's continued efforts on this amazing project!!
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 24, 2023
+Maintainer
+Libraries don't currently use checksums since they are the "source of truth" and there is a significantly negative performance impact to generating hashes on large libraries. Even if we had them, checksums have to be unique in the database and now you still have the complexity of managing what file do you keep and which one do you ignore, how do you manage that on rescan or file moves, etc. There are also priorities for libraries like automatic album creation. I guess long story short, probably not going to be addressed anytime soon and you are better off using a proper dedupe tool instead.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+mattjmeier
+Oct 24, 2023
+Ahh, thanks for the insight and taking the time to reply.
+So if I understand correctly, the upload library is specially designated to calculate the sha1 hash for the assets in it, but external libraries are not.
+The part I am not understanding is how the resources required would be any different if I uploaded 100k photos from my phone. If I did this, hypothetically, the hashes would be calculated and presumably recorded in the db. But this isn't possible for the external libraries?
+And I guess what you are saying about being unique in the database means that two assets cannot share a checksum because it's a primary key. This makes sense*. I suppose it would make sense to me intuitively that two duplicate photos (with the same checksum) could be represented by a single asset in the database (since it essentially is). Perhaps it would also start to violate other rules about fields in the database - e.g., can't have more than one file path per asset, likely? I can see how problems would start to pile up.
+I can also definitely understand that people running this on a raspberry pi wouldn't find it desirable to run checksum calculations for days on end.
+I'm curious how photoprism implements this feature (
+https://docs.photoprism.app/user-guide/library/duplicates/
+- they are checking sha1 for every file on import to detect). It is one of the few things it does better - automatically stacking assets when it makes sense to do so (i.e., raw + jpg version; identical images; etc.). I understand this is getting outside the scope of what Immich was designed to do. It's just that it's so awesome at doing everything else it is so tempting to integrate this feature.
+I also share
+@toxic0berliner
+'s concerns regarding dropping other backup methods. I am currently using Nextcloud for auto backups from mobile. I would be happy to lose this method, but it works and is stable for now. So, perhaps something for the future.
+I get the impression that there are many users facing the same issue though, because a lot of people are going to be using external libraries like this, and many people WILL have duplicates as I've described, and many will have other methods of backups too. I'm not trying to put more on the current developers' shoulders, just sharing my experience.
+I still come back to the same question: why would
+any
+user want duplicate images sharing a sha1 hash displayed in the timeline? It seems as simple (ha... I know, is it ever simple) as offering the option to calculate hashes; recording it in a table in the database; and picking one as the primary asset to display and generate thumbs for (the first one by mtime? literally doesn't matter).
+*(EDIT: actually I'm not sure anymore how this is possible, because I do have duplicates in the timeline, meaning they would have the same hash... I obviously do not have a good grasp of how this is all working in the back end, although it's clear that hashes are not calculated for both duplicates)
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 24, 2023
+Maintainer
+External libraries are quite different than upload libraries and we have separate implementations, which reflect each use case.
+Upload libraries have immich as the source of truth and it manages creating and deleting files and deduping them.
+External libraries have the file system as the source of truth and so we leave creating, deleting and deduping files to the user. Deduping has different semantics in this context and the implementation would be quite different. We realized that by not having hashing it is
+significantly
+faster to import an external library, so we didn't add it.
+It is not to say hashing and other deduping
+cannot
+be done, it is more that it is not trivial as it seems and specifically because there were benefits to excluding it (simpler implementation) we didn't include it originally.
+Checksum is a required field, but the value for external library files is just a hash of the file path instead.
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+kamzil
+Feb 13, 2024
+Good points, but I'm inclined to agree with
+@mattjmeier
+more here. Semantically, AFAICT, the only differences between internal and external libraries should be:
+With internal libraries, location of original files in the file system is managed by storage templates and can be changed via migrations managed by the app. With external, file locations are defined by the user and not managed via storage templates
+External library files are read-only (this shouldn't be necessary IMO)
+Files uploaded by users go to the internal library
+I'm curious, what else needs to be different? For both, all the metadata is stored in the database and thumbnails and encoded videos are stored in a similar file structure in the same location. Both can be added to albums and shared the same way. Both are visible in the timeline. Both can be downloaded by clients the same way. Why would the database schema be considerably different for internal and external library assets? I understand that historically the two approaches might have different implementations, but do they have to stay different because of some more difficult obstacle that I'm failing to see here?
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 24, 2023
+Maintainer
+I don't think any user wants duplicates in their external libraries, but they do want external libraries and they got them sooner at the expense of no dedupe checking.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+mattjmeier
+Oct 25, 2023
+Totally fair! Happy to have it, because that is what drew me in as a user.
+Pre-existing duplicates I agree are a separate problem with no easy answer. It was just a surprise that backing my photos up through a separate mechanism (which is indeed recommended upfront in the documentation) results in duplicate uploads from the mobile app to my library.
+I would be really interested to learn more about how the current implementation works to check duplicates against images in the
+upload_location
+but the code base is massive and I didn't have any luck trying to search on my own. Any pointers on where to look?
+Side note: why not use md5 rather than sha1 since it's a bit less computationally expensive? (EDIT: I guess the speed is fairly comparable, but you get more bits from sha1...)
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 25, 2023
+Maintainer
+Pre-existing duplicates I agree are a separate problem with no easy answer. It was just a surprise that backing my photos up through a separate mechanism (which is indeed recommended upfront in the documentation) results in duplicate uploads from the mobile app to my library.
+Honestly, there seem to be two main types of users using Immich right now:
+I want immich to backup and organize my photos for me.
+I have my own collection of photos I'll give you read only access to them, don't touch them.
+Immich was originally designed to work exactly like google photos. With google photos you don't have an option 2 available in the first place. But, there are lots of people looking for self-hosted photos with use case 2 in mind, so libraries was
+added
+(after the fact) to accommodate that user group. Upload libraries are really for group one and external libraries are really for group two.
+While we
+want
+to support more use cases, photo management software is indeed complicated. I'd say, currently at least, using the upload library and the external libraries in tandem in not a great experience and I think most people are only using one or the other right now. I'm sure it will improve in the future, but it is a current limitation. It's still unclear exactly how they should/will be integrated in the future. There are talks of migrating "partner sharing" to be library based and other stuff like that.
+I would be really interested to learn more about how the current implementation works to check duplicates against images in the upload_location but the code base is massive and I didn't have any luck trying to search on my own. Any pointers on where to look?
+Hashes are calculated on upload
+here
+Hashes are have a unique database constraint (per library)
+here
+Asset uploads are passed to the service
+here
+. If the upload violates the constraint the error is caught and the duplicate id is returned.
+Library checksum fields are set
+here
+Side note: why not use md5 rather than sha1 since it's a bit less computationally expensive? (EDIT: I guess the speed is fairly comparable, but you get more bits from sha1...)
+Long story short, it is the version Alex picked when he started building, probably because he is not a crypto expert and just made a decision and moved on. By the time more contributors started working on the project sha1 was already widely incorporated into the project and it would take a bit of effort to migrate to another algorithm. The benefits of migrating simply was not worth the time and effort. Basically, migrating has minimal impact on the users of the system, but delays other more critical features that we've decided to build instead. So like, do you want to migrate to md5 or get a better search system, a stacked photos implementation, a more robust dedupe implementation, automatic albums for external libraries, etc. We've decided those features are more important than the algorithm we use for hashing. Sha1 is pretty performant still and on some machines is a single cpu instruction.
+You must be logged in to vote
+All reactions
+👍
+1
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+mattjmeier
+Oct 25, 2023
+Thanks so much for all the details. I really appreciate you taking the time! I understand the nuances a lot better now.
+I would place myself somewhere between 1 and 2... I do want Immich to be my mobile backup & organization/UI/sharing solution (i.e., a replacement for google photos, obviously), but I also have a large collection of photos, and like the granularity of being able to provide various volumes across various physical locations and not worry about it destroying my collection while the app is in development. I would happily enable a longer processing time to have duplicate detection (but, I have a reasonably powerful server to do this, which many users might not).
+I guess the solution for me is to disable the Immich mobile upload entirely until there is progress on this front and rely on 3rd party tools, then clean up the existing duplicates as required, which is easy enough to do (well worth the effort to keep using the excellent application). I suppose that will work, thanks for helping me reach that conclusion - hopefully this discussion helps others too.
+I'm happy to continue the discussion if I think of anything productive.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Oct 25, 2023
+Maintainer
+Thanks,
+@mattjmeier
+and
+@jrasm91
+, for a very productive conversation.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 25, 2023
+Maintainer
+I think that sounds like a good solution in the interim while we continue to work out the kinks around libraries and figure out how to tackle your use case. Thanks for being understanding as well, it is refreshing 🙏.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jrasm91
+Oct 25, 2023
+Maintainer
+I think adding an optional feature for "library hashing" could be something we look at in the future as well.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Nov 1, 2023
+Maintainer
+Conver to discussion/feature request this as this is not a bug but the current intention. Future optimization might address this issue
+You must be logged in to vote
+All reactions
+👍
+2
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+raphpa
+Nov 14, 2023
+I do have a similar case where I took a Google Takeout with all my photos and dumped them into an external library. Now the app creates duplicates with the photos that still are on my current phone.
+Easiest solution for me in this case would be to tell the app not to upload images older than a given date (or an option like 'Only backup new files').  This might cover other use-cases too, like switching devices. Would this be easier to implement for now?
+You must be logged in to vote
+All reactions
+👍
+1
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Nov 29, 2023
+Author
+again, very unclear to me how duplicating all pictures would be intentional...
+Setting that aside, I've been unable to find a satisfactory solution, the best I have now is to keep the external library, somehow I managed to tell the app to not show the pictures, I believe my adding manually every signle album to the ignore list did it...
+On this device it's like a "read only" immich for me and that's suiting me fine for now. a bit sed I don't get the cloud+checkmark icon but as I only see cloud-only pictures, I still use my other app to monitor if the backup was performed sucessfully or simply look at the latest photo on immich
+Still, I'd like us that don't use immich as our primary backup solution to be more welcomed, especially given that the doc explicitely told us to not use immich as our only backup solution and that I'm not about to keep every picture twice, I take too many of them and hoard enough files already ;)
+You must be logged in to vote
+All reactions
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+alextran1502
+Nov 29, 2023
+Maintainer
+The deduplication mechanism is different on the external library vs the upload library. And they serve different purposes.
+All reactions
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+toxic0berliner
+Feb 13, 2024
+Author
+I don't know exactly what has changed since last I used the immich android app, but I can report that the issue that I had is now gone.m somehow. As I don't have immich backups enabled on the app, it's not showing me any picture from my phone files and I don't see duplicates anymore, I only see the online version with a little cloud icon without the checkmark. For me that's entirely fine.
+I don't need to backup my photos twice so I just don't use the immich backups for now. I will probably switch to it in the future abandoning my older Synology photo backup. I suspect then it might come back with the picture from my phone existing
+on my phone local storage responsible for the checkmark inside the cloud icon
+on immich main library once I have the backup enabled, responsible for the cloud surrounding the checkmark, so far so good we have a single photo in the timeline
+but also in the external library , probably this will show up as a duplicate in the timeline this time with a single cloud icon no checkmark ( it's probably the one I see right no so long as I haven't enabled the backups in immich)
+So probably something still needs to be done to properly deduplicate the timeline.
+Reading older comments here I fear at some point there was a confusion, I believe keeping the external libraries read only is the right thing to do and up to the user to deduplicate within his/her library.
+Nevertheless, deduplicating the timeline and therefore deduplicating across all libraries should be a immich feature.
+One extra use case I will see this useful: I might soon convert my wife to immich, when I import her library it will most likely import pictures that was shared to us by friends and we both stored separately, or she has some pictures I have sent her and I know I have in my library pictures that she has sent me in the past, so I expect all those would show up in duplicates and should I believe be merged by immich even if I agree it's my role within a single library to ensure the same picture isn't showing up twice or more...
+The fact that not enabling the backup doesn't "break the app" by showing duplicates is already a major win for me, and I can fully understand that you need some significant overhaul to recode external libraries to take a sha1 and apply dedupe that you will probably end up applying even within a single library to keep things simple, saying that this is not a priority and way down the line of features/enhancement is clearly understandable!
+I don't have a powerful server for immich to run, but I have time as it runs 24/7, so even if it takes it a few weeks to sha1 over 300k pictures, I'm like
+@mattjmeier
+on this point and agree to spend the compute on it if it makes my life easier and finally gives me a clean timeline 😁 so when you consider it's time to address cross library dedupe, I do believe there is not a need to rethink existing hashing.
+if there is a need to rethink hashing it's probably to move to an AI style dedupe that could bundle the 8 shots I took in which on 6 of them my wife has her eyes closed and group them under 1 picture selecting the one snapshot where both of us are smiling and not blinking 😁 but this is maybe a bit too far off for current local AI models 😂 and most certainly not something belonging in this bug issue 😉
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+dbadovsky
+Jan 22, 2025
+Hi. I have the same issue. I suppose the easiest (and probably best) way is to add "do not show local assets" feature in mobile app.
+Is it possible and maybe easy to implement it? I'm sure many users have the same issue and this is a good idea to let user decide show local assets or not. It can be surely off by default, I'm talking about just the ability.
+As for me, I prefer to sync my assets with third-party software (syncthing) and use an external library for some reasons.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jasongwq
+Aug 26, 2025
+I have the following use case:
+When uploading photos from a camera via FTP to Immich's external library directory (since the camera only supports FTP), Immich automatically scans the directory, and the images appear in the Android app—this works perfectly so far.
+However, when I tap "Download Original" in the Android app, the app re-uploads the original image.
+Would it be possible to add an option during external library setup to let users choose whether to compute hash values? If enabled,the app should skip uploading files that already exist in the external library during subsequent uploads.
+Is this feature something that would be welcome as a PR?
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+hodlemperor
+Nov 14, 2025
+Hi, I just had my issue "Missing cross-source deduplication between External Libraries and Upload Library" (
+#23898
+) closed in favor of this one, so I’d like to add some context and clarify my use case here.
+I’ve read through this discussion and I understand the current design and intentions:
+Upload libraries = Immich is the source of truth, with real checksums and dedup.
+External libraries = the filesystem is the source of truth, no real checksums, no dedup, and the user is responsible for managing duplicates inside that library.
+I’m not asking Immich to modify or deduplicate files
+inside
+the external library itself. I fully agree that the external library should stay read-only and that “in-library” dedupe is the user’s job.
+My problem is specifically about how
+assets from different sources are represented in the timeline and in mobile backup workflows
+, not about touching the external filesystem.
+1. This
+could
+be mitigated by merge duplicates, but only in theory
+In some cases, the situation could be partially mitigated by using the
+Merge duplicates
+feature:
+the device uploads a photo that already exists in an external library
+Immich detects a duplicate
+the user merges and chooses which asset to keep
+However, even this has several issues:
+it
+wastes bandwidth and server resources
+, because the duplicate must be fully uploaded
+before
+it can be merged
+it is
+manual
+, so it doesn’t scale for large overlapping libraries
+and most importantly: it
+still doesn’t work
+correctly unless the other issue is solved:
+Mobile backup re-uploads deleted duplicates after 30 days because Immich does not remember excluded hashes (
+#23897
+)
+If I keep the External Library asset and delete the Upload Library asset, after Trash expires the mobile app will upload the same file again.
+So even with the merge feature, the loop continues unless the server can remember that this hash was intentionally excluded as an upload.
+2. Realistic migration workflows: people keep old photos on their phone
+From a user perspective, it is also important to highlight that this is not an edge case:
+Many people have
+years or decades
+of photos on their phone (e.g. old imports, device migrations, etc.).
+It is completely normal to still have photos from 2006 or earlier on the phone, even if they also exist in some archive.
+When migrating to Immich, it is not realistic to expect users to:
+delete all existing photos from their phone and only keep them in an external library,
+or
+“sanitize” their external library so that it never overlaps with whatever still lives on the device.
+On top of that, a lot of users (myself included) have
+previous backup systems that they no longer fully trust
+.
+A very common migration pattern is:
+keep the old backup on the NAS (external library)
+keep photos on the phone as well
+use Immich to:
+verify that everything is really there
+detect if something is missing
+and only then decide how to clean up
+In this scenario,
+overlapping content between the phone and an external library is not a mistake, it’s intentional and temporary
+, and Immich is used as the tool to reconcile and verify.
+3. Two distinct but related issues
+For me there are two separate layers:
+Mobile backup + deleted uploads
+As described in
+Mobile backup re-uploads deleted duplicates after 30 days because Immich does not remember excluded hashes
+#23897
+: if I merge and keep the External Library asset while deleting the upload, after 30 days the mobile client will re-upload the same photo, creating an infinite loop.
+This is about the server not remembering hashes that the user explicitly excluded.
+Cross-source duplication in the UI
+Even without the re-upload loop, when the same file exists as:
+an uploaded asset, and
+an External Library asset
+they appear as two separate photos in the timeline, even if the content is identical.
+I understand that full hashing for external libraries is expensive and was intentionally avoided to keep them fast and simple. I’m fine with this being treated as a feature request rather than a bug.
+However, I think it’s important to acknowledge that:
+using
+External Libraries + mobile backup together
+is a very realistic use case,
+people will almost always have
+overlapping content
+between their phone and their external collections,
+and today, the combination of:
+no cross-source deduplication, and
+no memory of excluded upload hashes
+makes this workflow quite painful (duplicates, loops, extra bandwidth use, manual merges).
+4. Possible direction (from a user perspective)
+Without changing the external filesystem, some ideas that would already help a lot:
+Optional hashing for external libraries (opt-in, with clear warnings about performance).
+Timeline-level deduplication/stacking when two assets share the same real content hash.
+Remember hashes that were explicitly deleted from the upload library (so mobile backup doesn’t re-upload them).
+Better UX around merge, deletion, and “don’t ever upload this file again”.
+Thanks again for all the work and for the detailed explanations above. I hope this additional perspective (especially about real-world migration workflows and the interaction with mobile backup) is useful when you revisit libraries and cross-source behavior in the future.
+For reference, the related issue about excluded hashes is
+#23897
+.
+You must be logged in to vote
+All reactions
+👍
+4
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Horrih
+Dec 20, 2025
+I would like to chime here as I have the same issue : close to 1TB of family photos/videos, previously stored on a NAS and managed manually : once a year the wife migrates the phone backup into the year folder.
+When installing immich on her phone for the first time, her whole phone got reuploaded causing mass duplication of the past 7 years.
+If an external library hashing option is not something you would consider, another option that the synology photos app provides is quite simple : only sync "new" photos, aka automatically exclude from the iphone/android app any photo that occured before this date since you can assume that these old photos are already present on one of the external libraries.
+This is what we used when migrating to synology photo and honestly this simple option was enough.
+In the meantime we will continue using synology photo for backup, immich as external library only for browsing.
+Thank you for your amazing work otherwise !
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+corsac-s
+Dec 27, 2025
+My two cents as well.
+First, I think the discussion title is a bit misleading because it seems unrelated to the Android application, in the end? It's really just that there's no content hash calculation in the external library code and thus no deduplication based on content.
+I have the same use case as various others in the threads, where I rely a lot on the external library (I actually don't use the upload feature because I'm using Nextcloud for the upload) but I do have duplicates in there, because I also backup my phone pictures at the same place as my camera pictures.
+While I don't question your tests, I'm surprised that adding a sha1 calculation adds that much processing time, considering all there is to do when adding a picture (parsing and storing the metadata, and later generating the thumbnails, identifying faces etc.)
+I know it's not always a good idea to add options but here if processing time is actually an issue, maybe give people the choice would be nice. Because at the moment I have to use the content deduplication feature (which works in external libraries but relies on machine learning which is way more expensive than a sha1 calculation).
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Peaj
+Jan 15, 2026
+I have the same scenario as many others here:
+Huge backlog of old photos as external libarary but would love to fully embrace immich and use phone backup and internal libarary for new photos from now on.
+I think solving that
+"from now"
+part might be the low hanging fruit here.
+Like
+@raphpa
+suggested being able to set a cutoff date for the automatic upload would fix that common onboarding issue.
+This would be a great solution to quickly get a lot of people onboarded with the internal library and phone upload.
+For the longterm external library hashes would be great as
+@corsac-s
+mentioned it cannot take up that much processing time right?
+Generating all the thumbnails, clip space, ocr and face data probably takes a lot longer (took me nearly a week for 260k photos)
+You must be logged in to vote
+All reactions
+❤️
+2
+1 reply
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+DieBauer
+Feb 7, 2026
+That's a great idea. Indeed my Synology Photos app has the 'new photos only' toggle
+All reactions
+👍
+3
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+eandwal
+Apr 22, 2026
+I'm a type 2 user,  I want my master to be an external library on my NAS but I love the timeline feature in immich and the automatic android upload.
+Would it be possible (for me being type 2) to switch immich into a mode where new android uploads go to my external library instead of the upload library.  I can then sort them/delete them, rename them and select a scan of my external library when I want.  If the andriod immich upload app knows what has already been uploaded then why try and upload old photos again?
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+jacek-dargiel
+Jul 18, 2026
+I understand that calculating content hashes for large external libraries is time consuming, but immich already generates thumbnails, extracts metadata, runs facial recognition, OCR etc. for external library resources. Hashing can't be a deal breaker compared to those operations.
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🆕
+Feature Request
+Labels
+None yet
+15 participants
+Converted from issue
+This discussion was converted from issue
+#4413
+on November 01, 2023 03:38.

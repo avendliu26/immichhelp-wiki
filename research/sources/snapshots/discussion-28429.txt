@@ -1,0 +1,172 @@
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+immich-app
+/
+immich
+Public
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Notifications
+You must be signed in to change notification settings
+Fork
+6.8k
+Star
+114k
+immich upload vs external lib
+#28429
+Unanswered
+n3de
+asked this question in
+Q&A
+immich upload vs external lib
+#28429
+n3de
+May 14, 2026
+·
+5 comments
+Return to top
+Discussion options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+n3de
+May 14, 2026
+Hey everyone, I want to use Immich for my photos, and I'm facing a minor architectural decision:
+Setup:
+Proxmox with ZFS storage
+Nextcloud, where the data resides on the ZFS storage via a mount
+My Options:
+A: Mount a ZFS dataset directly into Immich as the upload folder, and then mount the user-specific folder into Nextcloud per user.
+B: Mount the user-specific photos folder e.g.,
+/data_tank/nextcloud-data/data/user_foobar/files/Photos
+into Immich as an external library. Upload photos from my phone to Nextcloud via "Syncthing-App" synchronization.
+I'm leaning slightly towards option B, simply because I already use Nextcloud for
+all
+my data—whether it's documents, images, contacts, etc.
+My only uncertainty is whether and if so, what kind of problems or disadvantages I might encounter if I
+don't
+handle uploads directly through Immich, but instead configure Immich to merely ingest external libraries.
+You must be logged in to vote
+All reactions
+Replies:
+5 comments
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+marr
+May 14, 2026
+I am going through some challenges after using an external library. I don't know if it will affect you, but I just learned that external lib aren't part of the dedupe process. I'm getting a bunch of uniqueness constraint issues now because I tried copying a previous library (non-external) and adding it as an external lib to a new instance. It messed everything up. I'm in the middle of debugging it now, but I would say avoid external if you can.
+Use SSD paths for thumbs and encoded-video if you can:
+https://docs.immich.app/guides/custom-locations
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+n3de
+May 14, 2026
+Author
+Thanks for your advie. I also read, that some functions doesn't work with external libs. I think also, that the main focus is on the photos and therefore I should use immich as it is designed. My lxc is on an m.2 ssd and my upload folder will be on the zfs raidz with 5x hdd.
+The hint with the custom location is great. Thanks a lot! I changed the thumbs folder to the local lxc container.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+yann117
+May 14, 2026
+@marr
+Sorry but I use mostly only external library without any issues.
+And the duplicate tool - like everything else - is working for them.
+In fact I don't see any limitation with external libraries at all. I think you are facing "something else".
+All my assets are in external libraries on a homeserver and exported as NFS drive. They are served by Immich, but also accessed by other applications (Kodi mainly).
+My process is uploading new content directly in Immich, to save and make them immediately available everywhere, so they land in the main user library (not external library).
+Then, every quarter or so, I take them out and process them:
+do some triage (duplicate, same scene, bad quality pictures, ...)
+file renaming to uniform them
+aligning metadata (tagging)
+reducing the  JPEG Quality
+re-encoding video (from fast/low compression H265 encoding of camera/smartphone) to AV1 with high-quality/compression ratio
+creating dedicated sub-folders for big events
+As final step, once they are properly cleaned-up/organized, the data size went down by 30 to 50% and they are ready for lifetime storage and
+I move them to the external library
+.
+The advantage of external library is that y
+ou can do whatever changes directly on the filesystem
+, without any risk with Immich database. Of course you have to reprocess the external library after that to update, but this is not corrupting the database.
+On the other hand with "upload library", you cannot touch the file from the filesystem/backend, this is
+not
+supported, this should
+never be done
+, this will let orphan references in the databse, cause access/error messages.
+And that is the reason why you need to be careful with the "moving out of upload library" step. You have to:
+make a copy of those asset in the filesystem
+do your processing (external to Immich)
+in Immich
+, select/identify those uploaded assets, and delete them
+add the processed items to the external library
+That identification step can be easily done, by going to the
+Folders
+view, then go to your
+/data/library/...
+content, they will be there. You can CTRL+A / select all, then just _delete.
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+n3de
+May 17, 2026
+Author
+I will quote an answere regarding to the topic
+The main disadvantage is that Immich isn't going to manage that library for you you're in charge of keeping it organized. Additionally, you'd lose out on mobile app features like album sync and free up space
+You must be logged in to vote
+All reactions
+0 replies
+Comment options
+Uh oh!
+There was an error while loading.
+Please reload this page
+.
+JimKnopf182
+Jul 30, 2026
+I have the same setup with Proxmox: 1x SSD and 3x HDDs. I installed Immich using Proxmox's helper scripts. I wasn't able to change the file custom locations as
+@marr
+mentioned, because this isn't a Docker setup.
+Instead, I simply mounted the entire Immich upload directory to my storage path:
+mp0: /mnt/storage/immich,mp=/opt/immich/upload
+Would this cause any problems or performance issues, since the thumbnails will also be stored in that directory? The rest is stored separately, right?
+You must be logged in to vote
+All reactions
+0 replies
+Sign up for free
+to join this conversation on GitHub
+.
+    Already have an account?
+Sign in to comment
+Category
+🙏
+Q&A
+Labels
+None yet
+4 participants

@@ -1,0 +1,174 @@
+Unraid
+Immich can easily be installed and updated on Unraid via:
+Docker Compose Manager
+plugin from the Unraid Community Apps
+Community made template on the Unraid Community Apps
+Community Applications Template
+​
+info
+The Unraid template uses a community made image and is not officially supported by Immich
+In order to install Immich from the Unraid CA, you will need an existing Redis and PostgreSQL 14 container, If you do not already have Redis or PostgreSQL you can install them from the Unraid CA, just make sure you choose PostgreSQL
+14
+.
+Once you have Redis and PostgreSQL running, search for Immich on the Unraid CA, choose either of the templates listed and fill out the example variables.
+For more information about setting up the community image see
+here
+Docker-Compose Method (Official)
+​
+info
+Guide was written using Unraid v6.12.10.
+Requires you to have installed the plugin:
+Docker Compose Manager
+An Unraid share created for your images
+There has been a
+report
+of this not working if your Unraid server doesn't support AVX
+(e.g. using a T610)
+Installation Steps
+​
+Go to "
+Plugins
+" and click on "
+Compose.Manager
+"
+Click "
+Add New Stack
+" and when prompted for a label enter "
+Immich
+"
+Select the cogwheel ⚙️ next to Immich and click "
+Edit Stack
+"
+Click "
+Compose File
+" and then paste the entire contents of the
+Immich Docker Compose
+file into the Unraid editor. Remove any text that may be in the text area by default. Note that Unraid v6.12.10 uses version 24.0.9 of the Docker Engine, which does not support healthcheck
+start_interval
+as defined in the
+database
+service of the Docker compose file (version 25 or higher is needed). This parameter defines an initial waiting period before starting health checks, to give the container time to start up. Commenting out the
+start_interval
+and
+start_period
+parameters will allow the containers to start up normally. The only downside to this is that the database container will not receive an initial health check until
+interval
+time has passed.
+Using an existing Postgres container? Click me! Otherwise proceed to step 5.
+Comment out the database service
+Comment out the database dependency for
+each service
+(example in screenshot below only shows 2 of the services - ensure you do this for all services)
+Comment out the volumes
+Click "
+Save Changes
+", you will be prompted to edit stack UI labels, just leave this blank and click "
+Ok
+"
+Select the cog ⚙️ next to Immich, click "
+Edit Stack
+", then click "
+Env File
+"
+Paste the entire contents of the
+Immich example.env
+file into the Unraid editor, then
+before saving
+edit the following:
+UPLOAD_LOCATION
+: Create a folder in your Images Unraid share and place the
+absolute
+location here > For example my
+"images"
+share has a folder within it called
+"immich"
+. If I browse to this directory in the terminal and type
+pwd
+the output is
+/mnt/user/images/immich
+. This is the exact value I need to enter as my
+UPLOAD_LOCATION
+DB_DATA_LOCATION
+: Change this to use an Unraid share (preferably a cache pool, e.g.
+/mnt/user/appdata/postgresql/data
+). This uses the
+appdata
+share. Do also create the
+postgresql
+folder, by running
+mkdir /mnt/user/{share_location}/postgresql/data
+. If left at default it will try to use Unraid's
+/boot/config/plugins/compose.manager/projects/[stack_name]/postgres
+folder which it doesn't have permissions to, resulting in this container continuously restarting.
+Using an existing Postgres container? Click me! Otherwise proceed to step 8.
+Update the following database variables as relevant to your Postgres container:
+DB_HOSTNAME
+DB_USERNAME
+DB_PASSWORD
+DB_DATABASE_NAME
+DB_PORT
+Click "
+Save Changes
+" followed by "
+Compose Up
+" and Unraid will begin to create the Immich containers in a popup window. Once complete you will see a message on the popup window stating
+"Connection Closed"
+. Click "
+Done
+" and go to the Unraid "
+Docker
+" page
+Note: This can take several minutes depending on your Internet speed and Unraid hardware
+Once on the Docker page you will see several Immich containers, one of them will be labelled
+immich_server
+and will have a port mapping. Visit the
+IP:PORT
+displayed in your web browser and you should see the Immich admin setup page.
+Using the FolderView plugin for organizing your Docker containers? Click me! Otherwise you're complete!
+If you are using the FolderView plugin go the Docker tab and select "
+New Folder
+".
+Label it
+"Immich"
+and use this URL as the logo:
+https://raw.githubusercontent.com/immich-app/immich/main/design/immich-logo.png
+Then simply select all the Immich related containers before clicking "
+Submit
+"
+tip
+For more information on how to use the application once installed, please refer to the
+Post Install
+guide.
+Updating Steps
+​
+danger
+Make sure to read the general
+upgrade instructions
+.
+Updating is extremely easy however it's important to be aware that containers managed via the Docker Compose Manager plugin do not integrate with Unraid's native dockerman UI, the label "
+update ready
+" will always be present on containers installed via the Docker Compose Manager.
+You should ignore the "
+update ready
+" on the Unraid WebUI and update when you receive the notification within the Immich WebUI.
+Go to the "
+Docker
+" tab and scroll to the Compose section
+Next to Immich click the "
+Update Stack
+" button and Unraid will begin to update all Immich related containers
+Note:
+Do not
+select Compose Down first, it is unnecessary.
+Once complete you will see a "
+Connection Closed
+" message, select "
+Done
+".
+Return back to the Immich WebUI and you will see the version has been updated to the latest
+Edit this page
+Last updated
+on
+Jul 27, 2026
+by
+github-actions

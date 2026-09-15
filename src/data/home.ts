@@ -7,6 +7,6 @@ export const home = {
   backup: { title: 'Backup before you need it', description: 'Repeatable backup and migration guidance with restore checks.', href: '/backup' },
   features: { title: 'Understand the features', description: 'Short, focused explanations that help you choose the right workflow.', href: '/features' },
   compare: { title: 'Compare before you commit', description: 'A neutral framework for setup, maintenance, privacy, and fit.', href: '/compare' },
-  latestUpdates: [{ date: 'Jul 29, 2026', title: 'Stable release: Immich v3.1.0', href: '/setup/how-to-update-immich' }, { date: 'Sep 08, 2026', title: 'Current research and source coverage', href: '/about' }],
+  latestUpdates: [{ date: 'Sep 14, 2026', title: 'Stable release: Immich v3.2.1', href: '/setup/how-to-update-immich' }, { date: 'Sep 08, 2026', title: 'Current research and source coverage', href: '/about' }],
   finalCta: { title: 'Need a place to start?', description: 'Use the search or begin with the setup guide.', href: '/guides', label: 'Open the getting started guide' },
 };

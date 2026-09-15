@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export type DocumentStatus = 'draft' | 'review' | 'published';
-export type DocumentSummary = { title:string; description:string; slug:string; category:string; keywords:string[]; headings:string[]; status:DocumentStatus; lastReviewed?:string; verifiedVersion?:string; updated?:string };
+export type DocumentSummary = { title:string; heading?:string; description:string; slug:string; category:string; keywords:string[]; headings:string[]; status:DocumentStatus; lastReviewed?:string; verifiedVersion?:string; updated?:string };
 export type Document = DocumentSummary & { body:string };
 const contentRoot = path.join(process.cwd(), 'content');
 
@@ -14,7 +14,7 @@ function parseFrontmatter(raw:string) {
   return { data, body: match[2] };
 }
 function files(dir = contentRoot):string[] { return fs.existsSync(dir) ? fs.readdirSync(dir,{withFileTypes:true}).flatMap((entry) => entry.isDirectory() ? files(path.join(dir,entry.name)) : entry.name.endsWith('.mdx') ? [path.join(dir,entry.name)] : []) : []; }
-function fromFile(file:string):Document { const raw = fs.readFileSync(file,'utf8'); const {data,body} = parseFrontmatter(raw); const slug = path.relative(contentRoot,file).replace(/\.mdx$/,'').replace(/\\/g,'/').replace(/\/index$/,''); const headings = [...body.matchAll(/^#{2,3}\s+(.+)$/gm)].map((match) => match[1].replace(/[#`]/g,'').trim()); return { title:data.title || slug, description:data.description || '', slug, category:data.category || 'Reference', keywords:(data.keywords || '').split(',').map((item) => item.trim()).filter(Boolean), headings, status:(data.status || 'draft') as DocumentStatus, lastReviewed:data.lastReviewed, verifiedVersion:data.verifiedVersion, updated:data.updated, body }; }
+function fromFile(file:string):Document { const raw = fs.readFileSync(file,'utf8'); const {data,body} = parseFrontmatter(raw); const slug = path.relative(contentRoot,file).replace(/\.mdx$/,'').replace(/\\/g,'/').replace(/\/index$/,''); const headings = [...body.matchAll(/^#{2,3}\s+(.+)$/gm)].map((match) => match[1].replace(/[#`]/g,'').trim()); return { title:data.title || slug, heading:data.heading, description:data.description || '', slug, category:data.category || 'Reference', keywords:(data.keywords || '').split(',').map((item) => item.trim()).filter(Boolean), headings, status:(data.status || 'draft') as DocumentStatus, lastReviewed:data.lastReviewed, verifiedVersion:data.verifiedVersion, updated:data.updated, body }; }
 export function getDocuments():Document[] { return files().map(fromFile); }
 export function getPublishedDocuments():DocumentSummary[] { return getDocuments().filter((doc) => doc.status === 'published').map(({body:_,...summary}) => summary); }
 export function getDocument(slug:string):Document | undefined { return getDocuments().find((doc) => doc.slug === slug && doc.status === 'published'); }

@@ -16,7 +16,7 @@ Protect three things together: the Immich database, the original photos and vide
 
 For an ordinary installation, copy the entire `UPLOAD_LOCATION`, retain a usable database dump, and include any external-library folders and custom mounts. Keep another copy away from the server. Immich recommends a 3-2-1 strategy; arranging and checking the actual filesystem backup remains your responsibility. [Official backup guidance](https://docs.immich.app/administration/backup-and-restore/)
 
-Use the web restore workflow for current installations. A successful database import alone is insufficient: the restored records must still point to readable originals. This guide was reviewed with stable v3.1.0 on September 8, 2026; backups from before v2.5.0 need the older, version-selected recovery instructions.
+Use the web restore workflow for current installations. A successful database import alone is insufficient: the restored records must still point to readable originals. This guide was reviewed with stable v3.2.1 on September 15, 2026; backups from before v2.5.0 need the older, version-selected recovery instructions.
 
 :::danger Restore replaces data
 A restore replaces the current database. Keep the current database and media, verify your backup set, and rehearse on an isolated recovery target before replacing a working instance. A database restore point is not an independent copy of your photos.

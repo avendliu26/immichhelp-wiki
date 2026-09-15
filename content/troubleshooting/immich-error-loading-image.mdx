@@ -1,22 +1,22 @@
 ---
-title: "Immich Error Loading Image: Trace the Cause Safely"
+title: "Immich Error Loading Image: Causes & Safe Fixes"
 description: "A source-backed path for missing originals, failed thumbnails, storage mounts, and version-specific Immich image errors."
 category: Troubleshooting
 keywords: immich error loading image, broken thumbnail, missing file, refresh thumbnails
 status: published
-lastReviewed: 2026-09-08
-verifiedVersion: v3.1.0
-updated: 2026-09-08
+lastReviewed: 2026-09-15
+verifiedVersion: v3.2.1
+updated: 2026-09-15
 draft: false
 ---
 
 ## Direct Answer
 
-First test whether the server can deliver the affected original. If the original downloads but its tile or preview fails, investigate thumbnail generation and generated-file storage. If the original also fails, inspect the exact path, mount and access error before regenerating anything. “Error loading image” does not identify a single cause. [System Integrity](https://docs.immich.app/administration/system-integrity/)
+Start by separating the original from its generated media. If the original loads but the thumbnail or preview fails, investigate generated media, thumbnail processing, the Job Queues and the `thumbs` storage path. If the original also fails, investigate the exact storage path, mount, permissions or missing file first. Thumbnail regeneration cannot recover a missing original. [System Integrity](https://docs.immich.app/administration/system-integrity/)
 
-Next decide whether the problem affects uploaded media, an external library, one format, or only access through a public hostname. Use one known failing asset throughout the checks. The decision flow below is an editorial diagnostic sequence assembled from the official storage/job/proxy documentation and labeled cases; it is not an official universal repair command.
+Next decide whether the problem affects uploaded media, an external library, one format, or only access through a public hostname. Use one known failing asset throughout the checks. For deployment paths, compare the [Docker Compose setup guide](/setup/immich-docker-compose) with your actual configuration. The decision flow below is an editorial diagnostic sequence assembled from the official storage/job/proxy documentation and labeled cases; it is not an official universal repair command.
 
-Do not delete database records, clear Trash or reset the stack to hide the error. If an original is truly absent, thumbnails cannot recreate it. Preserve backups and evidence first. Reviewed September 8, 2026 against stable v3.1.0; the v1/v2 incidents below are historical unless explicitly stated otherwise.
+Do not delete database records, clear Trash or reset the stack to hide the error. Preserve backups and evidence first. Reviewed September 15, 2026 against v3.2.1. Older v1/v2 incidents and release-specific discussions below are historical evidence, not current universal fixes.
 
 ## Choose the matching symptom
 
@@ -28,7 +28,6 @@ Do not delete database records, clear Trash or reset the stack to hide the error
 | Started after moving storage or updating | Old/new mounts, `.env`, container destination | Post-update branch |
 | LAN access works, public hostname fails | Same asset and client through each route | Network/proxy branch |
 | Only one format or file fails | Processing error and supported format | Format branch |
-| Different instances appear to handle each other's assets | Cache/queue isolation | Multi-instance case |
 
 Record the asset's filename/ID, approximate request time, server and mobile versions, deployment method and whether the failure affects one or many items. Avoid posting personal photos, full environment files or private share URLs in a public issue.
 
@@ -87,7 +86,7 @@ Symptom: managed uploads work, while files from an existing collection fail or s
 
 Check the additional volume mount, library import path, read access, exclusions and the NAS's availability. The UI path must equal the container-side destination; host access through File Station or the Proxmox console is insufficient. Dedicated worker containers, if configured, need the same path. The standard current stack does not require creating an old standalone microservices container. [External Libraries](https://docs.immich.app/features/libraries/)
 
-If a NAS disappears, restore the mount before scanning again or cleaning Trash. Current-v3.1.0 [Discussion #30820](https://github.com/immich-app/immich/discussions/30820) describes a remote-mount outage followed by many offline/trashed external assets. The maintainer recommends restoring visibility and rescanning, while the reporter says recovery remained incomplete. That disagreement remains unresolved; do not use the thread's suggested SQL as an endorsed repair.
+If a NAS disappears, restore the mount before scanning again or cleaning Trash. Historical [Discussion #30820](https://github.com/immich-app/immich/discussions/30820) describes a v3.1.0 remote-mount outage followed by many offline/trashed external assets. The maintainer recommends restoring visibility and rescanning, while the reporter says recovery remained incomplete. That disagreement remains unresolved; do not use the thread's suggested SQL as an endorsed repair.
 
 Verify a previously failing original opens after the same path is restored. If it does not, preserve the backup and exact scan/log evidence, then follow the detailed [external-library guide](/storage/immich-external-library).
 
@@ -109,7 +108,7 @@ Immich's [reverse-proxy documentation](https://docs.immich.app/administration/re
 
 Verify both local and proxied access to the original and preview after a change. For mobile-only failures, check the phone's actual server URL, network and major-version compatibility as well.
 
-## Format, checksum and multi-instance branches
+## Format and checksum branch
 
 If only one format or asset fails, compare a known-good JPEG and the failing original, check the [supported media formats](https://docs.immich.app/features/supported-formats/) and capture the exact decoder/thumbnail error. Do not rename an extension to make unsupported content appear supported. Keep the original and use the error plus exact version when reporting; no universal conversion or decoder workaround is confirmed here.
 
@@ -119,15 +118,17 @@ For checksum mismatch, determine whether the internal original was manually edit
 Only consider deleting/re-uploading a mismatched asset after preserving an intact original and backups and understanding the metadata impact. Investigate unexplained storage corruption first. Never batch-delete mismatches or clear Trash as a diagnostic test.
 :::
 
-Multi-instance case: [Issue #23574](https://github.com/immich-app/immich/issues/23574) concerns Ubuntu/Docker v2.2.1 with two instances. Its later comments identify an omitted instance-specific Redis hostname, allowing the wrong instance to process jobs. Verify each instance's queue/cache configuration as well as its database and mounts. The author confirmed the configuration omission; the record is not a complete full-library recovery test. [Confirmation comment](https://github.com/immich-app/immich/issues/23574#issuecomment-3486006690)
-
 ## Verification and escalation
 
 A branch is resolved when the same previously failing asset opens as an original and preview, relevant jobs finish, and the corresponding storage/log error no longer recurs. Sample more than one affected group before calling a large library repaired. New uploads alone do not test historical data.
 
 If this does not work, report the exact version/platform, one failing asset's redacted path, original-versus-preview result, local-versus-proxy result, job status, and the earliest relevant log error. Link the closest issue only if its environment matches. Do not label a closed issue as fixed without a supporting resolution, or expose private media as a public reproduction.
 
-## FAQ
+## Advanced cases and FAQ
+
+### Multi-instance deployments
+
+[Issue #23574](https://github.com/immich-app/immich/issues/23574) concerns Ubuntu/Docker v2.2.1 with two instances. Its later comments identify an omitted instance-specific Redis hostname, allowing the wrong instance to process jobs. Verify each instance's queue/cache configuration as well as its database and mounts. The author confirmed the configuration omission; the record is not a complete full-library recovery test. [Confirmation comment](https://github.com/immich-app/immich/issues/23574#issuecomment-3486006690)
 
 ### Why can the phone show a photo that the web cannot load?
 
@@ -153,7 +154,7 @@ The official FAQ records a player color-profile limitation for HDR content. That
 - [Docker ps](https://docs.docker.com/reference/cli/docker/compose/ps/) — Official Docker reference.
 - [Docker logs](https://docs.docker.com/reference/cli/docker/compose/logs/) — Official Docker reference.
 - [Missing uploaded originals, #26720](https://github.com/immich-app/immich/issues/26720) — GitHub issue; historical v2.5.6 record.
-- [Multiple instances, #23574](https://github.com/immich-app/immich/issues/23574) — GitHub issue; v2.2.1 queue-isolation case.
+- [Multiple instances, #23574](https://github.com/immich-app/immich/issues/23574) — GitHub issue; historical v2.2.1 queue-isolation case.
 - [Thumbnail refresh, #10570](https://github.com/immich-app/immich/discussions/10570) — GitHub discussion; historical user observations.
 - [External mount outage, #30820](https://github.com/immich-app/immich/discussions/30820) — GitHub discussion; v3.1.0, unresolved recovery discrepancy.
 - [Initial TrueNAS processing](https://www.reddit.com/r/immich/comments/1pgql6k/error_loading_image/) — Reddit; user-reported progress.

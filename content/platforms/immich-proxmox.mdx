@@ -16,7 +16,7 @@ For a new Proxmox deployment, create a full Linux VM and run Immich's official D
 
 Keep PostgreSQL on local guest storage backed by suitable disks, preferably SSD. Treat NAS photos as a separate mount and backup responsibility. Proxmox's successful guest-backup message does not by itself prove that externally mounted photos were included. In particular, LXC bind-mount contents are excluded from `vzdump`. [Proxmox container documentation](https://pve.proxmox.com/pve-docs/chapter-pct.html)
 
-This page was reviewed against stable Immich v3.1.0 on September 8, 2026. v3 machine learning on amd64 requires x86-64-v2 or later as seen inside the guest. The host's physical CPU capability alone is not enough if the VM exposes an older model. GPU passthrough is optional and hardware-specific; get the CPU-based installation working first.
+This page was reviewed against stable Immich v3.2.1 on September 15, 2026. v3 machine learning on amd64 requires x86-64-v2 or later as seen inside the guest. The host's physical CPU capability alone is not enough if the VM exposes an older model. GPU passthrough is optional and hardware-specific; get the CPU-based installation working first.
 
 ## Choose VM, Docker-in-LXC or native LXC
 

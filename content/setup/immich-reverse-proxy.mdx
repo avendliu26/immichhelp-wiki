@@ -1,0 +1,144 @@
+---
+title: "Immich Reverse Proxy: Nginx, HTTPS & Cloudflare Guide"
+description: "Configure an Immich reverse proxy with HTTPS, correct headers and upload limits. Troubleshoot Nginx, Cloudflare, mobile connections and public access."
+category: Install & Setup
+keywords: immich reverse proxy, immich nginx, immich cloudflare, immich https, immich proxy headers
+status: published
+lastReviewed: 2026-09-16
+verifiedVersion: v3.2.2
+updated: 2026-09-16
+draft: false
+---
+
+## Direct Answer
+
+Give Immich its own hostname, such as `photos.example.com`, and proxy the root path to the reachable Immich server. Hosting it under `/immich` is unsupported. Preserve the original host, scheme and client-address information, support WebSocket upgrades, and allow uploads through every proxy in the chain. Verify the mobile discovery endpoint as well as the web page. [Immich reverse-proxy requirements](https://docs.immich.app/administration/reverse-proxy/)
+
+First prove that login, uploads and original downloads work on the LAN. Then add HTTPS and test the same actions through the public hostname. This comparison makes a proxy failure distinguishable from a storage or application failure.
+
+Reviewed September 16, 2026 against [Immich v3.2.2](https://github.com/immich-app/immich/releases/tag/v3.2.2). Cloudflare limits below were checked on that date and must be rechecked against your plan and settings.
+
+## Who needs a reverse proxy?
+
+A reverse proxy is useful when you want a stable HTTPS address for browsers and phones while keeping application routing and certificates in one place. It does not install Immich, repair missing originals or replace authentication and backups.
+
+Before configuring one, complete the [Docker Compose installation](/setup/immich-docker-compose), choose a hostname you control, and identify where TLS will terminate. Save the working configuration and maintain an [Immich backup](/backup/immich-backup) before changing public access. If private LAN access already meets your needs, there is no need to expose the service solely to follow this guide.
+
+Write down the intended request path: client → optional Cloudflare edge → your proxy or tunnel connector → Immich. Identify which component resolves the upstream address and which component receives HTTPS. This is a planning checklist, not a requirement to deploy every layer.
+
+## Step 1: Establish the backend and root hostname
+
+The standard Compose deployment publishes port 2283. Use the actual server address reachable from the proxy's own network environment. `localhost` inside a proxy container refers to that container, not automatically to the Docker host or another container. [Reviewed Compose configuration](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml)
+
+For the [Synology workflow](/platforms/immich-for-synology), verify the NAS firewall and project address. In a [Proxmox VM](/platforms/immich-proxmox), verify the guest address. A [TrueNAS app](/platforms/immich-truenas) can publish a different host port; use the port configured in its app form instead of copying 2283 blindly.
+
+Assign the entire hostname to Immich. A URL such as `https://photos.example.com/` fits its routing model; `https://example.com/immich/` does not. A rewrite that merely makes the login screen appear is not proof that API, asset and mobile routes work.
+
+## Step 2: Configure Nginx for the actual request chain
+
+Use the current [Immich Nginx example](https://docs.immich.app/administration/reverse-proxy/) as the application-specific reference within your existing HTTPS virtual host. Certificate paths, DNS and the backend address belong to your deployment, so this guide does not supply a pretend complete server configuration.
+
+For a single Nginx proxy that receives the client's connection, configure these forwarded headers in the effective location serving Immich:
+
+| Header | Value in the official example | Purpose |
+|---|---|---|
+| `Host` | `$host` | Preserve the requested hostname |
+| `X-Real-IP` | `$remote_addr` | Report the address seen by Nginx |
+| `X-Forwarded-For` | `$proxy_add_x_forwarded_for` | Carry the address chain |
+| `X-Forwarded-Proto` | `$scheme` | Report the incoming HTTP or HTTPS scheme |
+
+Do not assume server-level headers remain active after adding another `proxy_set_header` inside a location. Nginx normally inherits that directive group only when the current level has none. Keep the effective forwarding and upgrade settings together, or verify your configuration's inheritance explicitly. [Nginx header behavior](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header)
+
+For WebSockets, the reviewed Immich example sets `proxy_http_version 1.1`, passes `Upgrade` from `$http_upgrade`, and sets `Connection` to `upgrade`. Nginx documents that these hop-by-hop headers need explicit forwarding for protocol upgrade. Preserve this behavior rather than stripping the headers as part of a generic proxy template. [Nginx WebSocket proxying](https://nginx.org/en/docs/http/websocket.html)
+
+If Cloudflare or another proxy sits in front, `$remote_addr` may be the previous proxy, and `$scheme` describes the connection reaching this Nginx instance. Do not blindly trust client-supplied forwarding headers. Configure the real-client-IP trust boundary for the known upstream proxies and verify what reaches Immich. [Cloudflare visitor-IP guidance](https://developers.cloudflare.com/support/troubleshooting/restoring-visitor-ips/restoring-original-visitor-ips/)
+
+## Step 3: Allow uploads and account for timeouts
+
+The reviewed Immich example uses `client_max_body_size 50000M`, `proxy_request_buffering off`, `client_body_buffer_size 1024k`, and 600-second read/send timeouts. These are documented example settings, not a promise that every network or upstream service accepts that upload size or duration. [Official proxy example](https://docs.immich.app/administration/reverse-proxy/)
+
+Choose an intentional body-size limit for your media and apply it at the location that actually handles uploads. Request buffering controls whether Nginx receives the request body before forwarding it; it is different from response buffering. A proxy read timeout measures the gap between upstream reads rather than a universal maximum duration for every complete request. [Nginx proxy directives](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
+
+Test a small photo first, then a representative large video on a slower connection. Record the HTTP status and the time until failure. A repeatable size threshold points toward a body-size policy; a repeatable delay points toward a timeout or stalled upstream. These observations narrow the investigation but do not identify the responsible layer by themselves.
+
+Do not raise every limit without checking the failing component. Increasing Nginx's allowance cannot change a rejection that occurs before the request reaches Nginx.
+
+## Step 4: Set up HTTPS and mobile routing
+
+Use a certificate valid for the public hostname at the TLS endpoint. Keep the public URL consistent in the browser and mobile app. When TLS ends at a proxy and the internal hop is HTTP, ensure forwarded scheme information still represents the intended public connection; avoid a redirect loop between layers that disagree about HTTPS.
+
+Check `/.well-known/immich` through the public hostname. Immich warns that an HTTP-01 certificate-challenge configuration may route this endpoint elsewhere, breaking mobile discovery. A working home page does not test this route. [Immich mobile-routing caveat](https://docs.immich.app/administration/reverse-proxy/)
+
+For a conventional Cloudflare-proxied HTTPS origin, Full (strict) validates the origin certificate as well as encrypting the connection. The origin needs an unexpired certificate from a supported authority with a matching hostname. That is separate from the certificate presented to the visitor. [Cloudflare Full (strict)](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/)
+
+After a server or app upgrade, repeat connection checks before changing unrelated proxy settings. Use the [update guide](/setup/how-to-update-immich) to separate version changes from network changes.
+
+## Cloudflare DNS, proxy and Tunnel are different choices
+
+| Cloudflare use | Request path and practical consequence |
+|---|---|
+| DNS-only record | Cloudflare answers DNS; clients connect to the resolved origin. You must provide reachable HTTPS yourself |
+| Proxied record | HTTP traffic passes through Cloudflare before the origin; edge policies and limits become part of the path |
+| Cloudflare Tunnel | A connector establishes outbound connections to Cloudflare and routes traffic to a configured local service; connector-to-origin settings also matter |
+
+These roles are documented separately in [DNS proxy status](https://developers.cloudflare.com/dns/proxy-status/) and [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/). Tunnel is not just a different SSL-mode switch, and adding it is not evidence that all upload restrictions disappear.
+
+As checked September 16, 2026, Cloudflare's 413 documentation lists request-upload limits of 100 MB for Free/Pro, 200 MB for Business, and up to 5 GB for Enterprise. The zone's configured maximum can be lower. These are request limits, not a claim about the size of every album or that every client chunks files in a way that avoids them. [Current Cloudflare upload limits](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/4xx-client-error/error-413/)
+
+Cloudflare separately documents connection and read/write timeouts. Its connection-limit page points Tunnel users to connector origin settings. Identify the product and failed hop before applying a number from another Cloudflare service. [Connection limits](https://developers.cloudflare.com/fundamentals/reference/connection-limits/)
+
+If an edge policy is the blocker, choose a suitable access design deliberately. Switching a record to DNS-only changes origin reachability and exposure; do not use it as an unexplained toggle. This guide does not claim that browser-only challenges, additional access gates or arbitrary cache rules are compatible with every Immich mobile/API request. Test those controls with the actual clients before depending on them.
+
+## Verify before relying on public access
+
+1. Confirm the LAN baseline: sign in, upload a sample, open it and download its original.
+2. Repeat using the HTTPS hostname from outside the home network. Check the certificate and final URL.
+3. Test a new browser session and the mobile app, including the discovery route and a small backup album.
+4. Upload a representative video, play it and download an original. Inspect failed requests in browser developer tools and correlate them with proxy/server logs.
+5. Repeat after a proxy reload or application restart. Confirm the backend address and public hostname still resolve to the intended service.
+
+If the same original fails locally and publicly, inspect storage and processing using [image-loading troubleshooting](/troubleshooting/immich-error-loading-image). For mounted collections, also check the [external-library path](/storage/immich-external-library). A proxy setting cannot restore an original that the server cannot read.
+
+## Troubleshooting by symptom
+
+| Symptom | First useful comparison |
+|---|---|
+| Large uploads fail, small photos work | Request size, status such as 413, edge policy and Nginx body-size configuration |
+| 502 | Proxy-to-backend reachability, actual address/port and server health |
+| 504 or Cloudflare timeout | Which gateway generated the response, elapsed time and upstream logs |
+| Images fail only publicly | Same asset on LAN, failed public request and unintended routing/cache behavior |
+| Login or session fails only publicly | Final hostname, HTTPS redirects, forwarded scheme and any extra access gate |
+| Wrong client IP | Trusted proxy chain and effective forwarding headers |
+| Web works, mobile fails | Public server URL, certificate, discovery endpoint and client-specific blocked requests |
+| Public hostname behaves differently at home | DNS answers and whether the LAN request follows the same route |
+
+Avoid changing storage permissions to repair a public-only 502, disabling TLS verification to hide a certificate issue, or rewriting every route under `/immich`. Keep the working configuration so a failed proxy change can be reverted independently of the application.
+
+## FAQ
+
+### Can I host Immich at example.com/immich?
+
+No. The current Immich documentation requires the root of a domain or subdomain. Use a dedicated hostname and keep the application's route structure intact.
+
+### Does increasing Nginx's upload limit fix Cloudflare 413 errors?
+
+Only if Nginx was the rejecting layer. Cloudflare's own request limit remains independent. Identify the response source and check the effective zone setting before changing the origin.
+
+### Is a working browser login enough to verify the proxy?
+
+No. Test mobile discovery, uploads, original downloads and video playback too. A partially correct route can serve the front page while other requests fail.
+
+### Do I need to change my database to add HTTPS?
+
+Adding a reverse proxy is a routing and TLS change. Do not delete or rebuild the database as part of that procedure. Keep backups and troubleshoot the actual failing request first.
+
+## Sources
+
+- [Immich reverse proxy](https://docs.immich.app/administration/reverse-proxy/) — Root routing, headers, upload settings and mobile discovery.
+- [Nginx proxy module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html) — Directive semantics and inheritance.
+- [Nginx WebSockets](https://nginx.org/en/docs/http/websocket.html) — Upgrade forwarding.
+- [Cloudflare proxy status](https://developers.cloudflare.com/dns/proxy-status/) — DNS-only versus proxied requests.
+- [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) — Connector architecture.
+- [Cloudflare 413](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/4xx-client-error/error-413/) — Plan-specific upload limits checked September 16, 2026.
+- [Cloudflare connection limits](https://developers.cloudflare.com/fundamentals/reference/connection-limits/) — Distinct connection and request timeouts.
+- [Cloudflare Full (strict)](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/) — Origin TLS verification.

@@ -1,0 +1,173 @@
+---
+title: "Immich Hardware Acceleration: GPU Setup for Video & ML"
+description: "Enable Immich GPU acceleration for video transcoding or machine learning. Compare supported backends, configure Compose and verify actual device usage."
+category: Install & Setup
+keywords: immich hardware acceleration, immich gpu, immich transcoding gpu, immich intel quick sync, immich nvidia gpu, immich amd gpu, immich machine learning gpu
+status: published
+lastReviewed: 2026-09-16
+verifiedVersion: v3.2.2
+updated: 2026-09-16
+draft: false
+---
+
+## Direct Answer
+
+Immich has two separate acceleration paths. Video transcoding runs through the server's hardware backend and video settings. Machine learning uses a backend-specific machine-learning image and its own device configuration. Enabling one does not enable the other, and neither promises to accelerate every photo-management task. [Video acceleration](https://docs.immich.app/features/hardware-transcoding/), [Machine-learning acceleration](https://docs.immich.app/features/ml-hardware-acceleration/)
+
+Start with a working CPU-based installation, enable one path at a time, and verify a real job with both logs and device activity. This guide follows the official Docker Compose approach, reviewed against [Immich v3.2.2](https://github.com/immich-app/immich/releases/tag/v3.2.2) on September 16, 2026. Both acceleration features are still described as experimental in the current documentation.
+
+## Who this setup is for
+
+Use this guide if video conversion or machine-learning processing is a real bottleneck and your host already has compatible hardware. CPU-only operation is a reasonable choice when jobs finish within your needs, the library is small or hardware access would complicate an otherwise dependable installation.
+
+Complete the [Compose setup](/setup/immich-docker-compose) before changing acceleration. Record the installed version, host or guest OS, GPU model, driver and chosen backend. Preserve working Compose files and an [application backup](/backup/immich-backup). A GPU setting is not a reason to replace the database or remount your originals.
+
+## What changes, and what does not?
+
+| Workload | Configuration path | What to verify |
+|---|---|---|
+| Video encoding/transcoding | `immich-server`, transcoding helper file and Video transcoding settings | A video that needs conversion uses the selected device |
+| Video decoding | Separate hardware-decoding option, subject to hardware support | Do not infer it is enabled merely because encoding is accelerated |
+| Smart Search and face-related ML processing | `immich-machine-learning`, backend image and ML helper file | Relevant execution provider and device activity during an ML job |
+| Upload transfer, database work or missing originals | Not repaired by enabling either GPU path | Network, storage and application checks remain separate |
+
+Do not treat thumbnail generation as a blanket GPU speedup promised by these two settings. Likewise, playing a video that needs no new conversion is not a reliable test of the transcoding backend. The useful comparison is a known pending job before and after one configuration change, using the same workload.
+
+## Choose a documented backend
+
+The following summarizes the current Immich backend choices. A vendor name alone does not establish support for every GPU model, codec, operating system or ML model.
+
+| Hardware family | Video backend in Compose | Machine-learning backend | Boundary to check |
+|---|---|---|---|
+| Intel GPU | `quicksync` or applicable `vaapi` | `openvino` | Device generation, kernel support and backend-specific memory requirements |
+| NVIDIA GPU | `nvenc` | `cuda` | Compatible GPU, official driver and container runtime access |
+| AMD GPU | `vaapi` | `rocm` | ROCm support for the exact GPU is separate from video capability |
+| Supported Rockchip SoC | `rkmpp` | `rknn` | Supported SoC and vendor kernel/device drivers |
+| Mali-equipped ARM device | No universal video choice implied | `armnn` | Correct Mali driver and firmware; not all ARM devices qualify |
+
+The mappings are documented in the [transcoding helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.transcoding.yml) and [ML helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.ml.yml). Read each backend's prerequisites before choosing it. These names are helper services selected through `extends`; do not assume that a Docker Compose `--profile` switch alone enables them.
+
+## Step 1: Verify drivers and device access
+
+For NVIDIA, install the official driver in the environment running Docker and configure the NVIDIA Container Toolkit where required. Immich's reviewed CUDA requirements specify compute capability 5.2 or newer and a driver at least version 545 supporting CUDA 12.3. Treat these as the current Immich requirements, not a guarantee that every future image accepts the same driver. Follow the distribution-specific [NVIDIA installation and Docker runtime instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html), including its sample-workload verification.
+
+Docker's GPU reservation syntax also depends on the host runtime being correctly configured. Adding a reservation to YAML does not install drivers or make an unsupported card compatible. [Docker GPU access](https://docs.docker.com/compose/how-tos/gpu-support/)
+
+For Intel and AMD, check the device and permissions in the actual Linux environment running Docker. The reviewed video helper maps `/dev/dri`; ROCm additionally uses `/dev/kfd`, while OpenVINO has its own device and USB configuration. Use the matching release helper rather than assigning one universal group ID or device list to every backend. [Versioned device mappings](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.ml.yml)
+
+The documented instructions cover Linux and Windows through WSL2, with backend-specific restrictions. Quick Sync is not supported under WSL2 in Immich's current transcoding guide; WSL-specific helper services exist for other supported paths. Raspberry Pi is not currently supported by the documented video-acceleration path. ARM NN requires Mali hardware; RKNN requires a supported Rockchip SoC and its driver. Do not translate “ARM support” into universal Raspberry Pi or Apple GPU support. [Video limitations](https://docs.immich.app/features/hardware-transcoding/), [ML prerequisites](https://docs.immich.app/features/ml-hardware-acceleration/)
+
+## Step 2: Enable video transcoding acceleration
+
+1. Obtain `hwaccel.transcoding.yml` from the same Immich release as your Compose configuration and place it beside `docker-compose.yml`.
+2. Under the existing `immich-server` service, enable its `extends` section and choose the backend matching your hardware.
+3. Preserve the service's image, storage, environment, ports and dependencies. Validate the merged configuration, then recreate the service through Compose.
+4. In Immich Administration → Video transcoding settings, select the corresponding hardware acceleration option and save.
+5. Enable hardware decoding only if appropriate for your hardware and workload, then test a video conversion.
+
+For example, this is only the addition to an existing Intel Quick Sync server service, not a replacement Compose file:
+
+```yaml
+services:
+  immich-server:
+    extends:
+      file: hwaccel.transcoding.yml
+      service: quicksync
+```
+
+The reviewed helper provides `/dev/dri:/dev/dri` for that backend. NVIDIA uses the `nvenc` helper instead; AMD's documented video path is VAAPI. The UI backend must agree with the configured device path. [Release Compose hooks](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml), [Transcoding helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.transcoding.yml)
+
+Do not copy the old service name from a stale comment or tutorial. The v3.2.2 Compose file places video acceleration under `immich-server`. Preserve the official release's service structure.
+
+## Step 3: Enable machine-learning acceleration separately
+
+Place the matching `hwaccel.ml.yml` next to the Compose file. In the existing `immich-machine-learning` service, use both the image suffix for the selected backend and its `extends` configuration.
+
+This CUDA fragment shows the two changes together; retain the existing cache volume, `.env` and other service settings:
+
+```yaml
+services:
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-cuda
+    extends:
+      file: hwaccel.ml.yml
+      service: cuda
+```
+
+Use the matching documented suffix and helper for other backends, such as `openvino` or `rocm`; WSL-specific service choices require their own documented setup. Do not append an ML suffix to the server image. Compare against the [v3.2.2 Compose file](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml) and [ML helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.ml.yml).
+
+From the application's Compose directory, validate and apply the reviewed configuration:
+
+```bash
+docker compose config --quiet
+docker compose up -d
+```
+
+The first command checks Compose configuration without printing resolved configuration and secrets; the second applies the service configuration. Syntax validation does not test GPU compatibility. Check startup logs before scheduling a large job queue. [Compose config](https://docs.docker.com/reference/cli/docker/compose/config/), [Compose up](https://docs.docker.com/reference/cli/docker/compose/up/)
+
+## Step 4: Prove that the intended job uses the device
+
+For video, run a small sample that requires transcoding under your settings. Inspect server logs for backend errors and observe GPU activity while the conversion runs. For ML, start a pending Smart Search or face-detection job and inspect the machine-learning logs. The documented checks include a relevant ORT provider, such as `CUDAExecutionProvider`, or a successful ARM NN model-load entry. Correlate logs with actual device utilization; an idle container or a provider merely being available is not the whole test. [ML verification](https://docs.immich.app/features/ml-hardware-acceleration/)
+
+Immich suggests tools such as `nvtop`, `intel_gpu_top` and `radeontop` for observing device usage. Select a tool suitable for the hardware and run it where the device is accessible. Do not install every tool or infer that ordinary CPU activity means acceleration failed: decoding, data preparation and other work can remain on the CPU. [Transcoding verification](https://docs.immich.app/features/hardware-transcoding/)
+
+Check the output too: play the processed video, verify an original still downloads, and confirm the expected search or face-processing result. Existing jobs do not all need to be rerun just because acceleration is enabled; new jobs use the new configuration. Test a small workload before deciding to regenerate anything.
+
+## Virtual machines, NAS apps and LXC
+
+In [Proxmox](/platforms/immich-proxmox), expose the device to the Linux VM first, then verify the driver and Docker access inside that VM. A host GPU visible to Proxmox is not automatically available to Immich. Full Linux VMs fit the documented deployment boundary; Docker inside LXC is not Immich's recommended path. Do not make a container privileged merely to bypass a device-access error. [Immich requirements](https://docs.immich.app/install/requirements/)
+
+For [Synology](/platforms/immich-for-synology), model and driver availability still need checking. For [TrueNAS](/platforms/immich-truenas), use the installed catalog app's supported GPU controls and bundled-version assumptions. The snippets above belong to an official Compose deployment, not an instruction to overwrite an appliance's generated app configuration.
+
+## Troubleshooting and common mistakes
+
+| Symptom | Check before changing anything else |
+|---|---|
+| GPU absent inside the container | Host/guest visibility first, then backend helper and runtime/device access |
+| NVIDIA startup or driver error | Official driver compatibility, toolkit configuration and vendor sample workload |
+| Permission denied on a device | Actual service identity and device access; do not copy a numeric group from another host |
+| Video still uses CPU | Whether a transcode actually ran, server helper, UI selection and hardware-decoding distinction |
+| ML still uses CPU | ML image suffix, ML helper, model/backend compatibility and job-time logs |
+| AMD video works but ML fails | VAAPI and ROCm have different compatibility and runtime requirements |
+| OpenVINO fails under load | Kernel/device support and memory availability; an older iGPU is not automatically supported |
+| Images remain broken | Original paths and processing errors; use the image troubleshooting guide |
+
+For the final row, follow [image-loading troubleshooting](/troubleshooting/immich-error-loading-image) and verify any [external-library mounts](/storage/immich-external-library). GPU configuration cannot make an unavailable original readable.
+
+If one backend change breaks a previously working deployment, restore the saved CPU configuration for that service and retest a small job. Do not delete the library, database or cache as a first troubleshooting step. Before upgrading, compare the target release's Compose and helper files using the [update guide](/setup/how-to-update-immich).
+
+## Performance, power and CPU-only tradeoffs
+
+Hardware video encoding can reduce CPU load, but Immich warns of larger files and lower quality than comparable software settings. GPU support also varies by codec. The choice is workload-dependent: compare output quality, processing time and storage use on your own sample rather than relying on invented speedup numbers. [Video tradeoffs](https://docs.immich.app/features/hardware-transcoding/)
+
+ML backends have different memory, disk and power costs. The current docs warn that OpenVINO can use more RAM, and ROCm images require substantial free disk space; ROCm may also keep power consumption elevated after inference until models unload. Budget those resources before enabling a backend on a busy NAS. [ML backend caveats](https://docs.immich.app/features/ml-hardware-acceleration/)
+
+A working CPU-only installation is preferable when acceleration adds no useful improvement to your actual workload. This page makes no GPU purchasing recommendation or promise about whole-system power savings.
+
+## FAQ
+
+### Does Intel Quick Sync also enable Smart Search acceleration?
+
+No. Quick Sync belongs to the video path. The documented Intel ML backend is OpenVINO, configured separately on the machine-learning service with its own prerequisites.
+
+### Can I accelerate video with AMD without using ROCm?
+
+The documented AMD video path is VAAPI. ROCm is the separate machine-learning path; success with video does not prove ROCm support for that GPU.
+
+### Why is CPU usage still visible after enabling a GPU?
+
+Only the configured jobs and supported operations move to the device. Video decoding is separately controlled, and database, network and other processing do not disappear. Verify the relevant job instead of expecting total CPU use to fall to zero.
+
+### Should I enable both acceleration paths at once?
+
+Enable and verify one first. Keeping changes separate makes driver, image and job failures easier to isolate. Once one works, test the second independently.
+
+## Sources
+
+- [Immich hardware transcoding](https://docs.immich.app/features/hardware-transcoding/) — Video setup, limitations and verification.
+- [Immich ML acceleration](https://docs.immich.app/features/ml-hardware-acceleration/) — Backend prerequisites and model/provider checks.
+- [v3.2.2 Compose file](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml) — Current service names and extension hooks.
+- [v3.2.2 transcoding helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.transcoding.yml) — Backend device mappings.
+- [v3.2.2 ML helper](https://github.com/immich-app/immich/blob/v3.2.2/docker/hwaccel.ml.yml) — ML device and runtime configuration.
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) — Host runtime setup.
+- [Docker Compose GPU support](https://docs.docker.com/compose/how-tos/gpu-support/) — GPU reservations and runtime prerequisites.

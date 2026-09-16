@@ -103,6 +103,8 @@ After the guest can use the device, follow Immich's backend-specific [video tran
 
 Verify an actual transcode or ML job using the chosen backend's documented checks. If the guest cannot access the device, fix passthrough first. If the guest can but Docker cannot, check the runtime/device mapping. If Docker can but the job fails, inspect Immich's backend logs. Hardware-specific driver/VFIO commands are outside what one generic page can safely establish.
 
+For the application-side steps after guest device access works, follow the [hardware-acceleration guide](/setup/immich-hardware-acceleration), which separates video and machine-learning configuration.
+
 ## Backup and upgrade
 
 Keep both a database dump and media backup, plus the Compose configuration and guest/storage mapping. For LXC, Proxmox explicitly excludes bind-mount contents from `vzdump`; the backup flag for storage-backed volumes does not turn arbitrary host bind mounts into backed-up data. Independently protect NAS originals. Rehearse recovery with the mounts included. [Proxmox container backup scope](https://pve.proxmox.com/pve-docs/chapter-pct.html), [Immich backup](/backup/immich-backup)

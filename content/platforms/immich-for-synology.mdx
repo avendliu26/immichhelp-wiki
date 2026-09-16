@@ -1,12 +1,12 @@
 ---
-title: "Immich for Synology: Container Manager Notes"
-description: "Use Immich's community Synology guide with firewall, storage, and update caveats clearly separated."
+title: "Immich on Synology: Install & Setup Guide"
+description: "Install Immich on Synology with Container Manager. Plan local database storage, existing photo libraries, firewall access, backups and project updates."
 category: Platforms
 keywords: immich for synology, immich synology, synology container manager
 status: published
-lastReviewed: 2026-09-08
-verifiedVersion: v3.1.0
-updated: 2026-09-08
+lastReviewed: 2026-09-16
+verifiedVersion: v3.2.2
+updated: 2026-09-16
 draft: false
 ---
 
@@ -16,7 +16,15 @@ Use Synology Container Manager to create a Compose project from Immich's release
 
 Check your NAS architecture, memory and CPU capabilities first. Current Immich supports amd64/arm64, recommends local SSD database storage, and forbids a network-share PostgreSQL data directory. v3 amd64 machine learning requires x86-64-v2 or later. Model-specific Container Manager availability and GPU support must be checked on the actual NAS. [Requirements](https://docs.immich.app/install/requirements/)
 
-Reviewed with stable v3.2.1 on September 15, 2026. Keep project data and configuration backed up before updates. Cleanup/rebuild controls can differ by DSM version and volume type; never assume a button named Clean is harmless to every deployment.
+Reviewed with stable [v3.2.2](https://github.com/immich-app/immich/releases/tag/v3.2.2) on September 16, 2026. Keep project data and configuration backed up before updates. Cleanup/rebuild controls can differ by DSM version and volume type; never assume a button named Clean is harmless to every deployment.
+
+## Who this setup is for and what you need
+
+This path suits an existing Synology owner who wants DSM to manage the application while keeping the database, managed uploads and original photo shares separate. It assumes your model offers Container Manager in Package Center. If it does not, do not install an unrelated model's package to force compatibility.
+
+Reserve at least 2 CPU cores and 6 GB available memory for normal Immich operation; 4 cores and 8 GB are recommended. Leave capacity for DSM and other NAS workloads. The restricted 4 GB option requires disabling machine learning. Confirm amd64/arm64 compatibility and, on amd64, the v3 machine-learning CPU requirement before importing a large collection. [Current resource requirements](https://docs.immich.app/install/requirements/)
+
+The intended architecture is one Container Manager project containing the official Compose services, backed by dedicated NAS-local folders. Your existing Synology Photos folder remains an optional external library, not the destination for new Immich uploads. Start on the LAN with a few disposable test photos; add remote access only after storage and backups work.
 
 ## Step 1: Prepare Container Manager and shared storage
 
@@ -36,9 +44,18 @@ A NAS's own local volume and a remote network share mounted on that NAS are diff
 
 Download `docker-compose.yml` and `example.env` from the release linked by the [official Compose installation](https://docs.immich.app/install/docker-compose/). Upload them into the project directory and rename `example.env` to `.env`. DSM Text Editor may require temporarily using a `.txt` extension; restore the exact `.env` filename when finished.
 
-Set `UPLOAD_LOCATION` and `DB_DATA_LOCATION` to the intended directories, choose a random alphanumeric `DB_PASSWORD`, and select the intended `IMMICH_VERSION` such as stable `v3` or exact `v3.1.0`. Preserve default database name/user unless deliberately customized. Keep the two files from the same release and do not download repository-main configuration.
+Set `UPLOAD_LOCATION` and `DB_DATA_LOCATION` to the intended directories, choose a random alphanumeric `DB_PASSWORD`, and select the intended `IMMICH_VERSION` such as stable `v3` or exact `v3.2.2`. Preserve default database name/user unless deliberately customized. Keep the two files from the same release and do not download repository-main configuration.
 
-The v3.1.0 release maps the upload directory to `/data` inside `immich-server`; PostgreSQL uses its own data mount. Existing NAS pictures should be added as a separate external mount. Do not replace `/data` with your existing photo share to “import” it. [Release configuration](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml)
+The reviewed v3.2.2 configuration maps the upload directory to `/data` inside `immich-server`; PostgreSQL uses its own data mount. Existing NAS pictures should be added as a separate external mount. Do not replace `/data` with your existing photo share to “import” it. [Release configuration](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml)
+
+| Setting | Decision before building |
+|---|---|
+| `UPLOAD_LOCATION` | Dedicated managed-media folder; the documented layout uses `./library` |
+| `DB_DATA_LOCATION` | Dedicated local database folder; the documented layout uses `./postgres` |
+| `IMMICH_VERSION` | An intentional release selection; pinning `v3.2.2` makes this review reproducible |
+| `DB_PASSWORD` | New random alphanumeric secret; keep it in the protected `.env` |
+
+Relative paths above belong to the project directory. They are not external-library import paths. See the [Compose configuration walkthrough](/setup/immich-docker-compose) for the complete release-file and environment procedure rather than copying an old all-in-one YAML from a NAS forum.
 
 ## Step 3: Create and build the project
 
@@ -91,8 +108,6 @@ For an update, identify current and target versions, read release notes and comp
 Before Clean or any project deletion, read the current DSM confirmation dialog and determine which data are bind-mounted and which are named volumes. Synology's indexed Project help describes broader cleanup than the brief Immich community wording. Do not assume named volumes or project data are preserved. Database deletion, volume deletion and restore require verified database-and-media backups and the exact intended target.
 :::
 
-The [Synology Project help](https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project) was available as official search-index text in this research, while the full page body did not render. That prevents claiming one exact cleanup behavior across DSM versions. The conservative operational boundary is to inspect your version's dialog and preserve recoverable data before proceeding.
-
 After those checks, the community update sequence is:
 
 1. Select the existing project and use Action → Stop.
@@ -116,35 +131,28 @@ v3 adds the CPU and VectorChord requirements described in the [update tutorial](
 
 Use [image troubleshooting](/troubleshooting/immich-error-loading-image) for the last branch. When reporting an unresolved problem, include NAS model, DSM version, Immich/server/mobile versions, deployment method and redacted relevant logs.
 
-Real-world firewall example: a [Synology Reddit report](https://www.reddit.com/r/immich/comments/1jq4kuk/synology_firewall/) describes updating a rule to the current Docker network address after upgrade. This is a user-reported result and supports checking address changes, not disabling the firewall globally.
-
-Unresolved ML example: [Discussion #28987](https://github.com/immich-app/immich/discussions/28987) concerns DSM 7.2.2-72806 Update 4 and Immich v2. Disabling the firewall and changing environment naming did not establish a fix. A separate cache-clear observation later recurred with OpenVINO. There is no confirmed general root cause in that discussion.
-
 ## FAQ
 
 ### Can I use a 4 GB or older Synology model?
 
 The official restricted 4 GB option disables machine learning, while normal minimum memory is 6 GB. You must still meet architecture/runtime requirements; no single RAM answer establishes compatibility for every NAS model. [Requirements](https://docs.immich.app/install/requirements/)
 
-### Is a community Synology upgrade helper the official updater?
+### Will pointing UPLOAD_LOCATION at Synology Photos import my collection?
 
-No. [Discussion #25771](https://github.com/immich-app/immich/discussions/25771) includes a v2.5.2 user's shell error and no confirmed remedy. Its existence is not evidence of support for your DSM/version combination.
+No. Keep managed uploads separate and expose the existing photo folder through an external-library mount. Import the container-visible path in Immich, then scan a small folder before indexing everything. A read-only mount is a useful starting point when another application also manages those originals.
 
-### Should I change the ML service name from a dash to an underscore?
+### Does Container Manager Clean replace a backup?
 
-Not based on #28987. The discussion notes Docker aliases, and the proposed naming change was not established as the cause. Use the actual network and ML error evidence before editing working service references. [Discussion #28987](https://github.com/immich-app/immich/discussions/28987)
+No. It is part of the documented project rebuild procedure, not a recovery mechanism. Verify the exact confirmation dialog and persistent storage before using it. Keep a recoverable database dump and media copy independently of the project being rebuilt.
 
 ## Sources
 
 - [Synology installation](https://docs.immich.app/install/synology/) — Community contribution hosted in Immich docs.
 - [Requirements](https://docs.immich.app/install/requirements/) — Official Immich platform limits.
 - [Compose installation](https://docs.immich.app/install/docker-compose/) — Official Immich release files/environment.
-- [v3.1.0 Compose file](https://github.com/immich-app/immich/releases/download/v3.1.0/docker-compose.yml) — Official release configuration.
+- [v3.2.2 Compose file](https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml) — Official release configuration.
 - [Post-installation](https://docs.immich.app/install/post-install/) — Official Immich account setup.
 - [Mobile Backup](https://docs.immich.app/features/mobile-backup/) — Official Immich phone behavior.
 - [External Libraries](https://docs.immich.app/features/libraries/) — Official Immich mounts/scans.
 - [Upgrading](https://docs.immich.app/install/upgrading/) — Official Immich version/migration policy.
-- [Container Manager Project](https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project) — Official Synology help; indexed text only, full body inaccessible.
-- [DSM ML failure, #28987](https://github.com/immich-app/immich/discussions/28987) — GitHub discussion; unresolved v2 case.
-- [Synology helper, #25771](https://github.com/immich-app/immich/discussions/25771) — GitHub community script discussion.
-- [Synology firewall after update](https://www.reddit.com/r/immich/comments/1jq4kuk/synology_firewall/) — Reddit; user-reported network-rule correction.
+- [Container Manager Project](https://kb.synology.com/en-us/DSM/help/ContainerManager/docker_project) — Official Synology Project controls; consult the help for your DSM version.

@@ -118,7 +118,7 @@ Do not run user-supplied SQL, clear Trash, delete the database or remove volumes
 
 ## Platform and version differences
 
-Synology's File Station path belongs on the host side; the UI import path still belongs to the container. Review shared-folder access without granting global write permissions. In Proxmox, an unprivileged LXC introduces UID mapping and another mount layer; a complete Linux VM follows the regular Compose model. On TrueNAS/Unraid, use the app/template's persistent-volume controls to express the same mapping rather than pasting Compose into an unrelated UI. [Libraries](https://docs.immich.app/features/libraries/), [Synology community guide](https://docs.immich.app/install/synology/)
+[Synology](/platforms/immich-for-synology)'s File Station path belongs on the host side; the UI import path still belongs to the container. Review shared-folder access without granting global write permissions. In [Proxmox](/platforms/immich-proxmox), an unprivileged LXC introduces UID mapping and another mount layer; a complete Linux VM follows the regular Compose model. On [TrueNAS](/platforms/immich-truenas)/Unraid, use the app/template's persistent-volume controls to express the same mapping rather than pasting Compose into an unrelated UI. [Libraries](https://docs.immich.app/features/libraries/), [Synology community guide](https://docs.immich.app/install/synology/)
 
 A [Proxmox/Ubuntu/SMB Reddit report](https://www.reddit.com/r/immich/comments/1unxce7/ext_library_unable_to_scan_files/) identifies v3.0.1 and a container path/access problem, with the author later reporting success. The final exact change was not documented, so permissions-disabling commands in replies are not confirmed fixes.
 

@@ -1,0 +1,142 @@
+---
+title: "Immich on TrueNAS: Install & Storage Setup Guide"
+description: "Install Immich on TrueNAS with the Community app. Configure datasets, permissions, external libraries and port access, then plan updates and recovery."
+category: Platforms
+keywords: immich truenas, immich truenas scale, truenas immich app, immich datasets
+status: published
+lastReviewed: 2026-09-16
+verifiedVersion: v3.2.2 upstream; catalog app v3.2.1
+updated: 2026-09-16
+draft: false
+---
+
+## Direct Answer
+
+On current TrueNAS Community Edition, install Immich through the Community train in Apps. Use separate local datasets for managed photo data and PostgreSQL, select them as Host Paths in the app, and establish a working upload before attaching existing photo datasets. This is a TrueNAS catalog application; the TrueNAS instructions hosted by Immich are a community contribution, not an Immich-team support guarantee. [Immich TrueNAS guide](https://docs.immich.app/install/truenas/)
+
+Reviewed September 16, 2026: the newest upstream stable release is [Immich v3.2.2](https://github.com/immich-app/immich/releases/tag/v3.2.2). The reviewed TrueNAS catalog recipe is revision 1.14.38, packaging Immich v3.2.1. These are different version numbers, and the version offered by your refreshed catalog can change. Check the app's displayed release before installation or upgrade. [Catalog version metadata](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/app.yaml)
+
+## Who this setup is for
+
+Use this guide when TrueNAS already holds your storage and you want its Apps interface to manage the application. It suits a new installation with clearly separated app data, database state and existing originals. It does not describe importing an old database into a new app or migrating an older seven-dataset deployment in place.
+
+This route uses the modern Docker-based Apps system. TrueNAS 24.04 and earlier used Kubernetes, and TrueNAS CORE jail tutorials describe another architecture. Do not combine their commands or storage layouts with this installation. TrueNAS manages its internal app dataset itself; avoid editing its hidden app files directly. [TrueNAS app storage architecture](https://apps.truenas.com/getting-started/app-storage/)
+
+If you prefer to maintain ordinary release YAML inside a separate Linux machine, use the [Docker Compose guide](/setup/immich-docker-compose). Do not run that procedure against TrueNAS-managed app containers.
+
+## Requirements and version boundaries
+
+The reviewed recipe declares a minimum TrueNAS version of 24.10.2.2. Treat that as a compatibility floor, not a recommendation to remain on an old host release. Use a maintained TrueNAS release, read its upgrade notes and confirm that the app is offered for your installed version. Configure the Apps pool before installing applications. [App prerequisites](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/app.yaml), [TrueNAS Apps setup](https://apps.truenas.com/getting-started/initial-setup/)
+
+Immich's normal baseline is 2 CPU cores and 6 GB RAM, with 4 cores and 8 GB recommended. Leave additional capacity for TrueNAS, ZFS and other services. The reviewed app form defaults its memory limit to 4096 MB; increase that deliberately for a normal machine-learning-enabled setup rather than treating the form default as the upstream recommendation. For v3 on amd64, machine learning requires x86-64-v2 or newer CPU features. [Immich requirements](https://docs.immich.app/install/requirements/), [App resource fields](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/questions.yaml)
+
+The catalog recipe selects PostgreSQL 18 with VectorChord. Its database selector warns that changing an initialized database to a newer major version is a one-way upgrade. Do not replace it with the PostgreSQL image from an unrelated Compose tutorial or select an older database image as a rollback strategy. [Current app configuration](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/questions.yaml)
+
+## Step 1: Separate the storage responsibilities
+
+Create dedicated datasets before opening the app installer. Choose actual paths on your own pool; the names below describe their roles, not paths to paste unchanged.
+
+| Dataset or location | What belongs here | Backup and access boundary |
+|---|---|---|
+| Managed data | New Immich uploads and generated application media | App needs modify access; preserve the complete managed storage tree |
+| PostgreSQL data | Live database state | Dedicated local dataset, preferably SSD-backed; use database-aware backups |
+| Existing photo dataset | Originals already managed outside Immich | Attach separately after first-run verification; begin read-only |
+| Recovery destination | Database dumps, photos and saved configuration | Independent copy, not merely another directory beside the live data |
+
+For a straightforward new setup, the documented layout uses a Generic parent, an Apps-preset managed-data child and a Generic database child. Dataset names are customizable. Do not make your existing family photo dataset the new managed upload location. [Dataset setup](https://docs.immich.app/install/truenas/)
+
+Prefer Host Path storage for these user-managed persistent datasets. TrueNAS distinguishes Host Paths from automatically managed ixVolumes; Host Paths make the dataset selection and independent snapshot/replication responsibilities explicit. Do not assume deleting an application preserves every kind of managed volume. [App storage choices](https://apps.truenas.com/getting-started/app-storage/)
+
+Keep PostgreSQL on a supported local filesystem. Exporting a photo dataset over SMB does not make a remote SMB or NFS mount a supported live database location. [Database storage requirements](https://docs.immich.app/install/requirements/)
+
+## Step 2: Install and configure the catalog app
+
+1. Open Apps → Discover Apps, search for Immich, inspect its Community train details and select Install.
+2. Record the application name, catalog revision and bundled Immich version. Set the timezone and strong credentials using the fields in the current form.
+3. Review the User and Group fields. The reviewed recipe defaults both to 568; use the identity actually selected in your installation when checking managed-data access.
+4. Under Network Configuration, publish the web port on the host. The reviewed default is 30041; record a custom value if you change it.
+5. Under Storage Configuration, select Host Path for managed data and PostgreSQL, then choose the dedicated datasets prepared above. Review the database Automatic Permissions option for the selected directory. Leave the machine-learning cache temporary unless you have a specific reason to persist it.
+6. Review resource limits, then install and wait for the workload to start. Check application logs if it repeatedly exits.
+
+These fields are verified against the [1.14.38 installation form](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/questions.yaml) and its [generated application template](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/templates/docker-compose.yaml). The UI can change with future catalog revisions; use the offered field descriptions rather than reconstructing hidden YAML.
+
+Use the GUI's storage and version controls instead of trying to override `UPLOAD_LOCATION`, `DB_DATA_LOCATION` or `IMMICH_VERSION` through additional environment variables. Those settings are managed by the app form. [GUI-managed settings](https://docs.immich.app/install/truenas/)
+
+## Step 3: Check permissions and the first upload
+
+Managed media and PostgreSQL have different ownership requirements. Do not apply the app user's permissions recursively to the database. The reviewed recipe provides a database-specific automatic permission check; verify that its target is the dedicated database directory before enabling it. [Database permission control](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/questions.yaml)
+
+If an existing dataset already has an ACL, inspect it before changing presets. Parent directories must allow the actual service identity to reach the intended dataset. Do not grant broad write access to unrelated shares just to make a startup error disappear.
+
+The Immich community guide has a specific ACL-mode caveat for managed data using SMB/NFSv4 ACLs with storage templates. Consult that condition before changing ACL mode; it is not a blanket instruction to alter every photo or database dataset. [Conditional ACL guidance](https://docs.immich.app/install/truenas/)
+
+Open the application's Web Portal, or use `http://TRUENAS-IP:30041` if you kept the reviewed port. Create the first administrator and upload a few test photos. Check the timeline, open a full-size image, download an original and play a short video. Then test a small mobile album while the app is open. [First-login workflow](https://docs.immich.app/install/post-install/), [Mobile backup](https://docs.immich.app/features/mobile-backup/)
+
+These are checks to perform on your installation, not a claim that every TrueNAS host or GPU has been hardware-tested. If the application does not open, first check its running state, published port, selected host IP and LAN connectivity. Compose's usual port 2283 is not the catalog app's reviewed default.
+
+## Step 4: Attach existing photos as an external library
+
+Once uploads work, edit the app and add the existing dataset through Additional Storage. Choose its actual Host Path, a unique container Mount Path and the Read Only option. Preserve the managed-data mount. The reviewed form explicitly distinguishes the host path from the destination inside the container. [Additional Storage fields](https://github.com/truenas/apps/blob/master/trains/community/immich/1.14.38/questions.yaml)
+
+Grant the selected app identity read and directory-traversal access to this source. In Immich Administration, create an external library for the intended owner and enter the container Mount Path, not the TrueNAS host path. Scan a small directory, check its originals, then widen the scan. Follow the [external-library guide](/storage/immich-external-library) for scans and sidecar limitations. [Immich external libraries](https://docs.immich.app/features/libraries/)
+
+A read-only source deliberately prevents writes. If you later want metadata edits or deletion through Immich, assess backup coverage and the other applications sharing those originals before enabling write access. Missing images after a scan require checking the same mount and permissions, not creating another empty library; use [image-loading troubleshooting](/troubleshooting/immich-error-loading-image).
+
+## Update through TrueNAS Apps
+
+1. Save the installed app configuration and a recoverable database-and-media backup before updating.
+2. Check the offered catalog revision and bundled Immich version separately. Read the applicable Immich release notes and catalog changes, especially database changes.
+3. Use the installed application's update control in TrueNAS. Do not independently pull images or run Compose commands inside the appliance-managed application.
+4. Wait for the update to finish, inspect logs, and repeat login, original download, small upload and external-library checks.
+
+TrueNAS documents app updates and rollback through its Apps interface. A rollback of managed application storage does not roll back mounted Host Paths. Application version rollback and database compatibility therefore need separate review. [Managing installed apps](https://apps.truenas.com/managing-apps/managing-installed-apps/)
+
+Use the [Immich update guide](/setup/how-to-update-immich) for release-note and migration checks, while keeping the actual update operation in TrueNAS. A newer upstream tag appearing on GitHub does not mean it is already packaged and offered by your catalog.
+
+## Backup and recovery plan
+
+Protect the database dump, the complete managed-media tree, any external originals and a record of app settings, dataset paths and access identities. Immich's automatic database backups do not contain the photo files. Copy the recovery set to independent storage and verify that it can be read. [Immich backup documentation](https://docs.immich.app/administration/backup-and-restore/)
+
+Dataset snapshots and replication are useful layers, but a snapshot of live PostgreSQL files alone does not establish a coordinated application recovery point. Use the [backup and restore guide](/backup/immich-backup) to plan database/media consistency and validation. Keep Host Path datasets covered by explicit backup jobs rather than assuming an Apps rollback includes them.
+
+For recovery, first identify the backed-up application and database versions. Reconstruct the correct storage mounts and use the restore procedure supported by that version and deployment. Do not paste a Compose container name or delete a database directory from another platform's tutorial. Rehearse recovery in an isolated destination before replacing live data.
+
+## Common mistakes
+
+| Symptom or decision | Check first |
+|---|---|
+| App is running but the browser cannot connect | Actual published port and host binding; do not assume 2283 |
+| Database exits immediately | Dedicated local path, database-specific permissions and version compatibility |
+| Uploads fail with permission errors | Selected app identity and managed-data ACL, including parent traversal |
+| Existing originals do not appear | Additional Storage mount, container import path, read access and scan results |
+| Machine learning fails or is killed | CPU features, effective memory limit and ML logs |
+| Old tutorial requires seven initial datasets | Confirm whether it describes an older application layout before following it |
+| App rollback leaves photos unchanged | Host Paths are outside the app rollback's data scope |
+
+## FAQ
+
+### Is this an official Immich-supported TrueNAS app?
+
+It is available in the TrueNAS Community application train. Immich labels its TrueNAS installation page a community contribution. Report packaging issues to the app repository and distinguish them from upstream Immich bugs.
+
+### Can I use an existing photo dataset without copying all its files?
+
+Yes, attach it separately as an external library. Keep new managed uploads in their own dataset and verify the container-visible import path with a small scan. Do not repurpose the existing originals as the application's new upload directory.
+
+### Why is the app version different from the latest Immich release?
+
+The catalog has its own packaging revision and bundles a particular upstream version. The reviewed recipe packages v3.2.1 even though upstream v3.2.2 is available. Read the actual install/update dialog instead of treating these numbers as interchangeable.
+
+### Can I use this guide on TrueNAS CORE or an old Kubernetes installation?
+
+No. The architecture here is the current Docker-based Apps workflow. Plan the host/application migration separately and preserve recoverable data before changing deployment systems.
+
+## Sources
+
+- [Immich TrueNAS installation](https://docs.immich.app/install/truenas/) — Community contribution hosted by Immich; current dataset and UI guidance.
+- [Immich requirements](https://docs.immich.app/install/requirements/) — Resource, CPU and database-filesystem boundaries.
+- [Immich v3.2.2 release](https://github.com/immich-app/immich/releases/tag/v3.2.2) — Upstream release checked September 16, 2026.
+- [TrueNAS catalog recipe 1.14.38](https://github.com/truenas/apps/tree/master/trains/community/immich/1.14.38) — Version metadata, form fields and generated configuration reviewed together.
+- [TrueNAS app storage](https://apps.truenas.com/getting-started/app-storage/) — Host Paths, managed storage and architectural changes.
+- [Managing installed apps](https://apps.truenas.com/managing-apps/managing-installed-apps/) — Updates and Host Path rollback limitations.
+- [Immich backup and restore](https://docs.immich.app/administration/backup-and-restore/) — Database and photo recovery requirements.

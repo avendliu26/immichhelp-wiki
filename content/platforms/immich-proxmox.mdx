@@ -1,12 +1,12 @@
 ---
-title: "Immich on Proxmox: Choose the Supported Boundary"
-description: "What Immich documents for Proxmox, Docker in LXC, full VMs, storage, and migration decisions."
+title: "Immich on Proxmox: VM, Docker & Storage Guide"
+description: "Install Immich in a Proxmox Linux VM with Docker Compose. Choose CPU features, database and NAS storage, then verify uploads, updates and backup coverage."
 category: Platforms
 keywords: immich proxmox, immich lxc, immich virtual machine
 status: published
-lastReviewed: 2026-09-08
-verifiedVersion: v3.1.0
-updated: 2026-09-08
+lastReviewed: 2026-09-16
+verifiedVersion: v3.2.2
+updated: 2026-09-16
 draft: false
 ---
 
@@ -16,7 +16,13 @@ For a new Proxmox deployment, create a full Linux VM and run Immich's official D
 
 Keep PostgreSQL on local guest storage backed by suitable disks, preferably SSD. Treat NAS photos as a separate mount and backup responsibility. Proxmox's successful guest-backup message does not by itself prove that externally mounted photos were included. In particular, LXC bind-mount contents are excluded from `vzdump`. [Proxmox container documentation](https://pve.proxmox.com/pve-docs/chapter-pct.html)
 
-This page was reviewed against stable Immich v3.2.1 on September 15, 2026. v3 machine learning on amd64 requires x86-64-v2 or later as seen inside the guest. The host's physical CPU capability alone is not enough if the VM exposes an older model. GPU passthrough is optional and hardware-specific; get the CPU-based installation working first.
+This page was reviewed against stable Immich [v3.2.2](https://github.com/immich-app/immich/releases/tag/v3.2.2) on September 16, 2026. v3 machine learning on amd64 requires x86-64-v2 or later as seen inside the guest. The host's physical CPU capability alone is not enough if the VM exposes an older model. GPU passthrough is optional and hardware-specific; get the CPU-based installation working first.
+
+## Who this setup is for
+
+Choose this route if you already operate Proxmox and want Immich isolated from the hypervisor with a recognizable Linux and Docker recovery path. It is especially useful when the application lives on local SSD-backed virtual storage while photos live on a separate NAS. It assumes you can install and maintain a Linux guest; it does not require a GPU or a community installer.
+
+Before creating the VM, identify the guest's resource allocation, LAN address, database disk, photo destination and independent backup destination. The next steps turn those choices into a working stack. An existing native LXC with valuable data needs a separate migration plan; do not point a new Compose database at its old directory.
 
 ## Choose VM, Docker-in-LXC or native LXC
 
@@ -49,6 +55,10 @@ Verification: log into the guest console, confirm the configured resources and I
 | External backup destination | Independent copy of DB and media | Files can be recovered without the current guest |
 
 This is an operational map derived from the two products' storage models, not a universal mount configuration. Preserve the normal upload mount while adding a separate read-only [external library](/storage/immich-external-library). A mount visible in Proxmox is not automatically visible in Linux, and a Linux mount is not automatically visible inside Docker. [External-library mount instructions](https://docs.immich.app/features/libraries/)
+
+For a NAS-backed media directory, make the share available inside the Linux guest before starting Docker. Confirm the intended remote files are present, not just an empty local mount-point directory. Check availability again after a guest restart. The required mount persistence and credentials depend on your distribution and NAS; no universal SMB/NFS command is safe for every setup.
+
+Set `DB_DATA_LOCATION` to the guest-local PostgreSQL directory and `UPLOAD_LOCATION` to the chosen managed-media directory. Existing photos get a separate mount into the server container, then a library import path inside Immich. Record all three path layers so a restored VM can reconstruct them. [Immich storage requirements](https://docs.immich.app/install/requirements/)
 
 ## Step 3: Install Docker and Immich inside the guest
 
@@ -85,10 +95,6 @@ Trace a failing path in order: the host directory exists; the LXC mount points t
 Changing ownership recursively, changing ZFS ACL properties across a dataset, or making an LXC privileged can affect other applications and host access. Preserve existing permission information and backup data. Test the smallest dedicated directory with the actual mapped service identity; do not copy a blanket chmod or host UID from another setup.
 :::
 
-Real-world example: a June 2026 [Proxmox forum case](https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/) describes an unprivileged helper LXC, a ZFS photo directory and `EACCES` during upload. Its author reported success after matching ACL access to their mapped UID and ZFS ACL configuration. The exact values were specific to that environment; the reusable lesson is to verify the mapping before modifying permissions.
-
-Another [NFS bind-mount case](https://forum.proxmox.com/threads/access-via-nfs-bindmount-in-an-unprivileged-lxc.165001/) shows the host listing photos while the guest cannot read them. It has no confirmed general repair. Do not infer that changing every share to writable or disabling permission checks is necessary.
-
 ## Advanced branch: GPU and hardware acceleration
 
 Hardware acceleration has two separate layers: Proxmox must expose a usable device to the guest, and Immich must be configured for the correct backend. VM PCI passthrough needs suitable IOMMU support and device grouping; a passed-through physical device is not simultaneously available for ordinary use by the host or another VM. Proxmox documents PCIe passthrough and machine-type constraints. [Proxmox VM passthrough](https://pve.proxmox.com/pve-docs/chapter-qm.html)
@@ -107,6 +113,19 @@ Restoring a guest or replacing its database can discard newer application state.
 
 Use the [Immich update guide](/setup/how-to-update-immich) inside a Compose VM. For v2→v3, check VectorChord and CPU exposure before updating. A helper-native LXC must follow its maintainer's supported path instead of borrowing Compose database commands.
 
+### Update the application inside the VM
+
+1. Record the current version and save the Compose file, `.env` and mount configuration with the backup set.
+2. Read every applicable release note through the target version. Compare its official Compose file with your customized copy, especially database-image changes.
+3. In the guest's application directory, follow the [version-aware update procedure](/setup/how-to-update-immich). Pull and recreate only after satisfying any migration instructions.
+4. Check service logs and repeat login, upload, original download and an external-library scan. Do not treat a running VM as proof the application update succeeded.
+
+### What a Proxmox snapshot does not establish
+
+A VM snapshot is useful for managing guest state, but is not an independent database-and-photo recovery set. A snapshot-mode `vzdump` backup is also distinct from a local VM snapshot: it copies selected guest disks, while a NAS share mounted inside Linux remains a separate backup job. The QEMU guest agent's filesystem freeze can improve disk consistency; it does not replace an Immich database dump or coordinate photos outside those disks. [Proxmox backup documentation](https://pve.proxmox.com/pve-docs/chapter-vzdump.html)
+
+Write down which virtual disks are included in the backup, which media paths are remote, and where the database dump is saved. Recover a small test set before relying on this arrangement for the only copy of your library.
+
 ## If this does not work
 
 | Failure | Next diagnostic layer | Verification after correction |
@@ -118,7 +137,7 @@ Use the [Immich update guide](/setup/how-to-update-immich) inside a Compose VM. 
 | Restart during upgrade | Logs, allocated memory and database migration progress | No repeated exit; test originals and search |
 | Guest restore has missing images | External mounts and media backup coverage | Original download and integrity checks pass |
 
-Historical [Discussion #29626](https://github.com/immich-app/immich/discussions/29626) reports v2.7.5→v3.0.1 restart loops and improvement after temporary RAM expansion. It is an environment-specific memory observation, not a universal instruction to allocate one fixed amount to every failing VM.
+For broken originals or previews after a mount or restore change, use [Immich image-loading troubleshooting](/troubleshooting/immich-error-loading-image). First identify whether the original is missing or only a derived thumbnail has failed.
 
 ## FAQ
 
@@ -130,9 +149,13 @@ The maintainer's answer in [#29317](https://github.com/immich-app/immich/discuss
 
 The flag applies to storage-backed mount-point volumes. Bind mounts remain a separate backup responsibility. [Proxmox container documentation](https://pve.proxmox.com/pve-docs/chapter-pct.html)
 
-### Why does adding my host account to a group not fix the app?
+### Is GPU passthrough required?
 
-Your interactive account and the LXC application's mapped identity may be different. Test the service identity that actually accesses the directory; the [resolved ACL case](https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/) illustrates this distinction.
+No. Establish a working CPU-based deployment first. Transcoding and machine learning use separate acceleration settings, and both depend on the device being usable inside the guest. Choose acceleration only after identifying a real workload need.
+
+### Can the database live beside photos on an SMB or NFS share?
+
+Keep the PostgreSQL data directory on a supported local guest filesystem. A network share suitable for originals is not automatically suitable for live PostgreSQL state. The database and remote photos can still be backed up to an independent destination using the documented backup procedure.
 
 ## Sources
 
@@ -148,6 +171,4 @@ Your interactive account and the LXC application's mapped identity may be differ
 - [Docker ps](https://docs.docker.com/reference/cli/docker/compose/ps/) — Official Docker reference.
 - [Docker logs](https://docs.docker.com/reference/cli/docker/compose/logs/) — Official Docker reference.
 - [LXC migration question, #29317](https://github.com/immich-app/immich/discussions/29317) — GitHub discussion with maintainer support clarification.
-- [Upgrade restart loop, #29626](https://github.com/immich-app/immich/discussions/29626) — GitHub historical v3.0.1 community case.
-- [Unprivileged write-access case](https://forum.proxmox.com/threads/issues-with-giving-an-unprivileged-lxc-write-access-to-storage-on-the-host.184141/) — Proxmox forum; user-confirmed ACL case.
-- [NFS bind-mount access](https://forum.proxmox.com/threads/access-via-nfs-bindmount-in-an-unprivileged-lxc.165001/) — Proxmox forum; unresolved read-only scenario.
+- [Backup and Restore](https://pve.proxmox.com/pve-docs/chapter-vzdump.html) — Official Proxmox guest-backup consistency and scope.

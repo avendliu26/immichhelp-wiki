@@ -46,10 +46,12 @@ describe('content index', () => {
     expect(doc?.body).not.toContain('stable is v3.1.0');
   });
 
-  it('does not advertise an obsolete stable release in the homepage updates feed', () => {
+  it('matches the homepage review link to a published guide and its verified version', () => {
     expect(home.latestUpdates[0]).toMatchObject({
-      date: 'Sep 14, 2026',
-      title: 'Stable release: Immich v3.2.1',
+      date: 'Sep 16, 2026',
+      title: 'Guide review: Immich v3.2.2',
+      href: '/setup/immich-reverse-proxy',
     });
+    expect(getDocument('setup/immich-reverse-proxy')?.verifiedVersion).toBe('v3.2.2');
   });
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Immich Setup Guides', description: 'Install Immich with Docker Compose, check requirements, complete post-install steps, and follow safe update guidance from published sources.' };
+export const metadata: Metadata = { alternates: { canonical: '/setup' }, title: 'Immich Setup Guides', description: 'Install Immich with Docker Compose, check requirements, complete post-install steps, and follow safe update guidance from published sources.' };
 import Link from 'next/link';
 import { getPublishedDocuments } from '@/lib/content';
 const officialLinks = [

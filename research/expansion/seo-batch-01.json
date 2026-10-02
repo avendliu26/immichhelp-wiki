@@ -2,7 +2,7 @@
   "batch": "01",
   "recordedOn": "2026-10-02",
   "baseCommit": "d8f4eac3d29151bc7dabb575109f9e00cad5e956",
-  "deploymentDate": null,
+  "deploymentDate": "2026-10-02",
   "baselineSource": "User-supplied GSC data; preceding 28 days, exact date range not supplied",
   "comparisonPage": "/backup/immich-backup",
   "comparisonPageSha256": "94223db8fb4ac4bc41f0785de3dcd4d15a13534eccdb1c288d1e7a4c01473b2c",
@@ -494,5 +494,11 @@
     "runtimeScope": "Local production build and rendered HTML; no running Immich server was updated or exercised"
   },
   "readyForDeployment": true,
-  "deploymentStatus": "Not committed, pushed or deployed; user requested reviewable completed batch before deployment."
+  "deploymentStatus": "Production deployment READY on immichhelp.wiki from main at commit a3014e5231551c60ad658be04c0284414af8d9a0. This experiment record update will be included in the follow-up production deployment.",
+  "deployment": {
+    "commit": "a3014e5231551c60ad658be04c0284414af8d9a0",
+    "deploymentUrl": "https://immichhelp-wiki-rcvb11tfn-no-rest-for-the-wicked-wiki.vercel.app",
+    "customDomain": "https://immichhelp.wiki",
+    "state": "READY"
+  }
 }

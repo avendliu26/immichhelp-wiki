@@ -1,0 +1,498 @@
+{
+  "batch": "01",
+  "recordedOn": "2026-10-02",
+  "baseCommit": "d8f4eac3d29151bc7dabb575109f9e00cad5e956",
+  "deploymentDate": null,
+  "baselineSource": "User-supplied GSC data; preceding 28 days, exact date range not supplied",
+  "comparisonPage": "/backup/immich-backup",
+  "comparisonPageSha256": "94223db8fb4ac4bc41f0785de3dcd4d15a13534eccdb1c288d1e7a4c01473b2c",
+  "scope": "Two existing articles and their supporting tests/data only",
+  "pages": [
+    {
+      "path": "/setup/how-to-update-immich",
+      "gscBaseline": {
+        "impressions": 2578,
+        "clicks": 20,
+        "ctrPercent": 0.78,
+        "averagePosition": 8.06,
+        "queries": [
+          {
+            "query": "immich update",
+            "impressions": 255,
+            "clicks": 1,
+            "averagePosition": 8.62
+          },
+          {
+            "query": "how to update immich",
+            "impressions": 204,
+            "clicks": 1,
+            "averagePosition": 7.65
+          },
+          {
+            "query": "update immich",
+            "impressions": 109,
+            "clicks": 3,
+            "averagePosition": 8.63
+          },
+          {
+            "query": "immich upgrade",
+            "impressions": 58,
+            "clicks": 0,
+            "averagePosition": 8.21
+          },
+          {
+            "query": "update immich docker",
+            "impressions": 57,
+            "clicks": 2,
+            "averagePosition": 7.25
+          },
+          {
+            "query": "immich docker update",
+            "impressions": 45,
+            "clicks": 1,
+            "averagePosition": 6.87
+          },
+          {
+            "query": "immich upgrade to v3",
+            "impressions": 19,
+            "clicks": 1,
+            "averagePosition": 8.58
+          }
+        ]
+      },
+      "before": {
+        "title": "How to Update Immich Safely (Docker Compose)",
+        "metaDescription": "Learn how to update Immich safely with Docker Compose: check release notes, back up your database and media, pull new images, restart, and verify the upgrade.",
+        "h1": "How to Update Immich Safely",
+        "headings": [
+          {
+            "level": 2,
+            "text": "Direct Answer"
+          },
+          {
+            "level": 2,
+            "text": "Step 1: Check your current release and release notes"
+          },
+          {
+            "level": 2,
+            "text": "Step 2: Back up the database and actual media"
+          },
+          {
+            "level": 2,
+            "text": "Step 3: Update mobile clients and check `IMMICH_VERSION`"
+          },
+          {
+            "level": 2,
+            "text": "Step 4: Pull the images and restart Compose"
+          },
+          {
+            "level": 2,
+            "text": "Step 5: Wait for startup and migrations"
+          },
+          {
+            "level": 2,
+            "text": "Step 6: Verify services, media, uploads and jobs"
+          },
+          {
+            "level": 2,
+            "text": "Updating from Immich v1 or v2"
+          },
+          {
+            "level": 3,
+            "text": "pgvecto.rs to VectorChord"
+          },
+          {
+            "level": 3,
+            "text": "Very old v1 upgrade paths"
+          },
+          {
+            "level": 2,
+            "text": "Platform differences and real-world evidence"
+          },
+          {
+            "level": 2,
+            "text": "If this does not work"
+          },
+          {
+            "level": 2,
+            "text": "Sources"
+          }
+        ],
+        "lastReviewed": "2026-09-15",
+        "verifiedVersion": "v3.2.1",
+        "sha256": "a3d8311d6bfda060854ad42ed7daf25dca24f756af81d0e3d88c50c63504207f",
+        "wordCount": 1485
+      },
+      "intentAssessment": {
+        "alreadyStrong": [
+          "Routine Compose command and six-step checks",
+          "Database/media backup and verification",
+          "Logs, paths and historical migration recovery"
+        ],
+        "weakOrMissing": [
+          "Target-release selection is tied to v3.2.1",
+          "v3 breaking-change checklist lacks CPU and removed-variable prerequisites",
+          "Failure diagnosis and platform update links are difficult to find"
+        ],
+        "cannibalizationBoundary": "Keep fresh installation, full backup/restore procedures, and platform setup in their existing guides; this page owns updates and migration checks."
+      },
+      "after": {
+        "title": "How to Update Immich: Docker Compose & v3",
+        "metaDescription": "Update Immich with Docker Compose, prepare backups, check v3 migration requirements, and diagnose failed upgrades using release notes and server logs.",
+        "h1": "How to Update Immich Safely",
+        "headings": [
+          {
+            "level": 2,
+            "text": "How to update Immich with Docker Compose"
+          },
+          {
+            "level": 2,
+            "text": "Step 1: Check your current release and release notes"
+          },
+          {
+            "level": 2,
+            "text": "Step 2: Back up the database and actual media"
+          },
+          {
+            "level": 2,
+            "text": "Step 3: Update mobile clients and check `IMMICH_VERSION`"
+          },
+          {
+            "level": 2,
+            "text": "Step 4: Pull the images and apply the update"
+          },
+          {
+            "level": 2,
+            "text": "Step 5: Wait for startup and migrations"
+          },
+          {
+            "level": 2,
+            "text": "Step 6: Verify services, media, uploads and jobs"
+          },
+          {
+            "level": 2,
+            "text": "If the Immich update fails"
+          },
+          {
+            "level": 2,
+            "text": "How to upgrade to Immich v3"
+          },
+          {
+            "level": 3,
+            "text": "pgvecto.rs to VectorChord"
+          },
+          {
+            "level": 3,
+            "text": "Very old v1: Invalid upgrade path"
+          },
+          {
+            "level": 2,
+            "text": "Updating packaged NAS and LXC installations"
+          },
+          {
+            "level": 2,
+            "text": "Sources"
+          }
+        ],
+        "lastReviewed": "2026-10-02",
+        "verifiedVersion": "v3.2.4",
+        "sha256": "78752b640a034d5d65ff59ea4304c40fc796bfa8e48fd07f7ea4af47a8863fc0",
+        "wordCount": 1621
+      },
+      "addedInternalDestinations": [
+        "/platforms/immich-for-synology",
+        "/platforms/immich-truenas"
+      ],
+      "addedLocalAnchors": [
+        "#how-to-upgrade-to-immich-v3",
+        "#if-the-immich-update-fails"
+      ],
+      "changes": [
+        "Put routine Docker Compose answer and contextual backup link first; preserve update/config/log commands.",
+        "Replace stale fixed target with official release selection and dated v3.2.4 example.",
+        "Explain restart versus applying images; surface failure checks before historical migration material.",
+        "Add official v3 pgvecto.rs, CPU and removed-variable prerequisites; retain historical migration boundaries.",
+        "Link to packaged Synology and TrueNAS guides without duplicating their setup procedures."
+      ],
+      "intentCoverage": [
+        "immich update / how to update immich / update immich: immediate command and checks",
+        "immich upgrade: release selection, verification and recovery",
+        "update immich docker / immich docker update: Compose workflow and restart distinction",
+        "immich upgrade to v3: explicit migration prerequisites and historical path"
+      ]
+    },
+    {
+      "path": "/troubleshooting/immich-error-loading-image",
+      "gscBaseline": {
+        "impressions": 1154,
+        "clicks": 6,
+        "ctrPercent": 0.52,
+        "averagePosition": 7.46,
+        "queries": [
+          {
+            "query": "immich error loading image",
+            "impressions": 239,
+            "clicks": 1,
+            "averagePosition": 6.76
+          },
+          {
+            "query": "immich error loading image thumbnail",
+            "impressions": 31,
+            "clicks": 0,
+            "averagePosition": 6.71
+          },
+          {
+            "query": "error loading image immich",
+            "impressions": 29,
+            "clicks": 0,
+            "averagePosition": 7.31
+          },
+          {
+            "query": "immich thumbnail error loading image",
+            "impressions": 28,
+            "clicks": 0,
+            "averagePosition": 6.36
+          },
+          {
+            "query": "immich error loading image after upload",
+            "impressions": 20,
+            "clicks": 0,
+            "averagePosition": 6.6
+          }
+        ]
+      },
+      "before": {
+        "title": "Immich Error Loading Image: Causes & Safe Fixes",
+        "metaDescription": "A source-backed path for missing originals, failed thumbnails, storage mounts, and version-specific Immich image errors.",
+        "h1": "Immich Error Loading Image: Causes & Safe Fixes",
+        "headings": [
+          {
+            "level": 2,
+            "text": "Direct Answer"
+          },
+          {
+            "level": 2,
+            "text": "Choose the matching symptom"
+          },
+          {
+            "level": 2,
+            "text": "Step 1: Collect useful logs and integrity findings"
+          },
+          {
+            "level": 2,
+            "text": "Thumbnail-only branch"
+          },
+          {
+            "level": 2,
+            "text": "Missing-original or permission branch"
+          },
+          {
+            "level": 2,
+            "text": "External-library branch"
+          },
+          {
+            "level": 2,
+            "text": "Post-update or storage-move branch"
+          },
+          {
+            "level": 2,
+            "text": "Network and reverse-proxy branch"
+          },
+          {
+            "level": 2,
+            "text": "Format and checksum branch"
+          },
+          {
+            "level": 2,
+            "text": "Verification and escalation"
+          },
+          {
+            "level": 2,
+            "text": "Advanced cases and FAQ"
+          },
+          {
+            "level": 3,
+            "text": "Multi-instance deployments"
+          },
+          {
+            "level": 3,
+            "text": "Why can the phone show a photo that the web cannot load?"
+          },
+          {
+            "level": 3,
+            "text": "Why are there more thumbnail jobs than photos?"
+          },
+          {
+            "level": 3,
+            "text": "Why does an HDR video look pale in playback but normal after download?"
+          },
+          {
+            "level": 2,
+            "text": "Sources"
+          }
+        ],
+        "lastReviewed": "2026-09-15",
+        "verifiedVersion": "v3.2.1",
+        "sha256": "bc4e9fd61844437b478d1f83bc0c9c43746922c0dc493e7c008770d52b3466fe",
+        "wordCount": 2043
+      },
+      "intentAssessment": {
+        "alreadyStrong": [
+          "Original versus thumbnail distinction",
+          "Storage mounts, permissions, external libraries and logs",
+          "Missing-thumbnail jobs and verification"
+        ],
+        "weakOrMissing": [
+          "After-upload query has no explicit diagnostic section",
+          "Generic branch headings hide thumbnail and file-path answers",
+          "Meta description describes the article rather than the diagnostic actions"
+        ],
+        "cannibalizationBoundary": "Keep full external-library and reverse-proxy configuration in their existing guides; this page owns symptom diagnosis and verification."
+      },
+      "after": {
+        "title": "Immich Error Loading Image: Causes & Safe Fixes",
+        "metaDescription": "Diagnose Immich image loading errors: test original downloads, check thumbnail jobs after upload, and resolve storage paths or permissions before regeneration.",
+        "h1": "Immich Error Loading Image",
+        "headings": [
+          {
+            "level": 2,
+            "text": "First check: can you download the original?"
+          },
+          {
+            "level": 2,
+            "text": "Choose the matching symptom"
+          },
+          {
+            "level": 2,
+            "text": "Inspect server logs and integrity findings"
+          },
+          {
+            "level": 2,
+            "text": "Error loading image after upload"
+          },
+          {
+            "level": 2,
+            "text": "Fix thumbnail and preview errors"
+          },
+          {
+            "level": 3,
+            "text": "Regenerate missing thumbnails after checking the cause"
+          },
+          {
+            "level": 2,
+            "text": "Check original files, storage paths and permissions"
+          },
+          {
+            "level": 2,
+            "text": "If only external-library images fail"
+          },
+          {
+            "level": 2,
+            "text": "Errors after an update or storage move"
+          },
+          {
+            "level": 2,
+            "text": "Images work locally but fail through the reverse proxy"
+          },
+          {
+            "level": 2,
+            "text": "If one file format fails or checksums differ"
+          },
+          {
+            "level": 2,
+            "text": "Verification and escalation"
+          },
+          {
+            "level": 2,
+            "text": "Advanced cases and FAQ"
+          },
+          {
+            "level": 3,
+            "text": "Multi-instance deployments"
+          },
+          {
+            "level": 3,
+            "text": "Why can the phone show a photo that the web cannot load?"
+          },
+          {
+            "level": 3,
+            "text": "Why are there more thumbnail jobs than photos?"
+          },
+          {
+            "level": 2,
+            "text": "Sources"
+          }
+        ],
+        "lastReviewed": "2026-10-02",
+        "verifiedVersion": "v3.2.4",
+        "sha256": "1a27788f210d759efb6ce411103fc1598bb9fd1622fce923639e1fa1407af987",
+        "wordCount": 2152
+      },
+      "addedInternalDestinations": [
+        "/setup/immich-reverse-proxy"
+      ],
+      "addedLocalAnchors": [
+        "#check-original-files-storage-paths-and-permissions",
+        "#error-loading-image-after-upload",
+        "#errors-after-an-update-or-storage-move",
+        "#fix-thumbnail-and-preview-errors",
+        "#if-one-file-format-fails-or-checksums-differ",
+        "#if-only-external-library-images-fail",
+        "#images-work-locally-but-fail-through-the-reverse-proxy"
+      ],
+      "changes": [
+        "Retain already relevant title; shorten H1 and make meta describe diagnostic actions.",
+        "Begin with original download test and linked diagnostic branches.",
+        "Add after-upload section distinguishing server originals from background processing.",
+        "Inspect failed generated paths before thumbnail regeneration, then verify the same asset.",
+        "Rename branch headings around symptoms; retain logs, storage, permissions, historical evidence and recovery cautions.",
+        "Add contextual reverse-proxy guide link and remove unrelated HDR playback FAQ."
+      ],
+      "intentCoverage": [
+        "immich error loading image / error loading image immich: immediate original-versus-preview diagnosis",
+        "immich error loading image thumbnail / immich thumbnail error loading image: processing, paths and conditional regeneration",
+        "immich error loading image after upload: server download and queue progress checks"
+      ]
+    }
+  ],
+  "officialSourcesCheckedOn": "2026-10-02",
+  "officialSources": [
+    "https://docs.immich.app/install/upgrading/",
+    "https://github.com/immich-app/immich/releases/latest",
+    "https://github.com/immich-app/immich/releases/tag/v3.2.4",
+    "https://immich.app/blog/v3-migration",
+    "https://docs.immich.app/errors/",
+    "https://docs.immich.app/administration/jobs-workers/",
+    "https://docs.immich.app/administration/system-integrity/",
+    "https://docs.immich.app/features/libraries/",
+    "https://docs.immich.app/administration/reverse-proxy/",
+    "https://docs.immich.app/FAQ/",
+    "https://docs.docker.com/reference/cli/docker/compose/config/",
+    "https://docs.docker.com/reference/cli/docker/compose/ps/",
+    "https://docs.docker.com/reference/cli/docker/compose/logs/",
+    "https://docs.docker.com/reference/cli/docker/compose/restart/"
+  ],
+  "verification": {
+    "date": "2026-10-02",
+    "tests": "9 passed across 4 files",
+    "lintAndTypecheck": "npm run lint (tsc --noEmit) passed; repository has no separate lint engine",
+    "productionBuild": "npm run build passed, 26 static pages generated",
+    "renderedMetadata": "Both titles with site suffix exactly once, descriptions, single H1 and self canonicals passed",
+    "links": {
+      "firstPartyDestinations": 19,
+      "httpStatus": 200,
+      "validFragments": 41
+    },
+    "content": "Balanced code fences/callouts, unique headings, citation coverage and exact target index summary consistency passed",
+    "scope": "Backup SHA unchanged; all unrelated index entries and global/P0 files unchanged",
+    "legacyExpansionAudit": {
+      "result": "pre-existing failure",
+      "error": "KeyError: https://github.com/immich-app/immich/blob/v3.2.2/docker/docker-compose.yml",
+      "baselineReproduction": "Same failure reproduced against HEAD content without modifying audit output",
+      "reasonNotChanged": "Historical audit source registry is outside this two-page batch"
+    },
+    "runtimeScope": "Local production build and rendered HTML; no running Immich server was updated or exercised"
+  },
+  "readyForDeployment": true,
+  "deploymentStatus": "Not committed, pushed or deployed; user requested reviewable completed batch before deployment."
+}

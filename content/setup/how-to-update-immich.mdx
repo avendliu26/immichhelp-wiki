@@ -1,35 +1,35 @@
 ---
-title: "How to Update Immich Safely (Docker Compose)"
+title: "How to Update Immich: Docker Compose & v3"
 heading: "How to Update Immich Safely"
-description: "Learn how to update Immich safely with Docker Compose: check release notes, back up your database and media, pull new images, restart, and verify the upgrade."
+description: "Update Immich with Docker Compose, prepare backups, check v3 migration requirements, and diagnose failed upgrades using release notes and server logs."
 category: Install & Setup
 keywords: how to update immich, immich upgrade, docker compose update, vectorchord migration
 status: published
-lastReviewed: 2026-09-15
-verifiedVersion: v3.2.1
-updated: 2026-09-15
+lastReviewed: 2026-10-02
+verifiedVersion: v3.2.4
+updated: 2026-10-02
 draft: false
 ---
 
-## Direct Answer
+## How to update Immich with Docker Compose
 
-For a normal modern v3 Docker Compose installation, read the release notes, back up both the database and actual media, update the mobile clients, check whether `IMMICH_VERSION` is pinned, then run the official command from the directory containing your existing Compose file:
+To update Immich with Docker Compose, read the target release notes, make a [database and media backup](/backup/immich-backup), update your mobile clients, and check `IMMICH_VERSION` in `.env`. Then run this in the directory containing your existing `docker-compose.yml`:
 
 ```bash
 docker compose pull && docker compose up -d
 ```
 
-Wait for startup and any migrations to finish. Then verify service health, logs, an older original, a new upload, thumbnails, external libraries and jobs. Preserve your existing `.env`, Compose configuration, storage paths and secrets; do not replace them with `example.env`. The official [upgrading guide](https://docs.immich.app/install/upgrading/) defines this routine path.
+Wait for startup and any migrations to finish, then test an older original, a new upload and its thumbnail. Preserve your existing `.env`, Compose file, storage paths and secrets. The official [upgrading guide](https://docs.immich.app/install/upgrading/) defines this routine workflow.
 
-As of September 15, 2026, the latest stable release is **v3.2.1**, released on September 14, 2026. **v3.2.0** was released on September 10, 2026. Both are official stable releases; `v3.2.0-rc` was a prerelease line. Check the [official v3.2.1 release notes](https://github.com/immich-app/immich/releases/tag/v3.2.1) for changes between your running version and the target.
-
-This routine path is different from the historical v1/v2-to-v3 migration below. Downgrades, including within a minor version, are unsupported.
+For an older v1 or v2 server, complete the [v3 upgrade checks](#how-to-upgrade-to-immich-v3) before using this command. If an update fails, use the [failure checks](#if-the-immich-update-fails). Downgrades, including within a minor version, are unsupported.
 
 ## Step 1: Check your current release and release notes
 
 Record the server and mobile versions, database image tag and PostgreSQL major, explicit `DB_VECTOR_EXTENSION` if set, and any custom volumes, networks or hardware acceleration. An image tag in `.env` expresses intent; check the running application as well.
 
-Read every release note between the running version and v3.2.1, including breaking changes. Compare the target release's Compose asset with your current file and transfer only the required service/image/environment changes while preserving your real paths and secrets. [Official release files](https://docs.immich.app/install/docker-compose/)
+Choose the stable release you intend to install from the [official Immich releases](https://github.com/immich-app/immich/releases). Read every release note between your running version and that target, including breaking changes. Compare the target release's Compose asset with your current file and transfer only the required service/image/environment changes while preserving your real paths and secrets. [Official release files](https://docs.immich.app/install/docker-compose/)
+
+The exact-tag example in this guide uses the official [v3.2.4 release](https://github.com/immich-app/immich/releases/tag/v3.2.4), checked on October 2, 2026. Recheck the release list before updating; an example tag is not a permanent recommendation to stay on that version.
 
 ## Step 2: Back up the database and actual media
 
@@ -45,9 +45,9 @@ Migration changes stored state. Preserve a pre-update database dump and matching
 
 Upgrade each mobile-client type you use before updating the server, following Immich's compatibility policy. The server is compatible with the matching major version; the mobile app is typically compatible with the current and prior major version. [Versioning policy](https://docs.immich.app/install/upgrading/)
 
-If `.env` pins `IMMICH_VERSION`, set it to the intended target, such as `v3.2.1`. If your policy uses the stable major metatag, `v3` follows stable v3 releases and does not select release candidates. An exact old pin stays old after `pull`; do not assume the command changes it automatically.
+If `.env` pins `IMMICH_VERSION`, set it to the intended target, such as `v3.2.4`. If your policy uses the stable major metatag, `v3` follows stable v3 releases and does not select release candidates. An exact old pin stays old after `pull`; do not assume the command changes it automatically.
 
-## Step 4: Pull the images and restart Compose
+## Step 4: Pull the images and apply the update
 
 In a terminal on the Docker host, enter the directory containing the active `docker-compose.yml` and `.env`. Validate edited configuration first:
 
@@ -64,6 +64,8 @@ docker compose pull && docker compose up -d
 ```
 
 `pull` fetches the images selected by your configuration; `up -d` recreates or starts services with that configuration only if pulling succeeds. A pull failure means the update has not completed; check the target tag, registry access and available storage. Do not blindly overwrite the Compose file or `.env` with a release example.
+
+`docker compose restart` restarts the existing containers; it does not apply new images or configuration. Use `up -d` for the update. [Docker restart](https://docs.docker.com/reference/cli/docker/compose/restart/)
 
 ## Step 5: Wait for startup and migrations
 
@@ -82,9 +84,28 @@ Confirm the application reports the intended version. Log in from the web and ea
 
 Review Administration → Maintenance for new integrity findings and Job Queues for failed processing. A full integrity check examines beyond existing findings; refresh previously reported problems after correction. If thumbnails or originals fail, follow the [image-loading troubleshooting guide](/troubleshooting/immich-error-loading-image). If the installation itself is unclear, compare it with the [Docker Compose setup guide](/setup/immich-docker-compose).
 
-## Updating from Immich v1 or v2
+## If the Immich update fails
 
-The material in this section is for older installations and must not replace the routine v3 flow above.
+| Observation | Next check | Safe response |
+|---|---|---|
+| Pull fails | Exact image tag, registry response and storage capacity | Fix retrieval; do not select an RC to bypass a typo |
+| Server restarts during migration | Earliest database/server error and memory pressure | Preserve logs; distinguish a slow reindex from repeated exits |
+| `Invalid upgrade path` | Actual old version and intermediate startup history | Apply official historical guidance if that condition matches |
+| v3 rejects pgvecto.rs | Database image and explicit extension setting | Recover the pre-migration state as needed, then complete the documented transition |
+| Inconsistent media location / missing marker | Host mounts versus container destination | Correct mapping according to [Errors](https://docs.immich.app/errors/); do not move host files merely to silence the message |
+| Thumbnails fail after update | Original accessibility and processing jobs | Follow [image troubleshooting](/troubleshooting/immich-error-loading-image) |
+
+If recovery is required, use the pre-update database, its matching software/configuration and corresponding media in the documented [restore workflow](/backup/immich-backup). Reverting the image tag alone is not a supported downgrade. Keep failed-instance evidence until recovery has been verified.
+
+## How to upgrade to Immich v3
+
+For a v1 or v2 installation, review the official [v3 migration checklist](https://immich.app/blog/v3-migration) before changing the server version:
+
+- Database: v3 removes pgvecto.rs support. `DB_VECTOR_EXTENSION=pgvecto.rs` causes a startup error; complete the supported VectorChord transition below first.
+- Machine learning: x86 CPUs must support x86-64-v2 or newer. Check the CPU features exposed to a virtual machine as well as the physical CPU.
+- Configuration: replace removed machine-learning environment variables using the mappings in the official checklist, including any custom hardware-acceleration configuration.
+
+After these checks and a successful database transition, use the Docker Compose update and verification steps above. Very old v1 installations may also need the intermediate upgrade described below. Servers already on v3 use the routine workflow unless their target release notes require additional steps.
 
 ### pgvecto.rs to VectorChord
 
@@ -100,36 +121,23 @@ For the historical default pg14/pgvecto.rs 0.2.0 stack, the official transition 
 
 The official migration warns against downgrading below v1.133.0 after switching to VectorChord; the current general policy disallows downgrades altogether. Do not change PostgreSQL major versions by pointing a different image at the same data directory. A shared/custom database needs its own documented procedure. [Pre-existing Postgres](https://docs.immich.app/administration/postgres-standalone/)
 
-### Very old v1 upgrade paths
+### Very old v1: Invalid upgrade path
 
 For an old v1 installation with `Invalid upgrade path`, follow the official historical intermediate-version requirement before continuing. The documented v1.132.3 guidance and source version determine the safe branch; do not invent a shortcut or skip intervening release notes. [Errors](https://docs.immich.app/errors/)
 
 Pre-v2.5 database backups also need version-selected restore instructions because the current UI recovery behavior changed in v2.5.0. Use the [backup and restore guide](https://docs.immich.app/administration/backup-and-restore/) for the matching software and database state.
 
-## Platform differences and real-world evidence
+## Updating packaged NAS and LXC installations
 
-Synology Container Manager, Unraid, TrueNAS, native LXC and Docker-in-LXC may own different database and storage lifecycles. Preserve paths and backups, and use the distribution's supported controls rather than copying the default Compose command into a different packaging model.
+[Synology Container Manager](/platforms/immich-for-synology), [TrueNAS Apps](/platforms/immich-truenas), Unraid, native LXC and Docker-in-LXC may own different database and storage lifecycles. Preserve paths and backups, and use the distribution's supported controls rather than copying the default Compose command into a different packaging model.
 
 [Discussion #30621](https://github.com/immich-app/immich/discussions/30621) records one community-tested path from v1.129.x through multiple checkpoints to v3; it is evidence from one environment, not an official requirement to visit every listed version. [Discussion #25771](https://github.com/immich-app/immich/discussions/25771) describes an unresolved community Synology updater issue and is not part of this runbook.
-
-## If this does not work
-
-| Observation | Next check | Safe response |
-|---|---|---|
-| Pull fails | Exact image tag, registry response and storage capacity | Fix retrieval; do not select an RC to bypass a typo |
-| Server restarts during migration | Earliest database/server error and memory pressure | Preserve logs; distinguish a slow reindex from repeated exits |
-| `Invalid upgrade path` | Actual old version and intermediate startup history | Apply official historical guidance if that condition matches |
-| v3 rejects pgvecto.rs | Database image and explicit extension setting | Recover the pre-migration state as needed, then complete the documented transition |
-| Inconsistent media location / missing marker | Host mounts versus container destination | Correct mapping according to [Errors](https://docs.immich.app/errors/); do not move host files merely to silence the message |
-| Thumbnails fail after update | Original accessibility and processing jobs | Follow [image troubleshooting](/troubleshooting/immich-error-loading-image) |
-
-If recovery is required, use the pre-update database, its matching software/configuration and corresponding media in the documented [restore workflow](/backup/immich-backup). Reverting the image tag alone is not a supported downgrade. Keep failed-instance evidence until recovery has been verified.
 
 ## Sources
 
 - [Upgrading](https://docs.immich.app/install/upgrading/) — Official update command, compatibility policy and VectorChord guidance.
-- [v3.2.1 release](https://github.com/immich-app/immich/releases/tag/v3.2.1) — Official stable release, published September 14, 2026.
-- [v3.2.0 release](https://github.com/immich-app/immich/releases/tag/v3.2.0) — Official preceding stable release, published September 10, 2026.
+- [Official releases](https://github.com/immich-app/immich/releases) — Select a stable target and read intervening release notes.
+- [v3.2.4 release](https://github.com/immich-app/immich/releases/tag/v3.2.4) — Official release used for this guide's exact-tag example.
 - [Docker Compose](https://docs.immich.app/install/docker-compose/) — Official Compose release files.
 - [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official recovery prerequisites.
 - [Errors](https://docs.immich.app/errors/) — Official historical upgrade/path errors.
@@ -139,5 +147,6 @@ If recovery is required, use the pre-update database, its matching software/conf
 - [Compose config](https://docs.docker.com/reference/cli/docker/compose/config/) — Official Docker reference.
 - [Compose ps](https://docs.docker.com/reference/cli/docker/compose/ps/) — Official Docker reference.
 - [Compose logs](https://docs.docker.com/reference/cli/docker/compose/logs/) — Official Docker reference.
+- [Compose restart](https://docs.docker.com/reference/cli/docker/compose/restart/) — Why restarting alone does not apply an update.
 - [Old-version upgrade case, #30621](https://github.com/immich-app/immich/discussions/30621) — Community evidence from one environment.
 - [Synology updater, #25771](https://github.com/immich-app/immich/discussions/25771) — Community discussion; unresolved script failure.

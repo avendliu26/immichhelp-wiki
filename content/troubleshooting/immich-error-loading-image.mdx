@@ -1,7 +1,7 @@
 ---
 title: "Immich Error Loading Image: Causes & Safe Fixes"
 heading: "Immich Error Loading Image"
-description: "Diagnose Immich image loading errors: test original downloads, check thumbnail jobs after upload, and resolve storage paths or permissions before regeneration."
+description: "Fix Immich “Error loading image” by checking whether the original downloads, then inspecting thumbnail jobs, storage paths and permissions."
 category: Troubleshooting
 keywords: immich error loading image, broken thumbnail, missing file, refresh thumbnails
 status: published
@@ -18,7 +18,7 @@ When Immich shows “Error loading image,” open the affected asset in the web 
 1. If the original loads but the thumbnail or preview fails, check [thumbnail jobs and generated files](#fix-thumbnail-and-preview-errors).
 2. If the original also fails, check the [file path, mount and permissions](#check-original-files-storage-paths-and-permissions) before retrying processing.
 
-Thumbnail regeneration cannot recover a missing original. Do not delete database records, clear Trash or reset the stack to hide the error. [System Integrity](https://docs.immich.app/administration/system-integrity/)
+Thumbnail regeneration cannot recover a missing original. If the original is confirmed missing, stop before regenerating and use the [backup and restore guide](/backup/immich-backup) to check the available recovery set. Do not delete database records, clear Trash or reset the stack to hide the error. [System Integrity](https://docs.immich.app/administration/system-integrity/)
 
 ## Choose the matching symptom
 

@@ -68,3 +68,42 @@ describe('content index', () => {
     expect(getDocument('setup/immich-reverse-proxy')?.verifiedVersion).toBe('v3.2.2');
   });
 });
+
+describe('homepage internal links', () => {
+  const staticRoutes = ['/', '/guides', '/setup', '/troubleshooting', '/platforms', '/backup', '/about', '/privacy', '/terms'];
+  const routes = new Set([...staticRoutes, ...getPublishedDocuments().map((doc) => `/${doc.slug}`)]);
+  const pageSource = readFileSync('app/page.tsx', 'utf8');
+  const pageHrefs = [...pageSource.matchAll(/href="(\/[^"]*)"/g)].map((match) => match[1]);
+  const dataHrefs = [
+    ...home.popularHelp.map((card) => card.href),
+    ...home.troubleshooting.items.map((item) => item.href),
+    ...home.gettingStarted.items.map((item) => item.href),
+    ...home.latestUpdates.map((item) => item.href),
+    home.platforms.href,
+    home.backup.href,
+    home.finalCta.href,
+  ];
+
+  it('points every homepage link at a real route', () => {
+    for (const href of [...pageHrefs, ...dataHrefs]) {
+      expect(routes.has(href), `${href} should resolve to a real route`).toBe(true);
+    }
+  });
+
+  it('gives each troubleshooting item its own destination', () => {
+    const hrefs = home.troubleshooting.items.map((item) => item.href);
+    expect(new Set(hrefs).size).toBe(hrefs.length);
+    expect(home.troubleshooting.items.map((item) => item.title)).toEqual([
+      'Error loading image',
+      'Version and update mismatches',
+      'Storage and permission issues',
+    ]);
+  });
+
+  it('links to the update guide from Popular Help and a Setup section', () => {
+    expect(getDocument('setup/how-to-update-immich')).toBeDefined();
+    expect(home.popularHelp.some((card) => card.href === '/setup/how-to-update-immich')).toBe(true);
+    expect(pageHrefs.filter((href) => href === '/setup/how-to-update-immich').length).toBeGreaterThanOrEqual(1);
+    expect(dataHrefs.filter((href) => href === '/setup/how-to-update-immich').length).toBeGreaterThanOrEqual(1);
+  });
+});

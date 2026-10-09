@@ -61,6 +61,33 @@ html { scrollbar-gutter:stable; }
 .prose .update-preflight-result.complete { background:color-mix(in srgb,var(--accent) 14%,var(--card)); }
 .update-preflight-platform-note { border-top:1px solid var(--border); color:var(--muted); font-size:14px; padding-top:16px; }
 .update-preflight-platform-note strong { color:var(--foreground); }
+.image-loading-check { border:1px solid var(--border); border-radius:12px; background:var(--card); padding:20px; margin:24px 0 32px; }
+.prose .image-loading-check-kicker { color:var(--primary); font-size:12px; font-weight:800; letter-spacing:.08em; margin:0 0 4px; text-transform:uppercase; }
+.prose .image-loading-check-intro { color:var(--muted); margin:0 0 20px; }
+.image-loading-check fieldset { border:0; min-width:0; margin:0; padding:0; }
+.image-loading-check fieldset + fieldset { border-top:1px solid var(--border); margin-top:22px; padding-top:20px; }
+.image-loading-check legend { color:var(--foreground); font-weight:800; line-height:1.45; padding:0; }
+.image-loading-check legend span { display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; background:var(--secondary); color:var(--primary); margin-right:8px; }
+.prose .image-loading-check-help { color:var(--muted); font-size:14px; margin:7px 0 12px 34px; }
+.image-loading-check-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.image-loading-check-options label { display:flex; align-items:flex-start; gap:9px; min-height:48px; border:1px solid var(--border); border-radius:8px; padding:11px 12px; cursor:pointer; font-size:14px; font-weight:650; line-height:1.45; touch-action:manipulation; }
+.image-loading-check-options label:hover { border-color:color-mix(in srgb,var(--primary) 55%,var(--border)); background:color-mix(in srgb,var(--secondary) 42%,var(--card)); }
+.image-loading-check-options label:has(input:checked) { border-color:var(--primary); background:var(--secondary); }
+.image-loading-check-options input { flex:0 0 auto; width:18px; height:18px; margin:1px 0 0; accent-color:var(--primary); }
+.image-loading-check-options label:has(input:focus-visible) { outline:3px solid color-mix(in srgb,var(--primary) 55%,white); outline-offset:2px; }
+.image-loading-check-options input:focus-visible { outline:0; }
+.image-loading-check-options-context { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.image-loading-check-result:empty { display:none; }
+.image-loading-check-danger { border:1px solid color-mix(in srgb,var(--danger) 55%,var(--border)); border-left:4px solid var(--danger); border-radius:8px; background:color-mix(in srgb,var(--danger) 7%,var(--card)); padding:14px 15px; margin-top:20px; }
+.image-loading-check-danger strong { color:var(--danger); }
+.prose .image-loading-check-danger p { margin:4px 0 0; }
+.image-loading-check-next { border-radius:8px; background:var(--secondary); padding:15px; margin-top:20px; }
+.image-loading-check-next > strong { display:block; margin-bottom:4px; }
+.prose .image-loading-check-next p { margin:0 0 9px; }
+.prose .image-loading-check-next p:last-of-type { margin-bottom:0; }
+.prose .image-loading-check-caution { border-left:3px solid var(--warning); padding-left:10px; font-weight:650; }
+.image-loading-check-links { display:flex; flex-wrap:wrap; gap:8px 16px; border-top:1px solid var(--border); margin-top:13px; padding-top:11px; }
+.image-loading-check-links a { font-size:14px; font-weight:700; }
 .search-overlay,.mobile-nav-overlay { position:fixed; inset:0; margin:0; border:0; width:100%; max-width:none; height:100dvh; max-height:none; color:var(--foreground); background:transparent; }
 .search-overlay:not([open]),.mobile-nav-overlay:not([open]) { display:none; }
 .search-overlay[open] { display:grid; place-items:start center; padding: min(12vh,90px) 20px 20px; }
@@ -100,6 +127,11 @@ html { scrollbar-gutter:stable; }
   .update-preflight { padding:16px; }
   .prose .update-preflight-list li { grid-template-columns:24px minmax(0,1fr); padding:15px 0; }
   .update-preflight-list input { width:22px; height:22px; }
+  .image-loading-check { padding:16px; }
+  .image-loading-check-options,.image-loading-check-options-context { grid-template-columns:1fr; }
+  .image-loading-check-options label { min-height:48px; }
+  .image-loading-check-options input { width:20px; height:20px; }
+  .prose .image-loading-check-help { margin-left:0; }
 }
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }

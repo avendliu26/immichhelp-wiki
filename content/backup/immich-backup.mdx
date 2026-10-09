@@ -41,7 +41,7 @@ A SQL dump and the live `DB_DATA_LOCATION` are different backup formats. Do not 
 
 ## Step 1: Establish the recovery point
 
-In Administration → Settings → Backup, review schedule and retention. The documented defaults are a daily dump at 02:00 and retention of 14 backups. Confirm the latest date rather than assuming the schedule ran. For an immediate dump, open Administration → Job Queues → Create job → Create Database Dump → Confirm. Wait for the resulting backup in `UPLOAD_LOCATION/backups`; it counts toward retention.
+In Administration → Settings → Database Dump Settings, review schedule and retention. The documented defaults are a daily dump at 02:00 and retention of 14 backups. Confirm the latest date rather than assuming the schedule ran. For an immediate dump, open Administration → Job Queues → Create job → Create Database Dump → Confirm. Wait for the resulting backup in `UPLOAD_LOCATION/backups`; it counts toward retention.
 
 Record the selected dump date, server version, media backup date, external roots and configuration location together. This makes a restore point identifiable even if the original server is gone. An empty file or a filename ending in `.sql.gz` is not proof that the database can be restored. The displayed filename and version indicators are useful guidance, not proof of restore success. [Database backup controls](https://docs.immich.app/administration/backup-and-restore/)
 

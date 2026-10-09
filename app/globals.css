@@ -88,6 +88,57 @@ html { scrollbar-gutter:stable; }
 .prose .image-loading-check-caution { border-left:3px solid var(--warning); padding-left:10px; font-weight:650; }
 .image-loading-check-links { display:flex; flex-wrap:wrap; gap:8px 16px; border-top:1px solid var(--border); margin-top:13px; padding-top:11px; }
 .image-loading-check-links a { font-size:14px; font-weight:700; }
+.backup-readiness { border:1px solid var(--border); border-radius:14px; background:var(--card); margin:28px 0 36px; overflow:hidden; }
+.backup-readiness-header { border-bottom:1px solid var(--border); background:color-mix(in srgb,var(--secondary) 48%,var(--card)); padding:20px 22px 18px; }
+.prose .backup-readiness-kicker { color:var(--primary); font-size:12px; font-weight:800; letter-spacing:.08em; margin:0 0 5px; text-transform:uppercase; }
+.prose .backup-readiness-header h2 { font-size:25px; margin:0 0 7px; }
+.prose .backup-readiness-header > p:last-child { color:var(--muted); font-size:14px; margin:0; }
+.backup-readiness-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0; padding:0 22px; }
+.backup-readiness fieldset { border:0; min-width:0; margin:0; padding:18px 0; }
+.backup-readiness fieldset legend { color:var(--foreground); font-weight:800; line-height:1.4; padding:0; }
+.backup-readiness fieldset > p { color:var(--muted); font-size:13px; line-height:1.55; }
+.prose .backup-readiness fieldset > p { margin:5px 0 11px; }
+.backup-readiness-intent,.backup-readiness-external,.backup-readiness-recovery { grid-column:1 / -1; }
+.backup-readiness-intent,.backup-readiness-external,.backup-readiness-recovery,.backup-readiness-numbered { border-bottom:1px solid var(--border); }
+.backup-readiness-numbered { display:grid; grid-template-columns:28px minmax(0,1fr); gap:8px; }
+.backup-readiness-numbered:first-of-type { border-right:1px solid var(--border); padding-right:18px; }
+.backup-readiness-numbered:nth-of-type(2) { padding-left:18px; }
+.backup-readiness-numbered > span,.backup-readiness-intent > legend > span,.backup-readiness-external > legend > span,.backup-readiness-recovery > legend > span { display:inline-grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--secondary); color:var(--primary); font-size:12px; font-weight:800; }
+.backup-readiness-numbered > span { margin-top:18px; }
+.backup-readiness-intent-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:11px; }
+.backup-readiness-intent-options label { display:flex; align-items:flex-start; gap:9px; min-height:62px; border:1px solid var(--border); border-radius:9px; padding:10px 11px; cursor:pointer; touch-action:manipulation; }
+.backup-readiness-intent-options strong,.backup-readiness-intent-options small { display:block; }
+.backup-readiness-intent-options small { color:var(--muted); font-size:12px; font-weight:500; line-height:1.45; margin-top:1px; }
+.backup-readiness-intent-options input,.backup-readiness-evidence-options input { flex:0 0 auto; width:18px; height:18px; margin:2px 0 0; accent-color:var(--primary); }
+.backup-readiness-intent-options label:hover,.backup-readiness-evidence-options label:hover { border-color:color-mix(in srgb,var(--primary) 55%,var(--border)); }
+.backup-readiness-intent-options label:has(input:checked),.backup-readiness-evidence-options label:has(input:checked) { border-color:var(--primary); background:var(--secondary); }
+.backup-readiness-intent-options label:has(input:focus-visible),.backup-readiness-evidence-options label:has(input:focus-visible) { outline:3px solid color-mix(in srgb,var(--primary) 55%,white); outline-offset:2px; }
+.backup-readiness-intent-options input:focus-visible,.backup-readiness-evidence-options input:focus-visible { outline:0; }
+.backup-readiness-evidence-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.backup-readiness-evidence-options label { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; border:1px solid var(--border); border-radius:8px; padding:8px 6px; cursor:pointer; font-size:12px; font-weight:700; touch-action:manipulation; }
+.backup-readiness-intent > legend > span,.backup-readiness-external > legend > span,.backup-readiness-recovery > legend > span { margin-right:8px; }
+.backup-readiness-external-evidence { border-left:3px solid var(--primary); margin-top:14px; padding-left:14px; }
+.backup-readiness-external-evidence .backup-readiness-evidence { padding:0; }
+.backup-readiness-recovery { border-bottom:0; }
+.backup-readiness-recovery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+.backup-readiness-evidence.compact { border:1px solid var(--border); border-radius:9px; padding:12px; }
+.backup-readiness-evidence-label { display:block; font-size:14px; font-weight:800; line-height:1.4; }
+.prose .backup-readiness-evidence.compact > p { font-size:12px; min-height:76px; }
+.backup-readiness-result { border-top:1px solid var(--border); border-left:4px solid var(--primary); background:var(--secondary); padding:16px 18px; }
+.backup-readiness-result.warning { border-left-color:var(--warning); background:color-mix(in srgb,var(--warning) 7%,var(--card)); }
+.backup-readiness-result.danger { border-left-color:var(--danger); background:color-mix(in srgb,var(--danger) 7%,var(--card)); }
+.backup-readiness-result.complete { border-left-color:var(--accent); background:color-mix(in srgb,var(--accent) 9%,var(--card)); }
+.prose .backup-readiness-result-label { color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.08em; margin:0 0 2px; text-transform:uppercase; }
+.backup-readiness-result > strong { display:block; font-size:17px; line-height:1.4; }
+.prose .backup-readiness-result > p:not(.backup-readiness-result-label) { font-size:14px; margin:5px 0 8px; }
+.backup-readiness-result > a { font-size:13px; font-weight:750; }
+.backup-readiness-paths { border-top:1px solid var(--border); padding:15px 18px; }
+.backup-readiness-paths > strong { display:block; margin-bottom:7px; }
+.backup-readiness-paths > div { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.backup-readiness-paths > div a { border:1px solid var(--border); border-radius:8px; min-height:44px; padding:9px 10px; font-size:12px; font-weight:700; line-height:1.45; }
+.prose .backup-readiness-paths > p { color:var(--muted); font-size:12px; margin:9px 0 0; }
+.backup-readiness-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; border-top:1px solid var(--border); color:var(--muted); padding:12px 18px; font-size:11px; line-height:1.45; }
+.backup-readiness-footer a { flex:0 0 auto; font-weight:700; }
 .search-overlay,.mobile-nav-overlay { position:fixed; inset:0; margin:0; border:0; width:100%; max-width:none; height:100dvh; max-height:none; color:var(--foreground); background:transparent; }
 .search-overlay:not([open]),.mobile-nav-overlay:not([open]) { display:none; }
 .search-overlay[open] { display:grid; place-items:start center; padding: min(12vh,90px) 20px 20px; }
@@ -132,6 +183,15 @@ html { scrollbar-gutter:stable; }
   .image-loading-check-options label { min-height:48px; }
   .image-loading-check-options input { width:20px; height:20px; }
   .prose .image-loading-check-help { margin-left:0; }
+  .backup-readiness-header { padding:17px 16px; }
+  .prose .backup-readiness-header h2 { font-size:23px; }
+  .backup-readiness-fields { display:block; padding:0 16px; }
+  .backup-readiness-numbered:first-of-type,.backup-readiness-numbered:nth-of-type(2) { border-right:0; padding-left:0; padding-right:0; }
+  .backup-readiness-intent-options,.backup-readiness-recovery-grid,.backup-readiness-paths > div { grid-template-columns:1fr; }
+  .prose .backup-readiness-evidence.compact > p { min-height:0; }
+  .backup-readiness-intent-options input,.backup-readiness-evidence-options input { width:20px; height:20px; }
+  .backup-readiness-result,.backup-readiness-paths { padding:15px 16px; }
+  .backup-readiness-footer { align-items:flex-start; flex-direction:column; padding:12px 16px; }
 }
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }

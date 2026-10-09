@@ -23,6 +23,10 @@ Wait for startup and any migrations to finish, then test an older original, a ne
 
 For an older v1 or v2 server, complete the [v3 upgrade checks](#how-to-upgrade-to-immich-v3) before using this command. If an update fails, use the [failure checks](#if-the-immich-update-fails). Downgrades, including within a minor version, are unsupported.
 
+## Before You Update Immich
+
+<UpdatePreflight />
+
 ## Step 1: Check your current release and release notes
 
 Record the server and mobile versions, database image tag and PostgreSQL major, explicit `DB_VECTOR_EXTENSION` if set, and any custom volumes, networks or hardware acceleration. An image tag in `.env` expresses intent; check the running application as well.

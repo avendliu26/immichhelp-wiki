@@ -49,6 +49,18 @@ html { scrollbar-gutter:stable; }
 .code-block pre { min-width:0; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
 .prose .code-block pre code { background:none; color:inherit; padding:0; border-radius:0; font:inherit; }
 .code-copy-message { padding:8px 13px; font-size:12px; color:#e9eaf1; border-top:1px solid #ffffff16; }
+.update-preflight { border:1px solid var(--border); border-radius:12px; background:var(--card); padding:20px; margin:0 0 32px; }
+.prose .update-preflight-intro { color:var(--muted); margin-bottom:16px; }
+.prose .update-preflight-list { display:grid; gap:0; list-style:none; padding:0; margin:0; }
+.prose .update-preflight-list li { display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; margin:0; padding:16px 0; border-top:1px solid var(--border); }
+.update-preflight-list input { width:20px; height:20px; margin:3px 0 0; accent-color:var(--primary); }
+.update-preflight-list label { display:block; width:fit-content; font-weight:800; line-height:1.45; cursor:pointer; }
+.prose .update-preflight-list p { color:var(--muted); font-size:14px; margin:4px 0 5px; }
+.prose .update-preflight-list a { font-size:14px; font-weight:700; }
+.prose .update-preflight-result { border-radius:8px; background:var(--secondary); color:var(--foreground); font-weight:700; padding:12px 14px; margin:4px 0 16px; }
+.prose .update-preflight-result.complete { background:color-mix(in srgb,var(--accent) 14%,var(--card)); }
+.update-preflight-platform-note { border-top:1px solid var(--border); color:var(--muted); font-size:14px; padding-top:16px; }
+.update-preflight-platform-note strong { color:var(--foreground); }
 .search-overlay,.mobile-nav-overlay { position:fixed; inset:0; margin:0; border:0; width:100%; max-width:none; height:100dvh; max-height:none; color:var(--foreground); background:transparent; }
 .search-overlay:not([open]),.mobile-nav-overlay:not([open]) { display:none; }
 .search-overlay[open] { display:grid; place-items:start center; padding: min(12vh,90px) 20px 20px; }
@@ -85,6 +97,9 @@ html { scrollbar-gutter:stable; }
   .search-overlay[open] { padding:16px; }
   .search-panel { max-height:calc(100dvh - 32px); }
   .code-head button { min-height:44px; }
+  .update-preflight { padding:16px; }
+  .prose .update-preflight-list li { grid-template-columns:24px minmax(0,1fr); padding:15px 0; }
+  .update-preflight-list input { width:22px; height:22px; }
 }
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }

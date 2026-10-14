@@ -35,6 +35,8 @@ A restore replaces the current database. Keep the current database and media, ve
 | External libraries | Files Immich reads outside its upload storage | Every external root on the host or NAS, plus sidecars |
 | Deployment configuration | The map from old data to the restored services | `.env`, `docker-compose.yml`, overrides, custom config and mount definitions |
 
+<Figure id="backup-set-map" />
+
 The official guide recommends copying the entire upload location. With the storage template disabled, originals normally live under `upload`; a previously enabled template can leave older originals under `library` even after it is disabled. Backing up only the folder named `library` can miss most of a new installation. Custom mounts can place individual subfolders on other devices: inventory their actual sources. [Filesystem layout](https://docs.immich.app/administration/backup-and-restore/)
 
 Treat the configuration list as a recovery checklist derived from the documented onboarding restore requirements. Keep secrets private. Record both host paths and container destinations; the current release mounts uploaded storage at `/data`. External-library destinations must reproduce the previous structure. [Release Compose file](https://github.com/immich-app/immich/releases/download/v3.2.1/docker-compose.yml)

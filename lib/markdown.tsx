@@ -2,11 +2,14 @@ import { ReactNode } from 'react';
 import { BackupReadinessAnalyzer } from '@/components/backup-readiness-analyzer';
 import { Callout } from '@/components/callout';
 import { CodeBlock } from '@/components/code-block';
+import { Figure } from '@/components/figure';
 import { ImageLoadingCheck } from '@/components/image-loading-check';
 import { UpdatePreflight } from '@/components/update-preflight';
+import { figureIds, type FigureId } from '@/lib/diagrams';
 import { headingId as slug } from '@/lib/headings';
 
 const componentMarker = /^\s*<(?:UpdatePreflight|ImageLoadingCheck|BackupReadinessAnalyzer) \/>\s*$/;
+const figureMarker = /^\s*<Figure id="([a-z0-9-]+)" \/>\s*$/;
 
 function inline(text: string): ReactNode[] {
   return text.split(/(`[^`]+`|\[[^\]]+\]\([^\)]+\))/g).map((part, index) => {
@@ -45,6 +48,15 @@ export function Markdown({ source }: { source: string }) {
     }
     if (/^\s*<BackupReadinessAnalyzer \/>\s*$/.test(line)) {
       blocks.push(<BackupReadinessAnalyzer key={i} />);
+      i++;
+      continue;
+    }
+    const figure = line.match(figureMarker);
+    if (figure) {
+      const id = figure[1] as FigureId;
+      // Allow-listed ids render a figure; any other well-formed marker stays
+      // visible as literal text instead of being silently dropped.
+      blocks.push(figureIds.has(id) ? <Figure key={i} id={id} /> : <p key={i}>{inline(line.trim())}</p>);
       i++;
       continue;
     }
@@ -112,7 +124,7 @@ export function Markdown({ source }: { source: string }) {
       continue;
     }
     const paragraph = [];
-    while (i < lines.length && lines[i].trim() && !/^(#{1,3})\s|^```|^:::|^[|]|^[-*]\s|^\d+\.\s|^> /.test(lines[i]) && !componentMarker.test(lines[i])) {
+    while (i < lines.length && lines[i].trim() && !/^(#{1,3})\s|^```|^:::|^[|]|^[-*]\s|^\d+\.\s|^> /.test(lines[i]) && !componentMarker.test(lines[i]) && !figureMarker.test(lines[i])) {
       paragraph.push(lines[i]);
       i++;
     }

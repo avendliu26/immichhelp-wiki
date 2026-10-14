@@ -18,6 +18,8 @@ When Immich shows “Error loading image,” open the affected asset in the web 
 1. If the original loads but the thumbnail or preview fails, check [thumbnail jobs and generated files](#fix-thumbnail-and-preview-errors).
 2. If the original also fails, inspect the [failed request](#inspect-the-failed-image-request) first. When the matching server error identifies a file problem, check the [file path, mount and permissions](#check-original-files-storage-paths-and-permissions) before retrying processing.
 
+<Figure id="original-download-split" />
+
 Thumbnail regeneration cannot recover a missing original. If the original is confirmed missing, stop before regenerating and use the [backup and restore guide](/backup/immich-backup) to check the available recovery set. Do not delete database records, clear Trash or reset the stack to hide the error. [System Integrity](https://docs.immich.app/administration/system-integrity/)
 
 <ImageLoadingCheck />

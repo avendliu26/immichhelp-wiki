@@ -78,6 +78,12 @@ html { scrollbar-gutter:stable; }
 .image-loading-check-options input:focus-visible { outline:0; }
 .image-loading-check-options-context { grid-template-columns:repeat(2,minmax(0,1fr)); }
 .image-loading-check-result:empty { display:none; }
+.image-request-evidence { border-top:1px solid var(--border); margin:20px 0; padding-top:16px; }
+.image-request-evidence label { display:block; font-weight:800; }
+.prose .image-request-evidence p { color:var(--muted); font-size:14px; margin:7px 0 12px; }
+.image-request-evidence select { display:block; width:100%; max-width:100%; min-height:48px; padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--foreground); font:inherit; font-size:16px; }
+.image-request-evidence select:focus-visible { outline:3px solid var(--primary); outline-offset:2px; }
+
 .image-loading-check-danger { border:1px solid color-mix(in srgb,var(--danger) 55%,var(--border)); border-left:4px solid var(--danger); border-radius:8px; background:color-mix(in srgb,var(--danger) 7%,var(--card)); padding:14px 15px; margin-top:20px; }
 .image-loading-check-danger strong { color:var(--danger); }
 .prose .image-loading-check-danger p { margin:4px 0 0; }

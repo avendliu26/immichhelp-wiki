@@ -7,7 +7,7 @@ keywords: immich error loading image, broken thumbnail, missing file, refresh th
 status: published
 lastReviewed: 2026-10-02
 verifiedVersion: v3.2.4
-updated: 2026-10-02
+updated: 2026-10-14
 draft: false
 ---
 
@@ -16,7 +16,7 @@ draft: false
 When Immich shows “Error loading image,” open the affected asset in the web app and try downloading its original. A photo still visible on your phone may be a local copy; verify the server download from another device if necessary.
 
 1. If the original loads but the thumbnail or preview fails, check [thumbnail jobs and generated files](#fix-thumbnail-and-preview-errors).
-2. If the original also fails, check the [file path, mount and permissions](#check-original-files-storage-paths-and-permissions) before retrying processing.
+2. If the original also fails, inspect the [failed request](#inspect-the-failed-image-request) first. When the matching server error identifies a file problem, check the [file path, mount and permissions](#check-original-files-storage-paths-and-permissions) before retrying processing.
 
 Thumbnail regeneration cannot recover a missing original. If the original is confirmed missing, stop before regenerating and use the [backup and restore guide](/backup/immich-backup) to check the available recovery set. Do not delete database records, clear Trash or reset the stack to hide the error. [System Integrity](https://docs.immich.app/administration/system-integrity/)
 
@@ -35,6 +35,21 @@ Thumbnail regeneration cannot recover a missing original. If the original is con
 | Only one format or file fails | Processing error and supported format | [Format and checksum checks](#if-one-file-format-fails-or-checksums-differ) |
 
 Record the asset's filename/ID, approximate request time, server and mobile versions, deployment method and whether the failure affects one or many items. Avoid posting personal photos, full environment files or private share URLs in a public issue.
+
+## Inspect the failed image request
+
+A failed download does not by itself mean a file is missing. A session, access rule or network failure can prevent the request from reaching the image. Use the optional request result in the guide above to choose a narrower next check.
+
+1. On a desktop browser, open Developer Tools → Network before reproducing one affected image or original download. Keep the panel open during the request.
+2. Find the request made at that time. Check All or Fetch/XHR as well as images; do not select an unrelated upload, page or analytics request.
+3. Read its status, content type and response locally. Note the time and whether this was an original, preview or tile. A 2xx response can still contain unexpected content; inspect it before calling the image healthy.
+4. Compare the same asset and client over an already available trusted local route and public hostname, if applicable. Match the request time to Immich and proxy logs. Do not open a new public port for this comparison.
+
+For 401, recheck sign-in; for 403, check the account and any proxy access rules. For 404, compare the requested route and corresponding logs before concluding the original was deleted. For 429, pause retries and respect Retry-After if supplied. For 5xx, inspect service state and the matching server/proxy error. If no HTTP response arrives, investigate the browser's connection error first. These are next checks based on HTTP semantics, not confirmed Immich diagnoses. [HTTP status reference](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status), [429 response](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/429)
+
+Keep cookies, Authorization headers, query tokens, private share URLs and photos out of public reports. Do not post an unreviewed HAR export or copied cURL command: either can contain credentials. Share only a redacted path, status, time and relevant error. [Chrome Network documentation](https://developer.chrome.com/docs/devtools/network/)
+
+Request-routing guidance checked October 14, 2026 against the HTTP references and [Immich reverse-proxy documentation](https://docs.immich.app/administration/reverse-proxy/). This does not reverify the historical cases elsewhere in this article.
 
 ## Inspect server logs and integrity findings
 

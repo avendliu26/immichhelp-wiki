@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { requestEvidenceOptions, requestGuidance, type RequestEvidence } from '@/lib/image-request-evidence';
 
 type OriginalStatus = 'works' | 'fails' | 'unknown';
 type Context = 'thumbnail' | 'upload' | 'external' | 'move' | 'proxy' | 'checksum' | 'general';
@@ -28,6 +29,7 @@ const statusOptions: { value: OriginalStatus; label: string }[] = [
 
 const contextOptions: Record<Exclude<OriginalStatus, 'unknown'>, ContextOption[]> = {
   works: [
+    { value: 'general', label: 'No clear pattern / other preview failure' },
     { value: 'thumbnail', label: 'Only the tile or preview fails' },
     { value: 'upload', label: 'It started immediately after upload' },
     { value: 'external', label: 'It affects an external library or NAS' },
@@ -46,6 +48,14 @@ const contextOptions: Record<Exclude<OriginalStatus, 'unknown'>, ContextOption[]
 
 const guidance: Record<Exclude<OriginalStatus, 'unknown'>, Partial<Record<Context, Guidance>>> = {
   works: {
+    general: {
+      observation: 'Observed: the original downloads, but the image failure has no clear pattern yet.',
+      nextCheck: 'Compare one failing preview with a known-good asset using the same client and route. Record the failed request status and time, then match the server log before choosing a job, storage or format check.',
+      articleHref: '#inspect-the-failed-image-request',
+      articleLabel: 'Jump to request evidence checks',
+      sourceHref: 'https://docs.immich.app/administration/reverse-proxy/',
+      sourceLabel: 'Official Reverse Proxy documentation',
+    },
     thumbnail: {
       observation: 'Observed: the server can return the original, while a derived image fails. This narrows the next check but does not identify the cause.',
       nextCheck: 'Review thumbnail job queue state first, then confirm the derived-media mount is available and read the matching server logs. Only then consider selective regeneration for the affected asset or missing derived files.',
@@ -80,7 +90,7 @@ const guidance: Record<Exclude<OriginalStatus, 'unknown'>, Partial<Record<Contex
       sourceLabel: 'Official System Integrity documentation',
     },
     proxy: {
-      observation: 'Observed: the same server original works locally and fails only on the public route. This isolates the request path, but it does not by itself prove a proxy fault.',
+      observation: 'Observed: the original downloads on the route you tested, and you report an image failure on the public route. This does not by itself prove a proxy fault or establish that both originals and previews work locally.',
       nextCheck: 'Retest the same original and preview through local and public URLs, then compare the failed request status with the reverse-proxy log from that time.',
       articleHref: '#images-work-locally-but-fail-through-the-reverse-proxy',
       articleLabel: 'Jump to reverse-proxy checks',
@@ -143,12 +153,15 @@ const guidance: Record<Exclude<OriginalStatus, 'unknown'>, Partial<Record<Contex
 
 export function ImageLoadingCheck() {
   const [status, setStatus] = useState<OriginalStatus | null>(null);
+  const [evidence, setEvidence] = useState<RequestEvidence>('unknown');
+  const evidenceGuidance = evidence === 'unknown' ? undefined : requestGuidance[evidence];
   const [context, setContext] = useState<Context | null>(null);
   const selectedGuidance = status && status !== 'unknown' && context ? guidance[status][context] : undefined;
 
   function selectStatus(nextStatus: OriginalStatus) {
     setStatus(nextStatus);
     setContext(null);
+    setEvidence('unknown');
   }
 
   return <section className="image-loading-check" aria-label="Image loading error next-check guide">
@@ -188,7 +201,18 @@ export function ImageLoadingCheck() {
         <p>Do not regenerate thumbnails to “recover” originals. Do not clean Trash, delete database rows, reset the stack, or mass chmod/chown. Preserve the database, storage and backups while you identify whether the original is missing or inaccessible.</p>
       </aside> : null}
 
-      {status && status !== 'unknown' ? <fieldset className="image-loading-check-context" aria-describedby="loading-context-help">
+      {status && status !== 'unknown' ? <div className="image-request-evidence">
+        <label htmlFor="image-request-status">What did the failed image request return? (Optional)</label>
+        <p id="image-request-help">Use the affected image or original-download request in your browser’s Network panel. Keep the default if you have not checked. <a href="#inspect-the-failed-image-request">How to find the request</a></p>
+        <select id="image-request-status" value={evidence} aria-describedby="image-request-help" onChange={(event) => {
+          setEvidence(event.currentTarget.value as RequestEvidence);
+          setContext(null);
+        }}>
+          {requestEvidenceOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+      </div> : null}
+
+      {status && status !== 'unknown' && !evidenceGuidance ? <fieldset className="image-loading-check-context" aria-describedby="loading-context-help">
         <legend><span>2</span> Which context matches?</legend>
         <p className="image-loading-check-help" id="loading-context-help">Choose the closest observed context. The result is a next check, not a definitive diagnosis.</p>
         <div className="image-loading-check-options image-loading-check-options-context">
@@ -209,7 +233,17 @@ export function ImageLoadingCheck() {
         </div>
       </fieldset> : null}
 
-      {selectedGuidance ? <div className="image-loading-check-next">
+      {evidenceGuidance ? <section className="image-loading-check-next" aria-label="Request evidence next check">
+        <strong>{evidenceGuidance.title}</strong>
+        <p>{evidenceGuidance.nextCheck}</p>
+        <p className="image-loading-check-caution">{evidenceGuidance.caution}</p>
+        <div className="image-loading-check-links">
+          <a href="#inspect-the-failed-image-request">Review request evidence checks</a>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status" target="_blank" rel="noopener noreferrer">HTTP status reference ↗</a>
+        </div>
+      </section> : null}
+
+      {selectedGuidance && !evidenceGuidance ? <div className="image-loading-check-next">
         <strong>Next check</strong>
         <p>{selectedGuidance.observation}</p>
         <p>{selectedGuidance.nextCheck}</p>

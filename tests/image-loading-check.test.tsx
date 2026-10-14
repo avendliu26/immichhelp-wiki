@@ -28,7 +28,7 @@ describe('image loading next-check guide', () => {
 
     select('Yes, the server original downloads');
 
-    expect(screen.getAllByRole('radio')).toHaveLength(9);
+    expect(screen.getAllByRole('radio')).toHaveLength(10);
     expect(screen.getByRole('radio', { name: 'Only the tile or preview fails' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'It fails only through the public reverse proxy' })).toBeInTheDocument();
 

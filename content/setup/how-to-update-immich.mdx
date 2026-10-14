@@ -5,9 +5,9 @@ description: "Update Immich safely with Docker Compose: read release notes, back
 category: Install & Setup
 keywords: how to update immich, immich upgrade, docker compose update, vectorchord migration
 status: published
-lastReviewed: 2026-10-02
-verifiedVersion: v3.2.4
-updated: 2026-10-02
+lastReviewed: 2026-10-14
+verifiedVersion: v3.3.1
+updated: 2026-10-14
 draft: false
 ---
 
@@ -33,7 +33,7 @@ Record the server and mobile versions, database image tag and PostgreSQL major, 
 
 Choose the stable release you intend to install from the [official Immich releases](https://github.com/immich-app/immich/releases). Read every release note between your running version and that target, including breaking changes. Compare the target release's Compose asset with your current file and transfer only the required service/image/environment changes while preserving your real paths and secrets. [Official release files](https://docs.immich.app/install/docker-compose/)
 
-The exact-tag example in this guide uses the official [v3.2.4 release](https://github.com/immich-app/immich/releases/tag/v3.2.4), checked on October 2, 2026. Recheck the release list before updating; an example tag is not a permanent recommendation to stay on that version.
+The exact-tag example in this guide uses the official [v3.3.1 release](https://github.com/immich-app/immich/releases/tag/v3.3.1), checked on October 14, 2026. Recheck the release list before updating; an example tag is not a permanent recommendation to stay on that version.
 
 ## Step 2: Back up the database and actual media
 
@@ -49,7 +49,7 @@ Migration changes stored state. Preserve a pre-update database dump and matching
 
 Upgrade each mobile-client type you use before updating the server, following Immich's compatibility policy. The server is compatible with the matching major version; the mobile app is typically compatible with the current and prior major version. [Versioning policy](https://docs.immich.app/install/upgrading/)
 
-If `.env` pins `IMMICH_VERSION`, set it to the intended target, such as `v3.2.4`. If your policy uses the stable major metatag, `v3` follows stable v3 releases and does not select release candidates. An exact old pin stays old after `pull`; do not assume the command changes it automatically.
+If `.env` pins `IMMICH_VERSION`, set it to the intended target, such as `v3.3.1`. If your policy uses the stable major metatag, `v3` follows stable v3 releases and does not select release candidates. An exact old pin stays old after `pull`; do not assume the command changes it automatically.
 
 ## Step 4: Pull the images and apply the update
 
@@ -141,7 +141,7 @@ Pre-v2.5 database backups also need version-selected restore instructions becaus
 
 - [Upgrading](https://docs.immich.app/install/upgrading/) — Official update command, compatibility policy and VectorChord guidance.
 - [Official releases](https://github.com/immich-app/immich/releases) — Select a stable target and read intervening release notes.
-- [v3.2.4 release](https://github.com/immich-app/immich/releases/tag/v3.2.4) — Official release used for this guide's exact-tag example.
+- [v3.3.1 release](https://github.com/immich-app/immich/releases/tag/v3.3.1) — Official release used for this guide's exact-tag example.
 - [Docker Compose](https://docs.immich.app/install/docker-compose/) — Official Compose release files.
 - [Backup and Restore](https://docs.immich.app/administration/backup-and-restore/) — Official recovery prerequisites.
 - [Errors](https://docs.immich.app/errors/) — Official historical upgrade/path errors.

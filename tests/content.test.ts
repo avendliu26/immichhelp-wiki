@@ -44,10 +44,10 @@ describe('content index', () => {
     expect(doc).toBeDefined();
     expect(doc?.title).toBe('How to Update Immich: Docker Compose & v3');
     expect((doc as { heading?: string } | undefined)?.heading).toBe('How to Update Immich Safely');
-    expect(doc?.verifiedVersion).toBe('v3.2.4');
-    expect(doc?.lastReviewed).toBe('2026-10-02');
+    expect(doc?.verifiedVersion).toBe('v3.3.1');
+    expect(doc?.lastReviewed).toBe('2026-10-14');
     expect(doc?.body).toContain('https://github.com/immich-app/immich/releases');
-    expect(doc?.body).toContain('v3.2.4');
+    expect(doc?.body).toContain('v3.3.1');
     expect(doc?.body).toContain('docker compose pull && docker compose up -d');
     expect(doc?.body).toContain('## How to upgrade to Immich v3');
     expect(doc?.body).toContain('DB_VECTOR_EXTENSION=pgvecto.rs');
@@ -61,11 +61,11 @@ describe('content index', () => {
 
   it('matches the homepage review link to a published guide and its verified version', () => {
     expect(home.latestUpdates[0]).toMatchObject({
-      date: 'Sep 16, 2026',
-      title: 'Guide review: Immich v3.2.2',
-      href: '/setup/immich-reverse-proxy',
+      date: 'Oct 14, 2026',
+      title: 'Update and Compose guides checked against Immich v3.3.1',
+      href: '/setup/how-to-update-immich',
     });
-    expect(getDocument('setup/immich-reverse-proxy')?.verifiedVersion).toBe('v3.2.2');
+    expect(getDocument('setup/how-to-update-immich')?.verifiedVersion).toBe('v3.3.1');
   });
 });
 

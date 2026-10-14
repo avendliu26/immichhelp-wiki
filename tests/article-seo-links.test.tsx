@@ -36,7 +36,7 @@ describe('article SEO and contextual internal links', () => {
     const article = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)]
       .map((match) => JSON.parse(match[1]))
       .find((value) => value['@type'] === 'Article');
-    expect(article.dateModified).toBe('2026-10-02');
+    expect(article.dateModified).toBe('2026-10-14');
     expect(article.author).toMatchObject({
       name: 'Immich Help',
       url: 'https://immichhelp.wiki/',

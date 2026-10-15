@@ -453,6 +453,7 @@ a:is(:hover,:focus-visible) .link-arrow { color:var(--link-hover); transform:tra
   .docs-shell { width:calc(100% - 32px); padding-top:22px; }
   .breadcrumbs { font-size:10px; margin-bottom:20px; }
   .breadcrumbs [aria-current] { display:none; }
+  .breadcrumbs > [aria-hidden='true']:has(+ [aria-current='page']) { display:none; }
   .article h1 { font-size:34px; line-height:1.2; }
   .article-lead { font-size:15px; line-height:1.8; }
   .article-header { padding-bottom:21px; margin-bottom:21px; }

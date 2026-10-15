@@ -19,9 +19,11 @@ function Tx({ x, y, size = 13, cls = 'fig-label', anchor, children }: { x: numbe
 }
 
 function Box({ x, y, w, h, variant = 'panel', children }: { x: number; y: number; w: number; h: number; variant?: Variant; children: ReactNode }) {
-  return <g transform={`translate(${x} ${y})`}>
-    <rect className={variant === 'panel' ? 'fig-panel' : `fig-panel fig-${variant}`} x={0} y={0} width={w} height={h} rx={10} />
-    {variant !== 'panel' && <rect className={`fig-rail fig-rail-${variant}`} x={1.5} y={10} width={4} height={h - 20} rx={2} />}
+  // Every rect and text uses the figure's global viewBox coordinates. Keeping
+  // groups untransformed prevents nested panels from translating labels twice.
+  return <g>
+    <rect className={variant === 'panel' ? 'fig-panel' : `fig-panel fig-${variant}`} x={x} y={y} width={w} height={h} rx={10} />
+    {variant !== 'panel' && <rect className={`fig-rail fig-rail-${variant}`} x={x + 1.5} y={y + 10} width={4} height={h - 20} rx={2} />}
     {children}
   </g>;
 }
@@ -62,18 +64,18 @@ const backupSetMap: FigureSpec = {
     </Box>
     <Box x={14} y={86} w={392} h={200}>
       <Tx x={30} y={110} size={14} cls="fig-strong">UPLOAD_LOCATION</Tx>
-      <Tx x={170} y={110} size={12.5} cls="fig-note">host dir → mounted at /data</Tx>
+      <Tx x={205} y={110} size={12.5} cls="fig-note">host dir → mounted at /data</Tx>
       <Box x={28} y={124} w={364} h={48} variant="protect">
-        <Tx x={12} y={21} size={13} cls="fig-strong">backups/ — .sql.gz dump</Tx>
-        <Tx x={12} y={40} size={12} cls="fig-note">metadata + file paths, not image/video bytes</Tx>
+        <Tx x={40} y={145} size={13} cls="fig-strong">backups/ — .sql.gz dump</Tx>
+        <Tx x={40} y={164} size={12} cls="fig-note">metadata + file paths, not image/video bytes</Tx>
       </Box>
       <Box x={28} y={178} w={364} h={48} variant="protect">
-        <Tx x={12} y={21} size={13} cls="fig-strong">upload/ · library/ · profile/ — originals</Tx>
-        <Tx x={12} y={40} size={12} cls="fig-note">actual image/video bytes; must be copied</Tx>
+        <Tx x={40} y={199} size={13} cls="fig-strong">upload/ · library/ · profile/ — originals</Tx>
+        <Tx x={40} y={218} size={12} cls="fig-note">actual image/video bytes; must be copied</Tx>
       </Box>
-      <Box x={28} y={232} w={364} h={44} variant="regen">
-        <Tx x={12} y={20} size={13} cls="fig-strong">thumbs/ · encoded-video/ — generated</Tx>
-        <Tx x={12} y={38} size={12} cls="fig-note">regenerable from valid originals</Tx>
+      <Box x={28} y={232} w={364} h={46} variant="regen">
+        <Tx x={40} y={252} size={13} cls="fig-strong">thumbs/ · encoded-video/ — generated</Tx>
+        <Tx x={40} y={270} size={12} cls="fig-note">regenerable from valid originals</Tx>
       </Box>
     </Box>
     <Box x={14} y={302} w={392} h={56} variant="warn">
@@ -164,20 +166,20 @@ const updateRouteMap: FigureSpec = {
     <Head x={210} y={160} />
     <Box x={14} y={160} w={392} h={252}>
       <Tx x={28} y={184} size={13.5} cls="fig-strong">Choose your route — every route ends below</Tx>
-      <Box x={24} y={196} w={372} h={58} variant="protect">
-        <Tx x={12} y={20} size={13} cls="fig-strong">A · Already on v3 — routine update</Tx>
-        <Tx x={12} y={38} size={12} cls="fig-label">{'Set IMMICH_VERSION · docker compose config --quiet'}</Tx>
-        <Tx x={12} y={54} size={12} cls="fig-label">{'→ docker compose pull && docker compose up -d'}</Tx>
+      <Box x={24} y={196} w={372} h={62} variant="protect">
+        <Tx x={36} y={216} size={13} cls="fig-strong">A · Already on v3 — routine update</Tx>
+        <Tx x={36} y={234} size={12} cls="fig-label">{'Set IMMICH_VERSION · docker compose config --quiet'}</Tx>
+        <Tx x={36} y={250} size={12} cls="fig-label">{'→ docker compose pull && docker compose up -d'}</Tx>
       </Box>
-      <Box x={24} y={262} w={372} h={76} variant="warn">
-        <Tx x={12} y={20} size={13} cls="fig-strong">B · v1/v2 → v3 preflight, then A</Tx>
-        <Tx x={12} y={38} size={12} cls="fig-label">pgvecto.rs → VectorChord transition before v3</Tx>
-        <Tx x={12} y={54} size={12} cls="fig-label">CPU x86-64-v2+ (including VM-exposed features)</Tx>
-        <Tx x={12} y={70} size={12} cls="fig-label">Replace removed machine-learning env variables</Tx>
+      <Box x={24} y={262} w={372} h={78} variant="warn">
+        <Tx x={36} y={282} size={13} cls="fig-strong">B · v1/v2 → v3 preflight, then A</Tx>
+        <Tx x={36} y={300} size={12} cls="fig-label">pgvecto.rs → VectorChord transition before v3</Tx>
+        <Tx x={36} y={316} size={12} cls="fig-label">CPU x86-64-v2+ (including VM-exposed features)</Tx>
+        <Tx x={36} y={332} size={12} cls="fig-label">Replace removed machine-learning env variables</Tx>
       </Box>
       <Box x={24} y={346} w={372} h={58} variant="warn">
-        <Tx x={12} y={20} size={13} cls="fig-strong">C · Very old v1 — then B → A</Tx>
-        <Tx x={12} y={38} size={12} cls="fig-label">Start once on 1.132.0–1.136.0 (1.132.3 recommended)</Tx>
+        <Tx x={36} y={366} size={13} cls="fig-strong">C · Very old v1 — then B → A</Tx>
+        <Tx x={36} y={384} size={12} cls="fig-label">Start once on 1.132.0–1.136.0 (1.132.3 recommended)</Tx>
       </Box>
     </Box>
     <Arrow d="M210 412 V418" />

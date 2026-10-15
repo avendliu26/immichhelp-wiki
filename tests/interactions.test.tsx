@@ -36,6 +36,26 @@ describe('documentation interactions', () => {
     fireEvent.keyDown(document,{key:'Tab',shiftKey:true});
     expect(screen.getByRole('link',{name:/Update guide/})).toHaveFocus();
   });
+  it('filters results and moves keyboard focus between compact result rows and the input', () => {
+    render(<SearchDialog documents={[...documents, { ...documents[0], title:'Backup guide', description:'Save before an update', slug:'backup/immich-backup' }]}/>);
+    fireEvent.click(screen.getByRole('button',{name:'Open search'}));
+    const input = screen.getByRole('textbox',{name:'Search guides'});
+    fireEvent.change(input,{target:{value:'update'}});
+    const results = screen.getAllByRole('link');
+    expect(results).toHaveLength(2);
+    input.focus();
+    fireEvent.keyDown(input,{key:'ArrowDown'});
+    expect(results[0]).toHaveFocus();
+    fireEvent.keyDown(results[0],{key:'ArrowDown'});
+    expect(results[1]).toHaveFocus();
+    fireEvent.keyDown(results[1],{key:'ArrowUp'});
+    expect(results[0]).toHaveFocus();
+    fireEvent.keyDown(results[0],{key:'ArrowUp'});
+    expect(input).toHaveFocus();
+    fireEvent.change(input,{target:{value:'no such guide'}});
+    expect(screen.queryAllByRole('link')).toHaveLength(0);
+    expect(screen.getByRole('status')).toHaveTextContent('0 matching guides');
+  });
   it('does not claim a copy succeeded when clipboard access is unavailable', async () => {
     Object.defineProperty(navigator,'clipboard',{configurable:true,value:undefined});
     render(<CodeBlock code="docker compose up -d" language="bash"/>);

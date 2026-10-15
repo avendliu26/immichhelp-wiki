@@ -20,7 +20,7 @@ export const helpPaths: HelpPath[] = [
   {
     id: 'install-setup',
     title: 'Install & Setup',
-    description: 'Start from a clean machine and reach a running server with the official Docker Compose files.',
+    description: 'Check requirements, configure storage, and install with the official Docker Compose files.',
     href: '/setup',
     startHere: [
       { title: 'Docker Compose install', href: '/setup/immich-docker-compose' },
@@ -30,7 +30,7 @@ export const helpPaths: HelpPath[] = [
   {
     id: 'fix-a-problem',
     title: 'Fix a Problem',
-    description: 'Begin with the symptom, check the evidence, then apply the safest documented correction.',
+    description: 'Use the symptom and diagnostic evidence to choose a documented next check.',
     href: '/troubleshooting',
     startHere: [
       { title: 'Error loading image', href: '/troubleshooting/immich-error-loading-image' },
@@ -39,7 +39,7 @@ export const helpPaths: HelpPath[] = [
   {
     id: 'back-up-restore',
     title: 'Back Up & Restore',
-    description: 'Keep the database and the media consistent, and rehearse the restore before you need it.',
+    description: 'Plan backups of the database, media, and configuration, then test an isolated restore.',
     href: '/backup',
     startHere: [
       { title: 'Backup and restore', href: '/backup/immich-backup' },
@@ -58,13 +58,13 @@ export const helpPaths: HelpPath[] = [
   {
     id: 'storage-libraries',
     title: 'Storage & Libraries',
-    description: 'Mount and scan photos you already have while keeping ownership and paths predictable.',
+    description: 'Check container mounts, import paths, and read permissions before scanning an existing collection.',
     href: '/storage/immich-external-library',
   },
   {
     id: 'updates-migration',
     title: 'Updates & Migration',
-    description: 'Read the release notes, back up first, and move between versions without breaking the library.',
+    description: 'Check release notes and backups, follow the documented upgrade path, and verify the result.',
     href: '/setup/how-to-update-immich',
   },
 ];

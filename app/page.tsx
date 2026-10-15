@@ -2,10 +2,17 @@ import Link from 'next/link';
 import { ArrowRight, DatabaseBackup, Download, FolderOpen, RefreshCw, Server, Wrench } from 'lucide-react';
 import { SearchDialog } from '@/components/search-dialog';
 import { home } from '@/src/data/home';
-import { helpPaths, type HelpPathIcon } from '@/src/data/help-paths';
+import { helpPaths } from '@/src/data/help-paths';
 import { getPublishedDocuments } from '@/lib/content';
 
-const pathIcons = { Download, Wrench, DatabaseBackup, Server, FolderOpen, RefreshCw } satisfies Record<HelpPathIcon, typeof Download>;
+const pathIcons: Record<string, typeof Download> = {
+  'install-setup': Download,
+  'fix-a-problem': Wrench,
+  'back-up-restore': DatabaseBackup,
+  'nas-platforms': Server,
+  'storage-libraries': FolderOpen,
+  'updates-migration': RefreshCw,
+};
 const questions = [
   { title: 'Why won’t my images load?', note: 'Check originals, previews, and storage', href: '/troubleshooting/immich-error-loading-image', icon: Wrench },
   { title: 'What do I need to back up?', note: 'Protect the database and the actual files', href: '/backup/immich-backup', icon: DatabaseBackup },
@@ -39,7 +46,7 @@ export default function Home() {
       <div className="container">
         <div className="section-heading"><div><div className="eyebrow">Find your path</div><h2 id="help-paths">What do you need to do?</h2></div><Link className="text-link" href="/guides">All guides <ArrowRight size={15} aria-hidden="true"/></Link></div>
         <div className="task-grid">{helpPaths.map(path => {
-          const Icon = pathIcons[path.icon];
+          const Icon = pathIcons[path.id] ?? FolderOpen;
           return <article className="task-card" key={path.id}>
             <Link className="task-card-main" href={path.href}><span className="task-card-top"><span className="task-icon"><Icon size={22} strokeWidth={1.65} aria-hidden="true"/></span><ArrowRight className="link-arrow" size={17} aria-hidden="true"/></span><h3>{path.title}</h3><p>{path.description}</p></Link>
             {path.startHere?.length ? <div className="task-card-links" aria-label={`${path.title} starting points`}>{path.startHere.map(link => <Link href={link.href} key={link.href}>{link.title}<ArrowRight size={13} aria-hidden="true"/></Link>)}</div> : null}

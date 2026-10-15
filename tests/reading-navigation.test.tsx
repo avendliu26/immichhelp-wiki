@@ -19,6 +19,8 @@ describe('task and reading navigation', () => {
     expect(tasks).toHaveLength(6);
     helpPaths.forEach((path, index) => {
       expect(tasks[index].querySelector('h3')?.textContent).toBe(path.title);
+      expect(tasks[index].querySelector('p')?.textContent).toBe(path.description);
+      expect(tasks[index].querySelector('.task-icon svg')).not.toBeNull();
       expect(tasks[index].querySelector('a')?.getAttribute('href')).toBe(path.href);
       expect(tasks[index].querySelector('a a')).toBeNull();
     });

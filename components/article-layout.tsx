@@ -27,5 +27,36 @@ export function getRelatedGuideLinks(doc: Pick<Document, 'slug' | 'category'>) {
     .filter((item, index, items) => item.href !== `/${doc.slug}` && items.findIndex((other) => other.href === item.href) === index)
     .slice(0, 5);
 }
-export function ArticleLayout({doc,children}:{doc:Document;children:ReactNode}){const headings=articleHeadings(doc.body);return <div className="container docs-shell"><aside className="sidebar" aria-label="Documentation navigation">{navigation.map(group=><div className="sidebar-group" key={group.title}><div className="sidebar-title">{group.title}</div>{group.items.map(item=><a className={`sidebar-link ${item.href===`/${doc.slug.split('/')[0]}`?'active':''}`} href={item.href} key={item.href}>{item.title}</a>)}</div>)}</aside><main className="article"><Breadcrumbs title={doc.title} category={doc.category}/><div className="eyebrow">{doc.category}</div><h1>{doc.heading || doc.title}</h1><p className="article-lead">{doc.description}</p><div className="article-meta"><span>Verified against: {doc.verifiedVersion || 'Current release'}</span><span>Last reviewed: {doc.lastReviewed || 'Sep 2026'}</span><span>Updated: {doc.updated || 'Sep 2026'}</span></div><Toc headings={headings} mobile/><AdsterraBanner size="desktop-728x90" mobileSize="mobile-320x50" className="article-ad-top"/><div className="prose">{children}</div><AdsterraBanner size="rectangle-300x250" className="article-ad-rectangle"/><section className="article-related" aria-labelledby="related-guides"><h2 id="related-guides">Related guides</h2><div className="list-card">{getRelatedGuideLinks(doc).map((item)=><Link href={item.href} key={item.href}>{item.title}<span>→</span></Link>)}</div></section></main><Toc headings={headings}/></div>}
+export function ArticleLayout({ doc, children }: { doc: Document; children: ReactNode }) {
+  const headings = articleHeadings(doc.body);
+  return <div className="container docs-shell">
+    <aside className="sidebar" aria-label="Documentation navigation">
+      <Link className="sidebar-overview" href="/guides">← All guides</Link>
+      <nav aria-label="Guide topics">{navigation.map(group => <div className="sidebar-group" key={group.title}>
+        <div className="sidebar-title">{group.title}</div>
+        {group.items.map(item => <Link className={`sidebar-link${item.href === `/${doc.slug}` ? ' active' : ''}`} aria-current={item.href === `/${doc.slug}` ? 'page' : undefined} href={item.href} key={item.href}>{item.title}</Link>)}
+      </div>)}</nav>
+      <div className="sidebar-note">Independent guidance.<br/>Official sources linked throughout.</div>
+    </aside>
+    <main className="article" id="main-content">
+      <Breadcrumbs title={doc.title} category={doc.category}/>
+      <header className="article-header">
+        <div className="eyebrow">{doc.category}</div>
+        <h1>{doc.heading || doc.title}</h1>
+        <p className="article-lead">{doc.description}</p>
+        <dl className="article-meta">
+          {doc.verifiedVersion ? <div><dt>Verified against</dt><dd>{doc.verifiedVersion}</dd></div> : null}
+          {doc.lastReviewed ? <div><dt>Last reviewed</dt><dd><time dateTime={doc.lastReviewed}>{doc.lastReviewed}</time></dd></div> : null}
+          {doc.updated && doc.updated !== doc.lastReviewed ? <div><dt>Updated</dt><dd><time dateTime={doc.updated}>{doc.updated}</time></dd></div> : null}
+        </dl>
+      </header>
+      <Toc headings={headings} mobile/>
+      <AdsterraBanner size="desktop-728x90" mobileSize="mobile-320x50" className="article-ad-top"/>
+      <div className="prose">{children}</div>
+      <AdsterraBanner size="rectangle-300x250" className="article-ad-rectangle"/>
+      <section className="article-related" aria-labelledby="related-guides"><div className="eyebrow">Continue from here</div><h2 id="related-guides">Related guides</h2><div className="list-card">{getRelatedGuideLinks(doc).map(item => <Link href={item.href} key={item.href}>{item.title}<span aria-hidden="true">→</span></Link>)}</div></section>
+    </main>
+    <Toc headings={headings}/>
+  </div>;
+}
 export function ArticleJsonLd({doc}:{doc:Document}){const url=`https://${site.domain}/${doc.slug}`;return <><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({'@context':'https://schema.org','@type':'Article',headline:doc.title,description:doc.description,...(doc.updated && /^\d{4}-\d{2}-\d{2}$/.test(doc.updated) ? {dateModified:doc.updated} : {}),author:{'@type':'Organization',name:site.name,url:`https://${site.domain}/`,logo:`https://${site.domain}/android-chrome-512x512.png`},mainEntityOfPage:url})}}/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:site.name,item:`https://${site.domain}/`},{'@type':'ListItem',position:2,name:doc.category,item:`https://${site.domain}/${({'Getting Started':'guides','Install & Setup':'setup','Platforms':'platforms','Backup & Storage':'backup','Troubleshooting':'troubleshooting'} as Record<string,string>)[doc.category]||'guides'}`},{'@type':'ListItem',position:3,name:doc.title,item:url}]})}}/></>}

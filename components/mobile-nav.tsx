@@ -13,7 +13,7 @@ export function MobileNav() {
   const close = useCallback(() => setOpen(false), []);
   useEffect(() => { close(); }, [pathname, close]);
   useEffect(() => {
-    const desktop = matchMedia('(min-width: 981px)');
+    const desktop = matchMedia('(min-width: 1121px)');
     const resize = () => { if (desktop.matches) close(); };
     desktop.addEventListener('change',resize);
     return () => desktop.removeEventListener('change',resize);

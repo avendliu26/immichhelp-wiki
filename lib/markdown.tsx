@@ -104,7 +104,7 @@ export function Markdown({ source }: { source: string }) {
         if (!lines[i].match(/^\|\s*-+/)) rows.push(lines[i].split('|').slice(1, -1).map((cell) => cell.trim()));
         i++;
       }
-      blocks.push(<table key={i}><tbody>{rows.map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, cellIndex) => rowIndex === 0 ? <th key={cellIndex}>{inline(cell)}</th> : <td key={cellIndex}>{inline(cell)}</td>)}</tr>)}</tbody></table>);
+      blocks.push(<div className="table-scroll" role="region" aria-label={`Table: ${(rows[0] || []).join(', ')}`} tabIndex={0} key={i}><table><thead><tr>{rows[0]?.map((cell, index) => <th scope="col" key={index}>{inline(cell)}</th>)}</tr></thead><tbody>{rows.slice(1).map((row, rowIndex) => <tr key={rowIndex}>{row.map((cell, cellIndex) => <td key={cellIndex}>{inline(cell)}</td>)}</tr>)}</tbody></table></div>);
       continue;
     }
     if (/^[-*]\s/.test(line) || /^\d+\.\s/.test(line)) {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getPublishedDocuments } from '@/lib/content';
-import { helpPathIcons, helpPaths } from '@/src/data/help-paths';
+import { helpPaths } from '@/src/data/help-paths';
 
 const staticRoutes = ['/', '/guides', '/setup', '/troubleshooting', '/platforms', '/backup', '/about', '/privacy', '/terms', '/compare', '/features'];
 const routeSet = new Set([...staticRoutes, ...getPublishedDocuments().map((doc) => `/${doc.slug}`)]);
@@ -20,13 +20,6 @@ describe('homepage help paths', () => {
   it('gives every card a distinct id', () => {
     const ids = helpPaths.map((path) => path.id);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it('assigns every card an icon key from the declared icon set', () => {
-    expect(helpPathIcons.length).toBeGreaterThan(0);
-    for (const path of helpPaths) {
-      expect(helpPathIcons, `${path.id} icon ${path.icon}`).toContain(path.icon);
-    }
   });
 
   it('uses a root-relative href on every card and start-here link', () => {

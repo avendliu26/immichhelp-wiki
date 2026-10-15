@@ -1,34 +1,13 @@
-import type * as Lucide from 'lucide-react';
-
 export type HelpPathLink = {
   title: string;
   href: string;
 };
-
-/**
- * Icon key for each card. Every key is a named lucide-react export, so it maps
- * to a real component without inventing glyphs. No runtime import is needed.
- */
-export type HelpPathIcon = 'Download' | 'Wrench' | 'DatabaseBackup' | 'Server' | 'FolderOpen' | 'RefreshCw';
-
-/** Compile-time proof that every icon key is a real lucide-react export. */
-const ICON_EXPORT_CHECK: Record<HelpPathIcon, keyof typeof Lucide> = {
-  Download: 'Download',
-  Wrench: 'Wrench',
-  DatabaseBackup: 'DatabaseBackup',
-  Server: 'Server',
-  FolderOpen: 'FolderOpen',
-  RefreshCw: 'RefreshCw',
-};
-
-export const helpPathIcons = Object.keys(ICON_EXPORT_CHECK) as HelpPathIcon[];
 
 export type HelpPath = {
   id: string;
   title: string;
   description: string;
   href: string;
-  icon: HelpPathIcon;
   startHere?: HelpPathLink[];
 };
 
@@ -43,7 +22,6 @@ export const helpPaths: HelpPath[] = [
     title: 'Install & Setup',
     description: 'Start from a clean machine and reach a running server with the official Docker Compose files.',
     href: '/setup',
-    icon: 'Download',
     startHere: [
       { title: 'Docker Compose install', href: '/setup/immich-docker-compose' },
       { title: 'First steps in Immich', href: '/getting-started/how-to-use-immich' },
@@ -54,7 +32,6 @@ export const helpPaths: HelpPath[] = [
     title: 'Fix a Problem',
     description: 'Begin with the symptom, check the evidence, then apply the safest documented correction.',
     href: '/troubleshooting',
-    icon: 'Wrench',
     startHere: [
       { title: 'Error loading image', href: '/troubleshooting/immich-error-loading-image' },
     ],
@@ -64,7 +41,6 @@ export const helpPaths: HelpPath[] = [
     title: 'Back Up & Restore',
     description: 'Keep the database and the media consistent, and rehearse the restore before you need it.',
     href: '/backup',
-    icon: 'DatabaseBackup',
     startHere: [
       { title: 'Backup and restore', href: '/backup/immich-backup' },
     ],
@@ -74,7 +50,6 @@ export const helpPaths: HelpPath[] = [
     title: 'NAS & Platforms',
     description: 'Plan storage, permissions, and the update path for Proxmox, Synology, and TrueNAS.',
     href: '/platforms',
-    icon: 'Server',
     startHere: [
       { title: 'Proxmox', href: '/platforms/immich-proxmox' },
       { title: 'Synology', href: '/platforms/immich-for-synology' },
@@ -85,13 +60,11 @@ export const helpPaths: HelpPath[] = [
     title: 'Storage & Libraries',
     description: 'Mount and scan photos you already have while keeping ownership and paths predictable.',
     href: '/storage/immich-external-library',
-    icon: 'FolderOpen',
   },
   {
     id: 'updates-migration',
     title: 'Updates & Migration',
     description: 'Read the release notes, back up first, and move between versions without breaking the library.',
     href: '/setup/how-to-update-immich',
-    icon: 'RefreshCw',
   },
 ];

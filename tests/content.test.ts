@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { getDocument, getPublishedDocuments, searchDocuments } from '@/lib/content';
 import { home } from '@/src/data/home';
+import Home from '@/app/page';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 describe('content index', () => {
   it('only exposes published documents', () => {
@@ -72,7 +74,7 @@ describe('content index', () => {
 describe('homepage internal links', () => {
   const staticRoutes = ['/', '/guides', '/setup', '/troubleshooting', '/platforms', '/backup', '/about', '/privacy', '/terms'];
   const routes = new Set([...staticRoutes, ...getPublishedDocuments().map((doc) => `/${doc.slug}`)]);
-  const pageSource = readFileSync('app/page.tsx', 'utf8');
+  const pageSource = renderToStaticMarkup(Home());
   const pageHrefs = [...pageSource.matchAll(/href="(\/[^"]*)"/g)].map((match) => match[1]);
   const dataHrefs = [
     ...home.popularHelp.map((card) => card.href),

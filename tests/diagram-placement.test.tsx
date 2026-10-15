@@ -92,3 +92,71 @@ describe('figure position within each article', () => {
     expect(follows(figure, firstStep)).toBe(true);
   });
 });
+
+// JSDOM has no SVG getBBox. Check composed coordinates here; real Chrome
+// additionally checks glyph bounding boxes and collisions during visual QA.
+function svgPoint(node: Element, x: number, y: number) {
+  let ancestor = node.parentElement;
+  while (ancestor && ancestor.tagName.toLowerCase() !== 'svg') {
+    const transform = ancestor.getAttribute('transform');
+    if (transform) {
+      const translate = transform.match(/^translate\(([-\d.]+)[ ,]+([-\d.]+)\)$/);
+      if (!translate) throw new Error(`Unsupported geometry in figure: ${transform}`);
+      x += Number(translate[1]);
+      y += Number(translate[2]);
+    }
+    ancestor = ancestor.parentElement;
+  }
+  return { x, y };
+}
+function containingPanel(node: Element): Element | undefined {
+  let ancestor = node.parentElement;
+  while (ancestor && ancestor.tagName.toLowerCase() !== 'svg') {
+    const panel = [...ancestor.children].find(child => child.matches('rect.fig-panel'));
+    if (panel) return panel;
+    ancestor = ancestor.parentElement;
+  }
+}
+function panelBounds(panel: Element) {
+  const point = svgPoint(panel, Number(panel.getAttribute('x')), Number(panel.getAttribute('y')));
+  return { ...point, right: point.x + Number(panel.getAttribute('width')), bottom: point.y + Number(panel.getAttribute('height')) };
+}
+
+describe('figure coordinate containment', () => {
+  it.each(pages)('$id keeps every label and nested panel inside its owning box and viewBox', ({ id }) => {
+    const { container } = render(<>{figures[id].svg}</>);
+    const svg = container.querySelector('svg')!;
+    const [, , width, height] = svg.getAttribute('viewBox')!.split(' ').map(Number);
+    for (const text of svg.querySelectorAll('text')) {
+      const point = svgPoint(text, Number(text.getAttribute('x')), Number(text.getAttribute('y')));
+      const label = text.textContent || '';
+      expect(point.x, label).toBeGreaterThanOrEqual(0);
+      expect(point.x, label).toBeLessThanOrEqual(width);
+      expect(point.y, label).toBeGreaterThanOrEqual(0);
+      expect(point.y, label).toBeLessThanOrEqual(height);
+      const panel = containingPanel(text);
+      if (panel) {
+        const box = panelBounds(panel);
+        expect(point.x, label).toBeGreaterThanOrEqual(box.x + 10);
+        expect(point.x, label).toBeLessThanOrEqual(box.right - 10);
+        expect(point.y, label).toBeGreaterThanOrEqual(box.y + 10);
+        expect(point.y, label).toBeLessThanOrEqual(box.bottom - 4);
+      }
+    }
+    for (const panel of svg.querySelectorAll('rect.fig-panel')) {
+      const box = panelBounds(panel);
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.right).toBeLessThanOrEqual(width);
+      expect(box.bottom).toBeLessThanOrEqual(height);
+      const parent = containingPanel(panel.parentElement!);
+      if (parent) {
+        const outer = panelBounds(parent);
+        expect(box.x).toBeGreaterThanOrEqual(outer.x + 8);
+        expect(box.y).toBeGreaterThanOrEqual(outer.y + 8);
+        expect(box.right).toBeLessThanOrEqual(outer.right - 8);
+        expect(box.bottom).toBeLessThanOrEqual(outer.bottom - 8);
+      }
+    }
+  });
+});

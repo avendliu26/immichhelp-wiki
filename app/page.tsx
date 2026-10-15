@@ -1,2 +1,73 @@
-import Link from 'next/link'; import { ArrowRight } from '@/components/icons'; import { SearchDialog } from '@/components/search-dialog'; import { site } from '@/src/config/site'; import { home } from '@/src/data/home'; import { getPublishedDocuments } from '@/lib/content';
-export default function Home(){const docs=getPublishedDocuments();return <main><section className="hero"><div className="container"><div className="eyebrow">{home.hero.eyebrow}</div><h1>{home.hero.title}</h1><p>{home.hero.description}</p><div className="hero-search"><SearchDialog documents={docs} hero /></div><div className="hero-actions"><Link className="primary-button" href="/setup/immich-docker-compose">{home.hero.primaryCta} <ArrowRight size={16}/></Link><Link className="secondary-button" href="/troubleshooting">{home.hero.secondaryCta}</Link></div></div></section><section className="section"><div className="container card install-entry"><div className="card-tag">Install &amp; Setup</div><h2>Install Immich</h2><p>Set up Immich with Docker Compose or choose a platform-specific guide.</p><div className="hero-actions" style={{justifyContent:'flex-start'}}><Link className="primary-button" href="/setup/immich-docker-compose">Install Immich <ArrowRight size={16}/></Link><Link className="secondary-button" href="/setup/how-to-update-immich">How to update Immich</Link></div></div></section><section className="section"><div className="container"><div className="section-heading"><h2>Popular help</h2><p>Start with the answers people need most often.</p></div><div className="card-grid">{home.popularHelp.map(card=><Link href={card.href} className="card" key={card.href}><div className="card-tag">{card.tag}</div><h3>{card.title}</h3><p>{card.description}</p></Link>)}</div></div></section><section className="section"><div className="container split-grid"><div className="card"><div className="section-heading"><div><h2>{home.gettingStarted.title}</h2><p>{home.gettingStarted.description}</p></div></div><div className="list-card">{home.gettingStarted.items.map(item=><Link href={item.href} key={item.href}>{item.title}<span>{item.note} →</span></Link>)}</div></div><div className="card"><h2>{home.troubleshooting.title}</h2><p>{home.troubleshooting.description}</p><div className="list-card">{home.troubleshooting.items.map(item=><Link href={item.href} key={item.href}>{item.title}<span>→</span></Link>)}</div></div></div></section><section className="section"><div className="container card-grid"><Link href={home.platforms.href} className="card"><h3>{home.platforms.title}</h3><p>{home.platforms.description}</p></Link><Link href={home.backup.href} className="card"><h3>{home.backup.title}</h3><p>{home.backup.description}</p></Link></div></section><section className="section"><div className="container split-grid"><div className="card"><h3>Latest updates</h3><div className="list-card">{home.latestUpdates.map(item=><Link href={item.href} key={item.title}>{item.title}<span>{item.date}</span></Link>)}</div></div></div></section><section className="section"><div className="container card" style={{textAlign:'center',padding:'42px 22px'}}><h2>{home.finalCta.title}</h2><p>{home.finalCta.description}</p><Link className="primary-button" href={home.finalCta.href}>{home.finalCta.label} <ArrowRight size={16}/></Link></div></section></main>}
+import Link from 'next/link';
+import { ArrowRight, DatabaseBackup, Download, FolderOpen, RefreshCw, Server, Wrench } from 'lucide-react';
+import { SearchDialog } from '@/components/search-dialog';
+import { home } from '@/src/data/home';
+import { helpPaths } from '@/src/data/help-paths';
+import { getPublishedDocuments } from '@/lib/content';
+
+const pathIcons: Record<string, typeof Download> = {
+  'install-setup': Download,
+  'fix-a-problem': Wrench,
+  'back-up-restore': DatabaseBackup,
+  'nas-platforms': Server,
+  'storage-libraries': FolderOpen,
+  'updates-migration': RefreshCw,
+};
+const questions = [
+  { title: 'Why won’t my images load?', note: 'Check originals, previews, and storage', href: '/troubleshooting/immich-error-loading-image', icon: Wrench },
+  { title: 'What do I need to back up?', note: 'Protect the database and the actual files', href: '/backup/immich-backup', icon: DatabaseBackup },
+  { title: 'How do I update safely?', note: 'Check your version and upgrade path', href: '/setup/how-to-update-immich', icon: RefreshCw },
+];
+
+export default function Home() {
+  const docs = getPublishedDocuments();
+  return <main id="main-content" className="home-page">
+    <section className="home-intro">
+      <div className="container home-intro-grid">
+        <div className="hero">
+          <div className="eyebrow"><span className="status-dot" aria-hidden="true"/>{home.hero.eyebrow}</div>
+          <h1>Immich Help<span className="hero-title-detail">Your photos. A clearer path.</span></h1>
+          <p>{home.hero.description}</p>
+          <div className="hero-search"><SearchDialog documents={docs} hero /><span className="search-key-hint" aria-hidden="true">⌘ K / Ctrl K</span></div>
+          <div className="hero-actions"><Link className="primary-button" href="/setup/immich-docker-compose">{home.hero.primaryCta}<ArrowRight size={16} aria-hidden="true"/></Link><Link className="text-link" href="/guides">Explore the guides <ArrowRight size={15} aria-hidden="true"/></Link></div>
+        </div>
+        <aside className="question-panel" aria-labelledby="common-questions">
+          <div className="panel-label">A good place to start</div>
+          <h2 id="common-questions">What brought you here?</h2>
+          <div className="question-list">{questions.map(({ title, note, href, icon: Icon }) => <Link href={href} key={href}>
+            <span className="question-icon"><Icon size={19} aria-hidden="true"/></span><span><strong>{title}</strong><small>{note}</small></span><ArrowRight className="link-arrow" size={16} aria-hidden="true"/>
+          </Link>)}</div>
+          <p className="panel-footnote">Start with the evidence. Follow the documented next step.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section className="section task-section" aria-labelledby="help-paths">
+      <div className="container">
+        <div className="section-heading"><div><div className="eyebrow">Find your path</div><h2 id="help-paths">What do you need to do?</h2></div><Link className="text-link" href="/guides">All guides <ArrowRight size={15} aria-hidden="true"/></Link></div>
+        <div className="task-grid">{helpPaths.map(path => {
+          const Icon = pathIcons[path.id] ?? FolderOpen;
+          return <article className="task-card" key={path.id}>
+            <Link className="task-card-main" href={path.href}><span className="task-card-top"><span className="task-icon"><Icon size={22} strokeWidth={1.65} aria-hidden="true"/></span><ArrowRight className="link-arrow" size={17} aria-hidden="true"/></span><h3>{path.title}</h3><p>{path.description}</p></Link>
+            {path.startHere?.length ? <div className="task-card-links" aria-label={`${path.title} starting points`}>{path.startHere.map(link => <Link href={link.href} key={link.href}>{link.title}<ArrowRight size={13} aria-hidden="true"/></Link>)}</div> : null}
+          </article>;
+        })}</div>
+      </div>
+    </section>
+
+    <section className="section popular-section" aria-labelledby="popular-help">
+      <div className="container">
+        <div className="section-heading"><div><div className="eyebrow">Answers, without the guesswork</div><h2 id="popular-help">Popular help</h2></div><p>Focused guides. Practical checks. Sources you can follow.</p></div>
+        <div className="popular-grid">{home.popularHelp.map((card, index) => <Link href={card.href} className="popular-guide" key={card.href}><span className="guide-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><span className="card-tag">{card.tag}</span><h3>{card.title}</h3><p>{card.description}</p></span><ArrowRight className="link-arrow" size={18} aria-hidden="true"/></Link>)}</div>
+      </div>
+    </section>
+
+    <section className="section" aria-labelledby="getting-started">
+      <div className="container home-resources">
+        <div className="resource-panel"><div className="resource-icon"><Download size={20} aria-hidden="true"/></div><h2 id="getting-started">{home.gettingStarted.title}</h2><p>{home.gettingStarted.description}</p><div className="list-card">{home.gettingStarted.items.map(item => <Link href={item.href} key={item.href}>{item.title}<ArrowRight size={16} aria-hidden="true"/></Link>)}</div></div>
+        <div className="resource-panel"><div className="resource-icon"><RefreshCw size={20} aria-hidden="true"/></div><h2>From the guide desk</h2><p>Recent checks and updates to the documentation.</p><div className="update-list">{home.latestUpdates.map(item => <Link href={item.href} key={item.title}><time>{item.date}</time><strong>{item.title}</strong><ArrowRight size={16} aria-hidden="true"/></Link>)}</div></div>
+      </div>
+    </section>
+    <section className="section home-bottom"><div className="container help-banner"><div><span className="eyebrow">Keep a recovery path</span><h2>{home.backup.title}</h2><p>{home.backup.description}</p></div><Link className="secondary-button" href={home.backup.href}>Backup &amp; Storage <ArrowRight size={16} aria-hidden="true"/></Link></div></section>
+  </main>;
+}

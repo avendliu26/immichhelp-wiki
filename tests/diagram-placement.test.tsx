@@ -84,7 +84,7 @@ describe('figure position within each article', () => {
     const document = getDocument('setup/how-to-update-immich')!;
     render(<Markdown source={document.body} />);
 
-    const preflight = screen.getByRole('region', { name: 'Docker Compose update preflight checklist' });
+    const preflight = screen.getByRole('region', { name: 'Immich update preflight checklist' });
     const figure = screen.getByRole('figure');
     const firstStep = screen.getByRole('heading', { name: 'Step 1: Check your current release and release notes' });
 

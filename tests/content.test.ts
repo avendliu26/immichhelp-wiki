@@ -4,6 +4,7 @@ import { getDocument, getPublishedDocuments, searchDocuments } from '@/lib/conte
 import { home } from '@/src/data/home';
 import Home from '@/app/page';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { generateMetadata } from '../app/[...slug]/page';
 
 describe('content index', () => {
   it('only exposes published documents', () => {
@@ -39,6 +40,23 @@ describe('content index', () => {
     expect(doc?.body).toContain('/backup/immich-backup');
     expect(doc?.body).toContain('/storage/immich-external-library');
     expect(doc?.body).not.toContain('stable v3.1.0');
+  });
+
+  it('preserves the canonical paths and published internal links of both priority guides', async () => {
+    const targets = ['setup/how-to-update-immich', 'troubleshooting/immich-error-loading-image'];
+    const publishedRoutes = new Set([
+      '/', '/guides', '/setup', '/troubleshooting', '/platforms', '/backup',
+      ...getPublishedDocuments().map((doc) => `/${doc.slug}`),
+    ]);
+
+    for (const slug of targets) {
+      const doc = getDocument(slug);
+      expect(doc).toBeDefined();
+      const metadata = await generateMetadata({ params: Promise.resolve({ slug: slug.split('/') }) });
+      expect(metadata.alternates?.canonical).toBe(`/${slug}`);
+      const localLinks = [...doc!.body.matchAll(/\]\((\/[^)#\s]+)(?:#[^)]*)?\)/g)].map((match) => match[1]);
+      for (const href of localLinks) expect(publishedRoutes.has(href), `${slug}: ${href} should exist`).toBe(true);
+    }
   });
 
   it('puts the modern v3 update flow before the labeled v1/v2 migration material', () => {

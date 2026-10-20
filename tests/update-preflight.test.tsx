@@ -11,12 +11,14 @@ describe('update preflight checklist', () => {
   it('records reviews without claiming that the update or backups were verified', () => {
     render(<UpdatePreflight />);
 
-    const checklist = screen.getByRole('region', { name: 'Docker Compose update preflight checklist' });
+    const checklist = screen.getByRole('region', { name: 'Immich update preflight checklist' });
     const checkboxes = within(checklist).getAllByRole('checkbox');
     expect(checkboxes).toHaveLength(4);
     expect(within(checklist).getByRole('status')).toHaveTextContent('0 of 4 checks recorded.');
-    expect(checklist).toHaveTextContent(/do not inspect your system, test a restore, or certify/i);
-    expect(checklist).toHaveTextContent(/Not using Docker Compose/i);
+    expect(checklist).toHaveTextContent(/does not connect to or inspect your server/i);
+    expect(checklist).toHaveTextContent(/Do not enter passwords, tokens, .env contents, or personal files/i);
+    expect(screen.getByLabelText('Current Immich server version')).toHaveValue('v3');
+    expect(screen.getByLabelText('Deployment method')).toHaveValue('compose');
 
     checkboxes.forEach((checkbox) => fireEvent.click(checkbox));
 
@@ -33,6 +35,51 @@ describe('update preflight checklist', () => {
     expect(screen.getByRole('link', { name: 'Review media backup details' })).toHaveAttribute('href', '#step-2-back-up-the-database-and-actual-media');
     expect(screen.getByRole('link', { name: 'Review compatibility checks' })).toHaveAttribute('href', '#step-3-update-mobile-clients-and-check-immichversion');
   });
+
+  it('updates version guidance and applicable checklist when selections change', () => {
+    render(<UpdatePreflight />);
+    const version = screen.getByLabelText('Current Immich server version');
+
+    fireEvent.change(version, { target: { value: 'v1-v2' } });
+    expect(screen.getByText(/pgvecto\.rs is not supported in v3/i)).toBeInTheDocument();
+    expect(screen.getByText('Major-version migration and recovery requirements reviewed')).toBeInTheDocument();
+
+    fireEvent.change(version, { target: { value: 'very-old-v1' } });
+    expect(screen.getByText(/intermediate upgrade to v1\.132\.3/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /upgrade-path guidance/i })).toHaveAttribute('href', 'https://docs.immich.app/errors/');
+
+    fireEvent.change(version, { target: { value: 'unknown' } });
+    expect(screen.getByRole('region', { name: 'Immich update preflight checklist' })).toHaveTextContent(/identify the running server version/i);
+    expect(screen.getByRole('status')).toHaveTextContent('0 of 4 checks recorded.');
+  });
+
+  it('shows deployment-specific guidance and never gives non-Compose users a direct Compose update command', () => {
+    render(<UpdatePreflight />);
+    const deployment = screen.getByLabelText('Deployment method');
+    const cases = [
+      ['synology', 'Synology Container Manager'], ['truenas', 'TrueNAS Apps'], ['unraid', 'Unraid'],
+      ['proxmox', 'Proxmox VM + Docker'], ['lxc-other', 'LXC or another setup'], ['unknown', 'Identify what manages the Immich server'],
+    ];
+    for (const [value, message] of cases) {
+      fireEvent.change(deployment, { target: { value } });
+      const checklist = screen.getByRole('region', { name: 'Immich update preflight checklist' });
+      expect(checklist).toHaveTextContent(message);
+      expect(checklist).not.toHaveTextContent('docker compose pull && docker compose up -d');
+      expect(within(checklist).getAllByRole('checkbox')).toHaveLength(4);
+    }
+  });
+
+  it('keeps the four review checkboxes usable and resets them when the environment changes', () => {
+    render(<UpdatePreflight />);
+    const checklist = screen.getByRole('region', { name: 'Immich update preflight checklist' });
+    const checkboxes = within(checklist).getAllByRole('checkbox');
+    fireEvent.click(checkboxes[0]);
+    expect(within(checklist).getByRole('status')).toHaveTextContent('1 of 4 checks recorded.');
+    fireEvent.change(screen.getByLabelText('Deployment method'), { target: { value: 'unraid' } });
+    expect(within(checklist).getByRole('status')).toHaveTextContent('0 of 4 checks recorded.');
+    within(checklist).getAllByRole('checkbox').forEach((checkbox) => fireEvent.click(checkbox));
+    expect(within(checklist).getByRole('status')).toHaveTextContent('Checks recorded; follow the detailed steps below.');
+  });
 });
 
 describe('update article rendering', () => {
@@ -43,7 +90,7 @@ describe('update article rendering', () => {
     const { container } = render(<Markdown source={document!.body} />);
     const preflightHeading = screen.getByRole('heading', { name: 'Before You Update Immich' });
     const firstStepHeading = screen.getByRole('heading', { name: 'Step 1: Check your current release and release notes' });
-    const checklist = screen.getByRole('region', { name: 'Docker Compose update preflight checklist' });
+    const checklist = screen.getByRole('region', { name: 'Immich update preflight checklist' });
     const headingIds = new Set(articleHeadings(document!.body).map((heading) => heading.id));
     const fragmentLinks = within(checklist).getAllByRole('link').filter((link) => link.getAttribute('href')?.startsWith('#'));
 
@@ -58,11 +105,11 @@ describe('update article rendering', () => {
     const { rerender } = render(<Markdown source={'Before\n\n<UpdatePreflight />\n\nAfter'} />);
 
     expect(screen.getByText('Before')).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Docker Compose update preflight checklist' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Immich update preflight checklist' })).toBeInTheDocument();
     expect(screen.getByText('After')).toBeInTheDocument();
 
     rerender(<Markdown source={'<UpdatePreflight /> with trailing text'} />);
-    expect(screen.queryByRole('region', { name: 'Docker Compose update preflight checklist' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Immich update preflight checklist' })).not.toBeInTheDocument();
     expect(screen.getByText('<UpdatePreflight /> with trailing text')).toBeInTheDocument();
   });
 });

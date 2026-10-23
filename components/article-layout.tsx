@@ -1,5 +1,5 @@
 import { articleHeadings } from '@/lib/headings';
-import Link from 'next/link'; import { AdsterraBanner } from '@/components/ads/adsterra-banner'; import { ReactNode } from 'react'; import { navigation } from '@/src/config/navigation'; import { Breadcrumbs } from './breadcrumbs'; import { Toc } from './toc'; import { site } from '@/src/config/site'; import type { Document } from '@/lib/content';
+import Link from 'next/link'; import { ReactNode } from 'react'; import { navigation } from '@/src/config/navigation'; import { Breadcrumbs } from './breadcrumbs'; import { Toc } from './toc'; import { site } from '@/src/config/site'; import type { Document } from '@/lib/content';
 const relatedByCategory:Record<string,{title:string;href:string}[]>={'Getting Started':[{title:'Install & Setup',href:'/setup'},{title:'Troubleshooting',href:'/troubleshooting'}],'Install & Setup':[{title:'Platform guides',href:'/platforms'},{title:'Backup & Storage',href:'/backup'}],Platforms:[{title:'Install & Setup',href:'/setup'},{title:'Backup & Storage',href:'/backup'}],'Backup & Storage':[{title:'Install & Setup',href:'/setup'},{title:'Troubleshooting',href:'/troubleshooting'}],Troubleshooting:[{title:'Backup & Storage',href:'/backup'},{title:'Platform guides',href:'/platforms'}]};
 // Keep high-intent troubleshooting and upgrade guides one click away from their
 // most useful follow-ups, rather than sending every reader to generic hubs.
@@ -51,9 +51,7 @@ export function ArticleLayout({ doc, children }: { doc: Document; children: Reac
         </dl>
       </header>
       <Toc headings={headings} mobile/>
-      <AdsterraBanner size="desktop-728x90" mobileSize="mobile-320x50" className="article-ad-top"/>
       <div className="prose">{children}</div>
-      <AdsterraBanner size="rectangle-300x250" className="article-ad-rectangle"/>
       <section className="article-related" aria-labelledby="related-guides"><div className="eyebrow">Continue from here</div><h2 id="related-guides">Related guides</h2><div className="list-card">{getRelatedGuideLinks(doc).map(item => <Link href={item.href} key={item.href}>{item.title}<span aria-hidden="true">→</span></Link>)}</div></section>
     </main>
     <Toc headings={headings}/>

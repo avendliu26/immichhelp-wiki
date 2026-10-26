@@ -5,10 +5,11 @@ import { CodeBlock } from '@/components/code-block';
 import { Figure } from '@/components/figure';
 import { ImageLoadingCheck } from '@/components/image-loading-check';
 import { UpdatePreflight } from '@/components/update-preflight';
+import { MigrationReadiness } from '@/components/migration-readiness';
 import { figureIds, type FigureId } from '@/lib/diagrams';
 import { headingId as slug } from '@/lib/headings';
 
-const componentMarker = /^\s*<(?:UpdatePreflight|ImageLoadingCheck|BackupReadinessAnalyzer) \/>\s*$/;
+const componentMarker = /^\s*<(?:UpdatePreflight|ImageLoadingCheck|BackupReadinessAnalyzer|MigrationReadiness) \/>\s*$/;
 const figureMarker = /^\s*<Figure id="([a-z0-9-]+)" \/>\s*$/;
 
 function inline(text: string): ReactNode[] {
@@ -33,6 +34,11 @@ export function Markdown({ source }: { source: string }) {
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) {
+      i++;
+      continue;
+    }
+    if (/^\s*<MigrationReadiness \/>\s*$/.test(line)) {
+      blocks.push(<MigrationReadiness key={i} />);
       i++;
       continue;
     }

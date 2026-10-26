@@ -1,0 +1,421 @@
+---
+title: "Immich-Go Guide (2026): Install, Migrate Photos & Fix Errors"
+heading: "Immich-Go: Complete Installation and Migration Guide"
+description: "Learn how to install Immich-Go, migrate Google Photos to Immich, import photo libraries, use commands, and troubleshoot common errors."
+category: Getting Started
+keywords: immich-go, immich go install, google photos to immich, immich-go commands, immich-go missing json
+status: published
+lastReviewed: 2026-10-26
+verifiedVersion: Immich-Go v0.32.0 documentation and CLI help
+updated: 2026-10-26
+draft: false
+---
+
+## What is Immich-Go?
+
+Immich-Go is a community-maintained command-line uploader for moving existing photo collections into an Immich server. Its main advantage for Google Photos migration is reading Takeout media together with their JSON sidecars, rather than treating an export as an ordinary folder of pictures. Get the tool from the [official Immich-Go repository](https://github.com/simulot/immich-go), then follow the sequence below: export, prepare, preview, trial, import, verify.
+
+You run Immich-Go on the computer that can read your export and reach your Immich server over the network. It does not install an Immich server, log in to Google Photos, or keep Google and Immich continuously synchronized. You do not need Go, Node.js, or Docker to run its prebuilt executable.
+
+### Immich-Go vs Immich CLI vs external libraries
+
+| Your goal | Appropriate approach | Important distinction |
+|---|---|---|
+| Migrate a Google Photos Takeout | Immich-Go `upload from-google-photos` | Interprets Takeout JSON and album information |
+| Upload ordinary local files | Immich-Go `upload from-folder` or the official Immich CLI | The official CLI has its own commands and options; they are not interchangeable |
+| Keep originals on an existing NAS or disk | An Immich external library | Indexes existing files rather than uploading a managed copy |
+
+Immich's [official CLI documentation](https://docs.immich.app/features/command-line-interface/) directs Takeout users to Immich-Go. For keeping an existing filesystem in place, read our [external-library guide](/storage/immich-external-library) before uploading a second copy.
+
+### Version and verification scope
+
+This guide was reviewed on October 26, 2026 against [stable v0.32.0](https://github.com/simulot/immich-go/releases/tag/v0.32.0), including its tagged documentation, source, release assets, and the macOS ARM64 executable's version and help output. The release adds Immich V3 support while retaining V2 compatibility; this is not a guarantee for every future server release or every export.
+
+We have not run a real photo migration against an Immich server for this article. Windows/Linux installation and server-side effects are documented procedures, not claimed end-to-end test results. Check your installed version and subcommand help before using a different release.
+
+:::warning Keep a recoverable source
+Retain Google Photos, all downloaded export parts, and an independent backup until the verification checklist passes. Immich-Go can update an existing library and includes duplicate/upgrade handling; an import is not a read-only operation. Do not experiment against your only copy.
+:::
+
+## Check migration readiness
+
+<MigrationReadiness />
+
+## Install Immich-Go
+
+Use the [v0.32.0 release assets](https://github.com/simulot/immich-go/releases/tag/v0.32.0) for the commands in this guide. Download the archive matching both your operating system and processor. Extract the tool into its own folder, separate from the Takeout archives. The [tagged installation guide](https://github.com/simulot/immich-go/blob/v0.32.0/docs/installation.md) documents the binary installation method.
+
+| System | Processor | Release asset |
+|---|---|---|
+| Windows | Intel / AMD 64-bit | `immich-go_Windows_x86_64.zip` |
+| Windows | ARM64 | `immich-go_Windows_arm64.zip` |
+| macOS | Apple Silicon | `immich-go_Darwin_arm64.tar.gz` |
+| macOS | Intel | `immich-go_Darwin_x86_64.tar.gz` |
+| Linux | Intel / AMD 64-bit | `immich-go_Linux_x86_64.tar.gz` |
+| Linux | ARM64 | `immich-go_Linux_arm64.tar.gz` |
+
+### Windows installation
+
+1. Download the Windows ZIP for your processor and choose Extract All in File Explorer.
+2. Open PowerShell in the extracted folder containing `immich-go.exe`.
+3. Run the version and help checks below. PowerShell needs the `.` path prefix when running an executable from the current directory.
+
+```powershell
+.\immich-go.exe --version
+.\immich-go.exe upload from-google-photos --help
+```
+
+Expected version: `immich-go version 0.32.0`. If the executable is missing, check whether you opened the ZIP instead of extracting it. If Windows blocks execution, verify the download source and checksum before deciding whether to allow it; do not disable system-wide security controls.
+
+### macOS installation
+
+On Apple Silicon, open Terminal in the directory containing your download:
+
+```bash
+tar -xzf immich-go_Darwin_arm64.tar.gz
+chmod +x immich-go
+./immich-go --version
+./immich-go upload from-google-photos --help
+```
+
+For Intel Macs, replace the archive name with `immich-go_Darwin_x86_64.tar.gz`. You can keep using `./immich-go` from this folder without installing it system-wide. If macOS prevents it from opening, verify its official origin and checksum, then use the system's per-app security approval flow if appropriate.
+
+### Linux installation
+
+For an Intel/AMD 64-bit Linux machine:
+
+```bash
+tar -xzf immich-go_Linux_x86_64.tar.gz
+chmod +x immich-go
+./immich-go --version
+./immich-go upload from-google-photos --help
+```
+
+For ARM64, substitute `immich-go_Linux_arm64.tar.gz`. An “Exec format error” usually points to a binary for the wrong architecture; compare the downloaded asset with `uname -m`. `x86_64` corresponds to the x86_64 asset and `aarch64` to ARM64.
+
+### Verify the download
+
+Download `checksums.txt` from the same release and compare the SHA-256 hash with the line for your exact archive. Run this before extracting if possible. Replace the example filename for your system:
+
+```powershell
+Get-FileHash .\immich-go_Windows_x86_64.zip -Algorithm SHA256
+```
+
+```bash
+# macOS
+shasum -a 256 immich-go_Darwin_arm64.tar.gz
+# Linux
+sha256sum immich-go_Linux_x86_64.tar.gz
+```
+
+The hashes must match, ignoring letter case. The checksum helps detect a corrupt or different download; obtain both files from the official release.
+
+## Migrate Google Photos to Immich
+
+### Export Google Photos with Takeout
+
+1. Open [Google Takeout](https://takeout.google.com/), deselect other products, and select Google Photos.
+2. Check the photo/album selection. For a complete migration, include the full intended library; record any exclusions.
+3. Choose a one-time ZIP export. Pick a part size your disk and download connection can handle.
+4. Wait for completion and download every numbered ZIP part from that export. Keep each export in a separate directory to avoid mixing different runs.
+5. Preserve the original filenames, folder structure, and JSON files. Do not run a generic metadata fixer or rename the media before testing Immich-Go.
+
+Google explains the export process in its [data download guide](https://support.google.com/accounts/answer/3024190). Downloading an archive does not delete the Google copy. Changes made during export creation may not be included, so record the export window and separately account for newer photos.
+
+Immich-Go accepts ZIP archives directly; you do not need to extract the Takeout. If you already extracted it, preserve the complete directory tree and use that root as the source. Photo and JSON partners may be in different ZIP parts, which is why every part must be processed together. The maintainer explains this in [Takeout FAQ #722](https://github.com/simulot/immich-go/discussions/722).
+
+### Prepare the Immich server
+
+1. Confirm the server works in your browser and sign in as the user who should own the imported photos.
+2. Check the running server version and compare it with the Immich-Go release notes. Resolve version/API errors before a full import.
+3. Check available space for uploaded originals, database growth, thumbnails, and transcoded video. The export ZIP size alone is not a storage estimate.
+4. Back up the existing database and media using the [Immich backup guide](/backup/immich-backup).
+5. Ensure the import computer can reach the server. A sleeping laptop, unstable Wi-Fi, or an expiring proxy session can interrupt a long upload.
+
+Need a server first? Follow [Docker Compose setup](/setup/immich-docker-compose). For everyday account and library use, see [Getting Started](/getting-started/how-to-use-immich).
+
+Use the server's base URL, such as `http://192.168.1.50:2283` on a trusted LAN or `https://photos.example.com` over HTTPS. For Immich-Go, do not append `/api` to these examples. `localhost` is correct only when the server is reachable on the computer running the tool; it does not mean a remote NAS.
+
+### Create an API key
+
+In the destination user's Immich web interface, open Account Settings → API Keys → New API Key. Give the key a recognizable temporary name and store it privately. Assets belong to the account associated with the upload key; an administrator key is not a substitute for selecting the correct library owner.
+
+The v0.32.0 [permission list](https://github.com/simulot/immich-go/blob/v0.32.0/docs/installation.md#api-permissions) specifies `asset.read`, `asset.statistics`, `asset.update`, `asset.upload`, `asset.copy`, `asset.delete`, `asset.download`, `album.create`, `album.read`, `albumAsset.create`, `server.about`, `stack.create`, `tag.asset`, `tag.create`, and `user.read`. These include write and delete powers: grant them only to a trusted local tool for the migration, then revoke the temporary key. The old `asset.replace` permission was removed for this release.
+
+The default job-pausing mode additionally needs an admin-linked key with `job.create` and `job.read`. The examples below explicitly use `--pause-immich-jobs=false` so the import does not require the pause-job capability. Background processing then competes with uploading; watch the server load. If an administrator deliberately enables pausing, use `--admin-api-key` separately and verify jobs resume afterwards.
+
+:::warning Protect the key
+Never paste a real API key into this website, a public command generator, a support post, or an analytics field. The checker above has no credential input. Use HTTPS outside a trusted local network. Avoid --save-config with credentials and do not share API traces or raw logs without reviewing and redacting them.
+:::
+
+For the following examples, set the [documented environment variable](https://github.com/simulot/immich-go/blob/v0.32.0/docs/environment.md) locally. These prompts keep the literal key out of the command you type into shell history. Environment variables are not a secret vault; other software running with sufficient access can still inspect them.
+
+macOS/Linux, in Bash or zsh:
+
+```bash
+printf 'Immich API key: '
+read -rs IMMICH_GO_UPLOAD_API_KEY
+printf '\n'
+export IMMICH_GO_UPLOAD_API_KEY
+```
+
+Windows PowerShell:
+
+```powershell
+$secureKey = Read-Host 'Immich API key' -AsSecureString
+$env:IMMICH_GO_UPLOAD_API_KEY = [System.Net.NetworkCredential]::new('', $secureKey).Password
+Remove-Variable secureKey
+```
+
+Keep the same terminal session open for the import. Replace the example server URL and source path in every command below. If the executable is on your PATH, `immich-go` works in place of `./immich-go` or `.\immich-go.exe`.
+
+### Run a preview and a small trial
+
+A dry run previews the planned actions but still needs a reachable server and valid credentials. It cannot prove that a real upload, metadata update, or later server processing will succeed.
+
+macOS/Linux:
+
+```bash
+./immich-go upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --dry-run --log-file="takeout-preview.log" "/path/to/export/takeout-*.zip"
+```
+
+Windows PowerShell:
+
+```powershell
+.\immich-go.exe upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --dry-run --log-file="takeout-preview.log" "D:\Takeout\takeout-*.zip"
+```
+
+Keep the wildcard in quotes so Immich-Go receives the pattern. Point it at one export directory containing all the parts; do not import a single numbered ZIP on its own. Check the scan summary for media, missing JSON, ignored files, and errors before moving on.
+
+Next, do a real trial using a small named album from that export. Retain the full ZIP pattern so metadata from other parts remains available. Replace `Migration trial` with an actual Google Photos album title; the trial writes to your destination library.
+
+```bash
+./immich-go upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --from-album-name="Migration trial" --log-file="takeout-trial.log" "/path/to/export/takeout-*.zip"
+```
+
+On Windows, substitute `.\immich-go.exe` and your quoted Windows source path. Choose a trial containing an ordinary photo, a video, an edited photo, and a photo with a manually changed date if available. Compare the result with Google Photos before uploading everything. A disposable test account gives a cleaner comparison when the destination already contains many photos; its key and ownership are separate from your final account.
+
+### Import the full export
+
+Once the trial passes, remove the album filter and dry-run option. Start with a modest concurrency rather than maximizing parallel uploads.
+
+macOS/Linux:
+
+```bash
+./immich-go upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --concurrent-tasks=4 --log-file="takeout-import.log" "/path/to/export/takeout-*.zip"
+```
+
+Windows PowerShell:
+
+```powershell
+.\immich-go.exe upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --concurrent-tasks=4 --log-file="takeout-import.log" "D:\Takeout\takeout-*.zip"
+```
+
+Leave the source files intact and save the final report. Use a new log filename for each diagnostic attempt so you can distinguish runs. The upload finishing is only the start of verification: Immich may still be processing thumbnails, video, metadata, or search jobs.
+
+### Understand albums and metadata
+
+For `from-google-photos`, `--sync-albums=true` is the default. Immich-Go reads album definitions and links assets to corresponding albums. Google can export the same media into year and album directories; ZIP entry counts therefore are not a count of unique photos.
+
+The Takeout reader uses JSON information for fields such as capture date, description, and location. JSON matching is not the same as reading only EXIF from the image. The [tagged Takeout technical notes](https://github.com/simulot/immich-go/blob/v0.32.0/docs/misc/google-takeout.md) explain unusual filename matching and incomplete metadata. Google edits and irregular exports require inspection rather than assuming every field transfers perfectly.
+
+| v0.32.0 option | Default | What to decide before importing |
+|---|---|---|
+| `--sync-albums` | `true` | Keep enabled to reconstruct exported albums |
+| `--include-unmatched` | `false` | Media with no matching JSON is skipped; investigate before opting in |
+| `--include-archived` | `true` | Archived Google Photos are included |
+| `--include-trashed` | `false` | Trashed photos are excluded |
+| `--include-partner` | `true` | Review whether partner photos belong in the destination |
+| `--include-untitled-albums` | `false` | Untitled-album handling is opt-in and cannot recreate missing original titles |
+| `--people-tag` | `true` | People names found in JSON become tags; this is not a face-recognition database transfer |
+
+Do not assume shared-album permissions, public links, comments, or Google's face grouping will be recreated. Verify the actual exported information and destination behavior. The [upload reference for v0.32.0](https://github.com/simulot/immich-go/blob/v0.32.0/docs/commands/upload.md) lists the supported controls.
+
+## Import other photo libraries
+
+The same v0.32.0 executable supports local folders/ZIPs, iCloud exports, Picasa collections, and another Immich server. Choose the reader that understands your source rather than renaming a non-Google export as a Takeout.
+
+### Local folders and NAS copies
+
+With the API-key environment variable still set:
+
+```bash
+./immich-go upload from-folder --server="https://photos.example.com" --pause-immich-jobs=false --folder-as-album=FOLDER --log-file="folder-import.log" "/path/to/photos"
+```
+
+Recursion is enabled by default. `--folder-as-album=FOLDER` uses the folder name; `PATH` uses the path; `NONE` creates no folder-derived albums. XMP sidecars are supported by this reader, but do not treat it as a migration of every editing application's catalog. For originals that must remain in place, choose an [external library](/storage/immich-external-library) instead. Avoid uploading a collection already indexed externally without first deciding how to handle the two library copies.
+
+### iCloud and Picasa
+
+```bash
+./immich-go upload from-icloud --server="https://photos.example.com" --pause-immich-jobs=false "/path/to/icloud-export"
+./immich-go upload from-picasa --server="https://photos.example.com" --pause-immich-jobs=false "/path/to/picasa-photos"
+```
+
+The iCloud reader handles the export's CSV metadata; preserve it and test dates and organization. Picasa imports read `.picasa.ini` information. These are two separate examples: run only the command for your source. On Windows use the `.\immich-go.exe` prefix and a quoted Windows path.
+
+`upload from-immich` is available for a server-to-server copy, with separate `--from-server` and `--from-api-key` source settings and destination `--server` / `--api-key` settings. It is an asset transfer workflow, not a database restore or a promise to preserve every server relationship. See the [official source/destination reference](https://github.com/simulot/immich-go/blob/v0.32.0/docs/commands/upload.md#from-immich); use the [backup and restore guide](/backup/immich-backup) for disaster recovery.
+
+## Common Immich-Go commands
+
+These are v0.32.0 commands; avoid old tutorials using the pre-subcommand syntax. Run them from the executable directory. On Windows change `./immich-go` to `.\immich-go.exe`.
+
+```bash
+./immich-go --version
+./immich-go --help
+./immich-go upload from-google-photos --help
+./immich-go upload from-folder --help
+./immich-go upload from-icloud --help
+./immich-go upload from-picasa --help
+```
+
+| Option | Purpose | Safe decision |
+|---|---|---|
+| `--dry-run` | Simulate actions | Preview first; still verify a real trial |
+| `--log-file="takeout-import.log"` | Choose a local log path | Keep reports private and use a fresh filename for another run |
+| `--concurrent-tasks=4` | Limit parallel tasks, valid range 1–20 | Lower it if the server or network struggles |
+| `--client-timeout=60m` | Allow longer server calls | Use for genuinely slow calls; it cannot fix a proxy's shorter timeout |
+| `--pause-immich-jobs=false` | Leave background jobs running | Avoids requiring the job-pausing admin capability |
+| `--on-errors=stop` | Stop on an error, the default | Diagnose the first failure before a bulk retry |
+| `--on-errors=continue` | Continue despite errors | Only after you can reconcile every failed file from the report |
+| `--include-unmatched` | Include media without matched Takeout JSON | Opt in only after checking export completeness and metadata tradeoffs |
+| `--time-zone="America/New_York"` | Override the tool's system time zone | Use only when that zone matches the affected source dates |
+| `--overwrite` | Force overwrite behavior | Avoid for ordinary retries; it changes existing-data behavior |
+
+Example of a slower import profile, using the existing local key variable:
+
+```bash
+./immich-go upload from-google-photos --server="https://photos.example.com" --pause-immich-jobs=false --concurrent-tasks=2 --client-timeout=60m --log-file="takeout-retry.log" "/path/to/export/takeout-*.zip"
+```
+
+## Troubleshooting
+
+Start with the first actionable error and the final summary, not just the last progress indicator. Record the Immich-Go version, running server version, source type, command with secrets removed, and a small affected sample. An issue report is evidence of a possible failure mode, not proof that every installation has that bug.
+
+### Import failed or was interrupted
+
+1. Save the log and note the first error: authentication, network, unsupported API, unreadable archive, storage exhaustion, or a specific file.
+2. Fix that cause and confirm the intended account and server before retrying.
+3. Rerun the same source set with a new log filename. Immich-Go checks existing assets to avoid ordinary duplicate uploads; this is a rescan, not a byte-offset resume of a half-uploaded file.
+4. Compare album memberships and the report after the rerun. Existing metadata can be updated, and upgrade matching has edge cases; do not add `--overwrite` as a generic repair.
+
+If paused jobs were enabled and the process was killed, check Administration → Jobs and resume processing as needed. The [official reliability guidance](https://github.com/simulot/immich-go/blob/v0.32.0/docs/best-practices.md) describes restart behavior.
+
+### Duplicate photos or a surprising count
+
+First distinguish identical file content, visually similar edits, RAW+JPEG pairs, and the same asset appearing in several albums. Deduplication does not mean every similar image is the same file. Compare filenames and downloaded originals on a small sample before deleting anything.
+
+[Issue #1422](https://github.com/simulot/immich-go/issues/1422) reports order-dependent handling of edited/original Takeout pairs. Treat those pairs as a required trial case and retain both exported versions independently. Do not resolve a count mismatch by bulk-deleting originals or rerunning with forced overwrite. If you encounter the reported behavior, stop the full import and check the issue and target release for a verified resolution.
+
+### Photos have the wrong date
+
+Inspect one affected photo in Google Photos, its JSON `photoTakenTime`, embedded capture metadata, and the destination details. A file's download or extraction modification time is not its capture date. If the problem is a constant hour offset, compare time zones; if whole years or days are wrong, investigate missing or mismatched metadata first.
+
+Use `--time-zone` only with a known appropriate time zone and test a small import. It is not a universal repair for photos without any original capture time. Avoid rewriting the entire export's timestamps to today's date. Existing wrong metadata may require a targeted correction after diagnosis; a duplicate-skipping retry is not proof that dates were repaired.
+
+### JSON metadata is missing or does not match
+
+1. Confirm all parts from the same export are present and passed together.
+2. Check whether the affected file's sidecar is in another ZIP part; preserve Google's original names.
+3. Inspect a representative media/JSON pair for truncated names, edited suffixes, or unusual formats.
+4. Request a fresh export for the affected period or album if the source itself is incomplete.
+5. Only then consider `--include-unmatched` for files you deliberately want to import without JSON enrichment, and recheck their dates afterwards.
+
+The maintainer's [FAQ #722](https://github.com/simulot/immich-go/discussions/722) explains split archives and incomplete Takeouts. [Issue #1124](https://github.com/simulot/immich-go/issues/1124) documents an older Takeout format that was not recognized as expected. Do not assume a sidecar exists in a supported shape just because its extension is `.json`.
+
+### Albums are missing or merged
+
+Confirm you used `from-google-photos`, left `--sync-albums` enabled, included the relevant albums in Takeout, and waited for the run's album-management stage. Then compare album titles and memberships, not just the total album count. Recheck the destination account and album permissions if creation failed.
+
+[Issue #1437](https://github.com/simulot/immich-go/issues/1437) reports problems involving albums with the same name. If two distinct source albums share a title, record their memberships and test those albums separately before the full migration. Do not rename the ZIP's internal directories as a speculative fix. Untitled albums have additional export limitations; no flag can recover album identities that Google did not export distinctly.
+
+### Large libraries import slowly
+
+Separate upload speed from Immich's post-upload processing. Check network throughput, server CPU/RAM, disk space and I/O, and the job queue. Try a wired LAN connection and a lower `--concurrent-tasks` value if the server is overloaded. A larger timeout may help slow video uploads but will not repair an unstable connection or a proxy upload limit.
+
+Administrators can deliberately enable job pausing with the required admin key to reduce competing work; account for the deferred processing and check jobs afterwards. Do not disable error reporting to create the appearance of progress, and do not raise concurrency to 20 without measuring the bottleneck.
+
+### Cannot connect to the server
+
+| Symptom | First check | Next action |
+|---|---|---|
+| Connection refused / timeout | Can this computer reach the exact host and port? | Test the base URL in a browser on this computer; inspect LAN/firewall/DNS settings |
+| 401 / 403 from Immich | Key belongs to the intended user and has the required permissions | Recreate a narrowly used temporary key; distinguish a proxy login page from an Immich API response |
+| Cannot pause background jobs | Default pausing needs an administrator capability | Use `--pause-immich-jobs=false` or intentionally supply the documented admin key |
+| Certificate error | Hostname, certificate chain, and local trust | Fix TLS; avoid `--skip-verify-ssl` as a permanent workaround |
+| HTML response / redirect / 404 | Correct base URL and proxy routing | Remove an accidentally appended `/api`; check that a proxy auth gateway is not intercepting the API |
+| 413 / 502 / 504 during large videos | Upload body limits and timeouts along the request path | Check the proxy and server logs for that timestamp |
+
+For a proxied instance, see [reverse-proxy guidance](/setup/immich-reverse-proxy). For uploads that exist but have broken previews, use [image-loading troubleshooting](/troubleshooting/immich-error-loading-image) after confirming originals can be downloaded.
+
+## Verify your migration
+
+Do not cancel Google storage, delete the exports, or run duplicate cleanup just because the upload command exited. Record a baseline before importing and keep a short reconciliation note for the checks below.
+
+| Check | Evidence to record | If it does not match |
+|---|---|---|
+| Media counts | Intended source scope, newly uploaded, already present, excluded, unmatched, and failed items from the report | Reconcile categories; do not compare ZIP entries including JSON to unique assets |
+| Albums | Names, membership counts, and samples from large, small, and same-name albums | Recheck export scope, album sync, and album-stage errors |
+| Dates | Oldest/newest photos, a manual date edit, and photos near midnight across time zones | Compare JSON and EXIF before choosing a correction |
+| Originals | Download and open representative photos, edited pairs, and large videos | Stop cleanup if originals are missing, unreadable, or the wrong variant |
+| Duplicate handling | Inspect identical content separately from edits and RAW/JPEG pairs | Keep both sources until you know why they differ |
+| Metadata | Spot-check descriptions, location, favorites, and orientation where present in the export | Document fields not transferred and inspect sidecar matching |
+| Processing | No unexplained failed jobs; thumbnails/videos eventually usable | Inspect server jobs after uploads and confirm any paused jobs resumed |
+| Failures | A saved report and an explicit decision for each failed/skipped category | Retry only after diagnosis, then compare a new report |
+| Recovery | Independent media copy plus recoverable database backup after migration | Back up before removing a source or temporary test account |
+
+A useful reconciliation distinguishes source media candidates from JSON and album duplicates, then accounts for imported, already-present, intentionally excluded, unmatched, unsupported, and failed items. Treat any unexplained difference as unfinished work rather than inventing a single expected number. Sample checks complement this accounting; neither alone proves that every file migrated correctly.
+
+After verification, revoke the temporary key in Immich and clear the local environment variable. Revocation is the step that actually invalidates a copied key.
+
+```bash
+unset IMMICH_GO_UPLOAD_API_KEY
+```
+
+```powershell
+Remove-Item Env:\IMMICH_GO_UPLOAD_API_KEY
+```
+
+Store reports privately: they can reveal filenames, album names, locations, and other personal details even when the API key is masked.
+
+## FAQ
+
+### Is Immich-Go an official Immich tool?
+
+It is a separate community project maintained in the simulot/immich-go repository. Immich's own documentation recommends it for Google Photos Takeout imports. Download from that project rather than an unrelated download mirror.
+
+### Does Immich-Go have a graphical interface?
+
+It is a command-line tool with an interactive terminal display. That display is not a desktop application or browser uploader. `--no-ui` switches to output without the interactive interface; the commands and permissions still apply.
+
+### Do I need to unzip Google Takeout first?
+
+No. The Takeout reader accepts the ZIP files directly. Pass every part of the same export together using the quoted pattern. A completely extracted directory is another supported input, provided its structure and sidecars remain intact.
+
+### Can I resume an interrupted upload?
+
+Normally you rerun the same sources and let duplicate detection recognize existing assets. It may rescan the collection, and metadata/album work still needs verification. Do not assume a partial file resumes at its last byte or that an identical rerun is guaranteed to leave every relationship untouched.
+
+### Does it delete photos from Google Photos?
+
+The workflow here reads your downloaded Takeout rather than accessing your Google account. Google states that downloading data does not delete the source. Keep the Google library until you have independently verified the destination.
+
+### Will albums, dates, and faces transfer exactly?
+
+Albums and supported Takeout metadata are handled by the reader, subject to export completeness and matching limitations. People tags are not the same as Google's face-recognition groups. Verify dates, album memberships, edited pairs, and any important metadata in the trial; there is no blanket guarantee of a perfect transfer.
+
+### Can I use it for a multi-user family library?
+
+Use a separate upload key for each intended owner's account and keep exports separated. Test any shared or partner content and check permissions on the destination. Avoid assuming that an admin key automatically imports into another user's library.
+
+## Sources and review notes
+
+- [Immich-Go stable v0.32.0 release](https://github.com/simulot/immich-go/releases/tag/v0.32.0): version, assets, and V2/V3 release scope.
+- [Installation and permissions at v0.32.0](https://github.com/simulot/immich-go/blob/v0.32.0/docs/installation.md): platform setup and required capabilities.
+- [Upload commands at v0.32.0](https://github.com/simulot/immich-go/blob/v0.32.0/docs/commands/upload.md): readers, flags, and defaults.
+- [Environment variables at v0.32.0](https://github.com/simulot/immich-go/blob/v0.32.0/docs/environment.md): local credential configuration.
+- [Takeout technical notes at v0.32.0](https://github.com/simulot/immich-go/blob/v0.32.0/docs/misc/google-takeout.md): archive and sidecar limitations.
+- [Immich CLI documentation](https://docs.immich.app/features/command-line-interface/): official CLI distinction and Takeout recommendation.
+- [Google export help](https://support.google.com/accounts/answer/3024190): Takeout export and source-data behavior.
+
+The troubleshooting links above include maintainer discussion and individual bug reports. Recheck their current status before applying a workaround. Review date describes this article's source review, not a successful live migration test.

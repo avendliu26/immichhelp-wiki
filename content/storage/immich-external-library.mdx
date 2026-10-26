@@ -28,6 +28,8 @@ Stable v3.1.0 was checked September 8, 2026. Preserve the original paths and bac
 
 Each external library belongs to the user selected when it is created. The owner relationship is separate from filesystem ownership. An external root does not automatically become every user's library, and folders are not automatically shared albums. [Libraries](https://docs.immich.app/features/libraries/)
 
+If you want Immich to store a managed copy instead, follow the [Immich-Go import guide](/guides/immich-go). Its Google Photos reader handles Takeout metadata; indexing an export as an external library is a different workflow.
+
 ## Step 1: Prepare a small source folder and record both paths
 
 Choose an existing folder with a few known supported photos and a video. Confirm its host or NAS location, and decide where it should appear inside the container. Organize folder names before indexing where possible; changing paths later can create new assets and lose Immich-only metadata relationships.

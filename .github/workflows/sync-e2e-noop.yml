@@ -1,0 +1,11 @@
+name: sync-e2e-noop
+on:
+  push:
+    branches:
+      - "sync-e2e/**"
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: No site deploy
+        run: echo "sync-e2e noop only; not a production deploy"

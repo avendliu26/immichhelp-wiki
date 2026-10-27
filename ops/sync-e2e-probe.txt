@@ -1,0 +1,3 @@
+Temporary sync probe. Not a page, not SEO content, not production config.
+Safe to delete with the sync-e2e branches.
+refs avendliu26/seo-ops-hub#5

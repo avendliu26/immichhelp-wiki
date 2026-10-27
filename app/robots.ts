@@ -1,1 +1,4 @@
+// Metadata depends only on repository content and build-time site configuration.
+export const dynamic = 'force-static';
+
 import type { MetadataRoute } from 'next'; import { site } from '@/src/config/site'; export default function robots():MetadataRoute.Robots{return{rules:{userAgent:'*',allow:'/'},sitemap:`https://${site.domain}/sitemap.xml`};}

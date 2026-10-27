@@ -1,3 +1,6 @@
+// Metadata depends only on repository content and build-time site configuration.
+export const dynamic = 'force-static';
+
 import type { MetadataRoute } from 'next';
 import { getPublishedDocuments } from '@/lib/content';
 import { site } from '@/src/config/site';

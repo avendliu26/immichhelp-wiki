@@ -8,3 +8,6 @@ dist
 .vercel
 .env*
 !.env.example
+
+# Static backup build output
+/out/
